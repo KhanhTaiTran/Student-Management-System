@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - Student Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/index.css">
+
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="container">
+        <div class="hero-content">
+            <h1>Student Management System</h1>
+            <p class="subtitle">Streamline your academic journey with our comprehensive management platform</p>
+            
+            <ul class="features">
+                <li>Track student performance and grades</li>
+                <li>Manage courses and enrollments</li>
+                <li>Monitor attendance records</li>
+                <li>Generate detailed reports</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Get Started</h2>
+            <p>Access your dashboard and manage your academic information</p>
+            
+            <div class="btn-group">
+                <a href="login" class="btn btn-primary" id="loginBtn">Sign In</a>
+                <div class="divider">OR</div>
+                <a href="signup" class="btn btn-secondary" id="signupBtn">Create Account</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add smooth scroll and interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginBtn = document.getElementById('loginBtn');
+            const signupBtn = document.getElementById('signupBtn');
+
+            // Add click animation
+            function addClickAnimation(element) {
+                element.addEventListener('click', function(e) {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            }
+
+            addClickAnimation(loginBtn);
+            addClickAnimation(signupBtn);
+
+            // Parallax effect for floating shapes
+            document.addEventListener('mousemove', function(e) {
+                const shapes = document.querySelectorAll('.shape');
+                const mouseX = e.clientX / window.innerWidth;
+                const mouseY = e.clientY / window.innerHeight;
+
+                shapes.forEach((shape, index) => {
+                    const speed = (index + 1) * 0.05;
+                    const x = (mouseX - 0.5) * 50 * speed;
+                    const y = (mouseY - 0.5) * 50 * speed;
+                    shape.style.transform = `translate(${x}px, ${y}px)`;
+                });
+            });
+
+            // Add entrance animation to card on scroll (for mobile)
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            const card = document.querySelector('.card');
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
