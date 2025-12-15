@@ -1,6 +1,8 @@
 package com.example.studentmanagementsystem.security;
 
 import com.example.studentmanagementsystem.service.CustomUserDetailsService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,27 +16,21 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.AuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    @Autowired
     private CustomUserDetailsService userDetailsService;
-
+    @Autowired
     private AuthenticationEntryPoint authenticationEntryPoint;
-
+    @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    public SecurityConfig(CustomUserDetailsService userDetailsService,
-            JwtAuthenticationFilter jwtAuthenticationFilter, AuthenticationEntryPoint authenticationEntryPoint) {
-        this.userDetailsService = userDetailsService;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.authenticationEntryPoint = authenticationEntryPoint;
-    }
 
     // hash password
     @Bean
@@ -50,7 +46,7 @@ public class SecurityConfig {
 
     // connect UserDetailsService with AuthenticationProvider
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
@@ -74,10 +70,10 @@ public class SecurityConfig {
                         .requestMatchers("/student/**").hasRole("STUDENT")
 
                         // other enpoints
-                        .requestMatchers(HttpMethod.GET, "/api/user/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/user/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/user/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/user/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/admin/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/admin/**").hasRole("ADMIN")
 
                         // All other requests need authentication
                         .anyRequest().authenticated())
