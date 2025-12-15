@@ -1,5 +1,5 @@
 package com.example.studentmanagementsystem.service;
 
-public class PaymentServiceImpl extends PaymentService {
+public class PaymentServiceImpl {
 
 }

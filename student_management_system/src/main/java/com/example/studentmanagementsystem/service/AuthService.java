@@ -1,5 +1,7 @@
 package com.example.studentmanagementsystem.service;
 
-public interface AuthService {
+import com.example.studentmanagementsystem.dto.request.LoginRequestDTO;
 
+public interface AuthService {
+    String login(LoginRequestDTO loginRequestDTO);
 }
