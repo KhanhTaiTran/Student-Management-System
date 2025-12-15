@@ -6,6 +6,6 @@ import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
-public class AuthServiceImpl extends AuthService {
+public class AuthServiceImpl {
 
 }

@@ -1,5 +1,5 @@
 package com.example.studentmanagementsystem.service;
 
-public class UserServiceImpl extends UserService {
+public class UserServiceImpl {
 
 }
