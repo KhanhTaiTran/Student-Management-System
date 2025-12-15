@@ -31,6 +31,9 @@ public class User {
     @Column(name = "full_name", nullable = false, length = 100)
     private String fullName;
 
+    @Column(name = "student_id", nullable = true, length = 11, unique = true)
+    private String studentId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Role role = Role.STUDENT;

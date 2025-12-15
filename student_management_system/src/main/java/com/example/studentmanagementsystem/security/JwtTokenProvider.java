@@ -18,10 +18,10 @@ import javax.crypto.SecretKey;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${app.jwt.secret}")
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
-    @Value("${app.jwt.expiration}")
+    @Value("${jwt.expiration}")
     private long jwtExpirationDate;
 
     public String generateToken(Authentication authentication) {
@@ -69,8 +69,9 @@ public class JwtTokenProvider {
 
     // validate token
     public boolean validateToken(String token) {
-        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
         try {
+            SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+
             Jwts.parser()
                     .verifyWith(key)
                     .build()
