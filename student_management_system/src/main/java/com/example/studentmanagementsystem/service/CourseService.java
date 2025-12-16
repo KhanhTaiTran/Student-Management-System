@@ -1,5 +1,13 @@
 package com.example.studentmanagementsystem.service;
 
-public interface CourseService {
+import java.util.List;
 
+import com.example.studentmanagementsystem.entity.Course;
+
+public interface CourseService {
+    // create course
+    Course createCourse(Course course);
+
+    // list the courses
+    List<Course> getAllCourses();
 }
