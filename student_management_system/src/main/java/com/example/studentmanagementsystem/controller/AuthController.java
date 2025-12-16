@@ -36,16 +36,25 @@ public class AuthController {
     // forgot pass
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequestDTO request) {
-        authService.forgotPassword(request.getEmail());
-        return ResponseEntity.ok("Link reset Password has been send to your email!");
+        try {
+            authService.forgotPassword(request.getEmail());
+            return ResponseEntity.ok("Link reset Password has been send to your email!");
+        } catch (Exception e) {
+            // TODO: handle exception
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // reset pass
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequestDTO request) {
-        authService.resetPassword(request.getToken(), request.getNewPassword());
+        try {
+            authService.resetPassword(request.getToken(), request.getNewPassword());
 
-        return ResponseEntity.ok("Password was changed! You can login now.");
+            return ResponseEntity.ok("Password was changed! You can login");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }
