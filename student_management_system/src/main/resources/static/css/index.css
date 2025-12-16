@@ -11,5 +11,9 @@
 .card:hover {
     transform: translateY(-5px);
     transition: 0.3s;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.lang-switch img {
+    width: 20px;
+    margin-right: 5px;
 }

@@ -1,1 +1,142 @@
-<!--Form login-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="#{login.title}">Login - SMS</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" th:href="@{/css/login.css}" />
+  </head>
+  <body>
+    <div class="dropdown lang-switch">
+      <button
+        class="btn btn-light btn-sm dropdown-toggle shadow-sm"
+        type="button"
+        data-bs-toggle="dropdown"
+      >
+        <i class="fa-solid fa-globe"></i> Language
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="?lang=en">🇺🇸 English</a></li>
+        <li><a class="dropdown-item" href="?lang=vi">🇻🇳 Tiếng Việt</a></li>
+      </ul>
+    </div>
+
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+          <div class="card login-card">
+            <div class="login-header">
+              <div class="fs-1 mb-2">
+                <i class="fa-solid fa-graduation-cap"></i>
+              </div>
+              <h4 th:text="#{login.title}">Welcome Back</h4>
+              <p class="mb-0 opacity-75 small" th:text="#{login.subtitle}">
+                Please login
+              </p>
+            </div>
+
+            <div class="card-body p-4">
+              <div
+                id="alertBox"
+                class="alert alert-danger d-none"
+                role="alert"
+              ></div>
+
+              <form id="loginForm">
+                <div class="mb-3">
+                  <label
+                    class="form-label text-muted small fw-bold"
+                    th:text="#{login.username}"
+                    >Username</label
+                  >
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"
+                      ><i class="fa-solid fa-user text-muted"></i
+                    ></span>
+                    <input
+                      title="username"
+                      type="text"
+                      class="form-control border-start-0 ps-0"
+                      id="username"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <label
+                    class="form-label text-muted small fw-bold"
+                    th:text="#{login.password}"
+                    >Password</label
+                  >
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"
+                      ><i class="fa-solid fa-lock text-muted"></i
+                    ></span>
+                    <input
+                      title="passwordInput"
+                      type="password"
+                      class="form-control border-start-0 ps-0"
+                      id="password"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  class="btn btn-primary w-100 btn-login text-white mb-3"
+                  id="btnLogin"
+                >
+                  <span th:text="#{login.btn}">Sign In</span>
+                </button>
+              </form>
+
+              <div class="text-center d-flex justify-content-between mt-3">
+                <a href="/" class="text-decoration-none text-muted small">
+                  <i class="fa-solid fa-arrow-left me-1"></i>
+                  <span th:text="#{login.back}">Back</span>
+                </a>
+                <a
+                  href="#"
+                  class="text-decoration-none text-primary small"
+                  th:text="#{login.forgot}"
+                  >Forgot?</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script th:src="@{/js/login.js}"></script>
+
+    <script th:inline="javascript">
+        // load language
+        const messages = {
+            loading: /*[[#{login.loading}]]*/ 'Loading...',
+            success: /*[[#{login.success}]]*/ 'Success!',
+            failed: /*[[#{login.failed}]]*/ 'Failed!',
+            btnText: /*[[#{login.btn}]]*/ 'Login'
+        };
+
+        // click event
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            handleLogin(e, messages);
+        });
+    </script>
+</body>
+  </body>
+</html>
