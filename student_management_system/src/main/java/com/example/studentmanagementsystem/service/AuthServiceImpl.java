@@ -58,6 +58,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void forgotPassword(String email) {
         // find user in db
+        System.out.println(">>> Find: " + "[" + email + "]");
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Email not exist!"));
 
         // create random token
