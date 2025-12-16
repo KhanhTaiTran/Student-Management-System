@@ -5,9 +5,7 @@ import com.example.studentmanagementsystem.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -60,27 +58,32 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint))
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/", "/login", "/register", "/css/**", "/js/**", "/img/**").permitAll()
+                        // 1. PUBLIC ENDPOINTS
+                        .requestMatchers("/api/auth/**").permitAll() // API Login/Register
+                        .requestMatchers("/", "/login", "/register", "/error", "/reset-password").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/img/**", "/assets/**").permitAll()
 
-                        // role based access control
+                        // 2. ADMIN ENDPOINTS (API + Admin page)
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        // 3. TEACHER ENDPOINTS
+                        .requestMatchers("/api/teacher/**").hasRole("TEACHER")
                         .requestMatchers("/teacher/**").hasRole("TEACHER")
+
+                        // 4. STUDENT ENDPOINTS
+                        .requestMatchers("/api/student/**").hasRole("STUDENT")
                         .requestMatchers("/student/**").hasRole("STUDENT")
 
-                        // other enpoints
-                        .requestMatchers(HttpMethod.GET, "/api/admin/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/admin/**").hasRole("ADMIN")
+                        // 5. COMMON API
+                        .requestMatchers("/api/users/profile", "/api/users/change-password").authenticated()
 
-                        // All other requests need authentication
+                        // 6. CATCH-ALL
                         .anyRequest().authenticated())
-                // configure stateless (don't save session on server)
+                // Stateless Session
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
-                // add JWT Filter before UsernamePasswordAuthenticationFilter
+                // Thêm JWT Filter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

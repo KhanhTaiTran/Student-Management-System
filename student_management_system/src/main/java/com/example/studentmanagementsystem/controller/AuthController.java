@@ -3,7 +3,9 @@ package com.example.studentmanagementsystem.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.studentmanagementsystem.dto.request.ForgotPasswordRequestDTO;
 import com.example.studentmanagementsystem.dto.request.LoginRequestDTO;
+import com.example.studentmanagementsystem.dto.request.ResetPasswordRequestDTO;
 import com.example.studentmanagementsystem.dto.response.JwtAuthResponseDTO;
 import com.example.studentmanagementsystem.service.AuthService;
 
@@ -29,6 +31,30 @@ public class AuthController {
         jwtAuthResponseDTO.setAccessToken(token);
 
         return ResponseEntity.ok(jwtAuthResponseDTO);
+    }
+
+    // forgot pass
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequestDTO request) {
+        try {
+            authService.forgotPassword(request.getEmail());
+            return ResponseEntity.ok("Link reset Password has been send to your email!");
+        } catch (Exception e) {
+            // TODO: handle exception
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // reset pass
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequestDTO request) {
+        try {
+            authService.resetPassword(request.getToken(), request.getNewPassword());
+
+            return ResponseEntity.ok("Password was changed! You can login");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }

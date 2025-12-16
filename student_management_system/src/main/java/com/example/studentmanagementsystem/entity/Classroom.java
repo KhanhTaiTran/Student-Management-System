@@ -25,7 +25,7 @@ public class Classroom {
     private Long id;
 
     @Column(nullable = false)
-    private String className; // ex: IT076IU...
+    private String className;
 
     // 1 course has many class
     @ManyToOne
@@ -38,4 +38,6 @@ public class Classroom {
     private User teacher;
 
     private String semester;
+
+    private String classRoom;// e.g. A1.202
 }
