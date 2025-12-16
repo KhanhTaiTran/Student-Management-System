@@ -89,12 +89,14 @@
         <h1 class="display-4 fw-bold mb-4" th:text="#{hero.title}">Title</h1>
         <p class="lead mb-4" th:text="#{hero.subtitle}">Subtitle</p>
         <div class="d-flex justify-content-center gap-3">
-          <a
-            href="/login"
+          <button
             class="btn btn-light btn-lg px-5 fw-bold text-primary"
-            th:text="#{hero.btn.start}"
-            >Start</a
+            data-bs-toggle="modal"
+            data-bs-target="#loginModal"
+            th:text="#{nav.login}"
           >
+            Start
+          </button>
           <a
             href="#features"
             class="btn btn-outline-light btn-lg px-5"
