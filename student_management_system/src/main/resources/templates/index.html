@@ -236,10 +236,66 @@
             <div class="text-center mt-3">
               <a
                 href="#"
-                class="text-decoration-none text-muted small hover-link"
+                data-bs-toggle="modal"
+                data-bs-target="#forgotModal"
+                class="text-decoration-none small"
                 th:text="#{login.forgot}"
-                >Forgot Password?</a
               >
+                Forgot Password?
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--Forgot modal-->
+    <div class="modal fade" id="forgotModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-warning text-dark border-0">
+            <h5 class="modal-title fw-bold">
+              <i class="fa-solid fa-key me-2"></i
+              ><span th:text="#{forgot.title}">Forgot Password</span>
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <div id="forgotAlert" class="alert d-none"></div>
+
+            <p class="text-muted small" th:text="#{forgot.instruction}">
+              Input your school email
+            </p>
+
+            <form id="forgotForm">
+              <div class="mb-3">
+                <input
+                  type="email"
+                  class="form-control"
+                  id="forgotEmail"
+                  th:placeholder="#{forgot.email.placeholder}"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-warning w-100 fw-bold">
+                <span th:text="#{forgot.btn}">Send Request</span>
+              </button>
+            </form>
+
+            <div class="text-center mt-3">
+              <a
+                href="#"
+                data-bs-toggle="modal"
+                data-bs-target="#loginModal"
+                class="small text-decoration-none"
+                th:text="#{forgot.back}"
+              >
+                Go to Login
+              </a>
             </div>
           </div>
         </div>
@@ -248,13 +304,14 @@
 
     <footer class="bg-dark text-white py-4 text-center mt-auto">
       <div class="container">
-        <p class="mb-0" th:text="#{footer.text}">&copy; 2024</p>
+        <p class="mb-0" th:text="#{footer.text}">&copy; 2025</p>
       </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script th:src="@{/js/login.js}"></script>
+    <script th:src="@{/js/forgotPassword.js}"></script>
 
     <script th:inline="javascript">
       const messages = {
@@ -264,12 +321,61 @@
         btnText: /*[[#{login.btn}]]*/ "Login",
       };
 
+      const forgotMsgs = {
+        btnLoading: '<i class="fa-solid fa-spinner fa-spin"></i>',
+        btnDefault: /*[[#{forgot.btn}]]*/ "Send",
+        success: /*[[#{forgot.success}]]*/ "Sent!",
+        failed: /*[[#{forgot.failed}]]*/ "Email not found",
+        error: /*[[#{forgot.error}]]*/ "Error",
+      };
+
+      // handle login
       const loginForm = document.getElementById("loginForm");
       if (loginForm) {
         loginForm.addEventListener("submit", function (e) {
-          // note: in login.js, after login we should:
-          // window.location.reload(); (to load with page logged in)
           handleLogin(e, messages);
+        });
+      }
+
+      // handle Forgot Password
+      const forgotForm = document.getElementById("forgotForm");
+      if (forgotForm) {
+        forgotForm.addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const email = document.getElementById("forgotEmail").value;
+          const alertBox = document.getElementById("forgotAlert");
+          const btn = this.querySelector("button");
+
+          // Loading UI
+          btn.disabled = true;
+          btn.innerHTML = forgotMsgs.btnLoading;
+          alertBox.classList.add("d-none");
+
+          try {
+            // call API Backend
+            const res = await fetch("/api/auth/forgot-password", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email: email }),
+            });
+
+            if (res.ok) {
+              alertBox.className = "alert alert-success";
+              alertBox.innerText = forgotMsgs.success;
+              alertBox.classList.remove("d-none");
+            } else {
+              alertBox.className = "alert alert-danger";
+              alertBox.innerText = forgotMsgs.failed;
+              alertBox.classList.remove("d-none");
+            }
+          } catch (err) {
+            alertBox.className = "alert alert-danger";
+            alertBox.innerText = forgotMsgs.error;
+            alertBox.classList.remove("d-none");
+          } finally {
+            btn.disabled = false;
+            btn.innerHTML = forgotMsgs.btnDefault;
+          }
         });
       }
     </script>

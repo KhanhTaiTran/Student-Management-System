@@ -5,9 +5,7 @@ import com.example.studentmanagementsystem.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -62,7 +60,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 1. PUBLIC ENDPOINTS
                         .requestMatchers("/api/auth/**").permitAll() // API Login/Register
-                        .requestMatchers("/", "/login", "/register").permitAll()
+                        .requestMatchers("/", "/login", "/register", "/error", "/reset-password").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/img/**", "/assets/**").permitAll()
 
                         // 2. ADMIN ENDPOINTS (API + Admin page)

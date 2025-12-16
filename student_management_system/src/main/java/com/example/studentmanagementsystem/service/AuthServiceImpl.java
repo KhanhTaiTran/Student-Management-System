@@ -15,6 +15,9 @@ import com.example.studentmanagementsystem.entity.User;
 import com.example.studentmanagementsystem.repository.UserRepository;
 import com.example.studentmanagementsystem.security.JwtTokenProvider;
 
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+
 @Service
 public class AuthServiceImpl implements AuthService {
     private AuthenticationManager authenticationManager;
@@ -25,12 +28,15 @@ public class AuthServiceImpl implements AuthService {
 
     private PasswordEncoder passwordEncoder;
 
+    private JavaMailSender mailSender;
+
     public AuthServiceImpl(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider,
-            UserRepository userRepository, PasswordEncoder passwordEncoder) {
+            UserRepository userRepository, PasswordEncoder passwordEncoder, JavaMailSender mailSender) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.mailSender = mailSender;
     }
 
     @Override
@@ -65,8 +71,25 @@ public class AuthServiceImpl implements AuthService {
         // simulate to send email (print to console to test)
         // can be use JavaMailSender
         String resetLink = "http://localhost:8080/reset-password?token=" + token;
+
+        sendEmail(email, "Request to reset the password - SMS System - HCMIU",
+                "Hello,\n\n" +
+                        "You just send an request to reset the password. Please click enter this link:\n" +
+                        resetLink +
+                        "\n\nThis link will be expiry after 5 minutes.\n" +
+                        "If you don't request this, please disregard this email.");
         System.out.println(">>> EMAIL SENT TO [" + email + "]");
         System.out.println(">>> RESET LINK: " + resetLink);
+    }
+
+    private void sendEmail(String to, String subject, String content) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("noreply@sms-system.hcmiu.com");
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(content);
+
+        mailSender.send(message);
     }
 
     @Override

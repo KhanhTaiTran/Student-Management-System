@@ -14,4 +14,9 @@ public class HomeController {
     public String login() {
         return "auth/login";
     }
+
+    @GetMapping("/reset-password")
+    public String resetPasswordPage() {
+        return "auth/reset-password";
+    }
 }
