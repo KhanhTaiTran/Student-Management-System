@@ -38,6 +38,4 @@ public class AdminController {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    // TODO: admin can create course and classroom
-
 }
