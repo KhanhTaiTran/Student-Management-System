@@ -69,8 +69,7 @@ public class AuthServiceImpl implements AuthService {
         user.setResetTokenExpiry(LocalDateTime.now().plusMinutes(5));
         userRepository.save(user);
 
-        // simulate to send email (print to console to test)
-        // can be use JavaMailSender
+        // use JavaMailSender
         String resetLink = "http://localhost:8080/reset-password?token=" + token;
 
         sendEmail(email, "Request to reset the password - SMS System - HCMIU",
