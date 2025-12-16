@@ -29,6 +29,10 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public Classroom createClassroom(CreateClassRequestDTO request) {
+        // validation
+        if (classroomRepository.existsByClassName(request.getClassName())) {
+            throw new RuntimeException("Error: Class Name is unique!");
+        }
         // find course
         Course course = courseRepository.findById(request.getCourseId())
                 .orElseThrow(() -> new RuntimeException("Can't find the course!"));
@@ -53,8 +57,17 @@ public class ClassroomServiceImpl implements ClassroomService {
         return classroomRepository.save(classroom);
     }
 
+    @Override
     public List<Classroom> getAllClassrooms() {
         return classroomRepository.findAll();
     }
 
+    @Override
+    public void deleteClassroom(Long id) {
+        if (!classroomRepository.existsById(id)) {
+            throw new RuntimeException("The classroom with this id is not exists!");
+        }
+
+        classroomRepository.deleteById(id);
+    }
 }

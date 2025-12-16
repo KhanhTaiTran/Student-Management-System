@@ -9,4 +9,6 @@ public interface ClassroomService {
     Classroom createClassroom(CreateClassRequestDTO request);
 
     List<Classroom> getAllClassrooms();
+
+    void deleteClassroom(Long id);
 }
