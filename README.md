@@ -7,7 +7,7 @@ A comprehensive web-based application for managing school activities, built with
 | No. | Full Name             | Student ID | Role & Responsibilities                  |
 |-----|-----------------------|------------|------------------------------------------|
 | 1   | Tran Khanh Tai        | ITITIU21300| Admin Features, Security & Authentication|
-| 2   | [Member Name 2]       | [ID 2]     | Teacher Features (Grading, Quiz, Attendance)|
+| 2   | Nguyen Dy Nien        | ITITIU21272| Teacher Features (Grading, Quiz, Attendance)|
 | 3   | [Member Name 3]       | [ID 3]     | Student Features (Payment, Schedule, Results)|
 
 ---
