@@ -1,5 +1,19 @@
 package com.example.studentmanagementsystem.repository;
 
-public interface EnrollmentRepository {
+import java.util.List;
+import java.util.Optional;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.studentmanagementsystem.entity.Enrollment;
+
+public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
+    // check is that sutudent register this class or not
+    Boolean existsByStudentIdAndClassRoomId(Long studentId, Long classRoomId);
+
+    List<Enrollment> findByStudentId(Long studentId);
+
+    List<Enrollment> findByClassRoomId(Long classRoomId);
+
+    Optional<Enrollment> findByStudentIdAndClassRoomId(Long studentId, Long classRoomId);
 }

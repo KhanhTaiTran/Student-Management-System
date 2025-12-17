@@ -35,10 +35,4 @@ public class Enrollment {
     private Double inclass;
     private Double midTermGrade;
     private Double finalGrade;
-
-    public Double getTotalGrade() {
-        if (midTermGrade == null || finalGrade == null)
-            return 0.0;
-        return inclass * 0.3 + midTermGrade * 0.3 + finalGrade * 0.4;
-    }
 }
