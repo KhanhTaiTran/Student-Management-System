@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.example.studentmanagementsystem.entity.Classroom;
 
@@ -19,4 +20,8 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Long> {
 
     // find all classrooms of 1 teacher are teaching
     List<Classroom> findByTeacherId(Long teacherId);
+
+    // return list object: [Course name, Number of class]
+    @Query("SELECT c.courseName, COUNT(cl) FROM Classroom cl JOIN cl.course c GROUP BY c.courseName")
+    List<Object[]> countClassesByCourse();
 }

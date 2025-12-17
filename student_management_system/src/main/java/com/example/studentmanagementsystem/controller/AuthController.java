@@ -25,12 +25,9 @@ public class AuthController {
     // api login: http://localhost:8080/api/auth/login
     @PostMapping("/login")
     public ResponseEntity<JwtAuthResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO) {
-        String token = authService.login(loginRequestDTO);
+        JwtAuthResponseDTO jwtAuthResponse = authService.login(loginRequestDTO);
 
-        JwtAuthResponseDTO jwtAuthResponseDTO = new JwtAuthResponseDTO();
-        jwtAuthResponseDTO.setAccessToken(token);
-
-        return ResponseEntity.ok(jwtAuthResponseDTO);
+        return ResponseEntity.ok(jwtAuthResponse);
     }
 
     // forgot pass

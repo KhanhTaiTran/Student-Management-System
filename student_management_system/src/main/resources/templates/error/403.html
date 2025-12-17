@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <head th:replace="fragments/head :: head"></head>
+  <body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <main
+      class="container"
+      style="
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <section class="error-page" style="text-align: center; padding: 48px">
+        <h1 style="font-size: 6rem; margin: 0; color: #d9534f">403</h1>
+        <h2 style="margin-top: 12px">Access Forbidden</h2>
+        <p
+          class="lead"
+          style="max-width: 640px; margin: 16px auto 24px; color: #666"
+        >
+          You don't have permission to access this resource. If you believe this
+          is an error, please contact the site administrator or sign in with an
+          account that has the required access.
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center">
+          <a
+            th:href="@{/}"
+            class="btn"
+            style="
+              padding: 10px 18px;
+              background: #007bff;
+              color: #fff;
+              text-decoration: none;
+              border-radius: 4px;
+            "
+            >Return Home</a
+          >
+          <a
+            th:href="@{/login}"
+            class="btn"
+            style="
+              padding: 10px 18px;
+              background: #6c757d;
+              color: #fff;
+              text-decoration: none;
+              border-radius: 4px;
+            "
+            >Sign In</a
+          >
+        </div>
+      </section>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+  </body>
+</html>

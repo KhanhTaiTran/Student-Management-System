@@ -12,7 +12,7 @@ Google not allow to create `App Passwords` if 2FA is turn off
 
 ## Step 2: Access to: https://myaccount.google.com/apppasswords
 
-### 1. App Name: you can named it freely
+### 1. App Name: You can name it whatever you like.
 
 ### 2. Click button `Create`
 

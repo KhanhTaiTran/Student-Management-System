@@ -32,7 +32,17 @@ function handleLogin(e, messages) {
         alertBox.classList.remove("d-none");
 
         setTimeout(() => {
-          window.location.reload();
+          const role = res.body.role;
+
+          if (role === "ROLE_ADMIN") {
+            window.location.href = "/admin/dashboard";
+          } else if (role === "ROLE_TEACHER") {
+            window.location.href = "/teacher/dashboard"; // do it later
+          } else if (role === "ROLE_STUDENT") {
+            window.location.href = "/student/dashboard"; // do it later
+          } else {
+            window.location.href = "/"; //go to home
+          }
         }, 1000);
       } else {
         // failed
