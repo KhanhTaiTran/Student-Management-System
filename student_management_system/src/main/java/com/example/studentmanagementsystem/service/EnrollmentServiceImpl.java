@@ -67,13 +67,23 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     public Enrollment updateGrade(Long enrollmentId, GradeRequestDTO request) {
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
                 .orElseThrow(() -> new RuntimeException("Enrollment not found"));
-        // update score
+
         if (request.getInclass() != null)
             enrollment.setInclass(request.getInclass());
         if (request.getMidTermGrade() != null)
             enrollment.setMidTermGrade(request.getMidTermGrade());
         if (request.getFinalGrade() != null)
             enrollment.setFinalGrade(request.getFinalGrade());
+
+        Double inClass = enrollment.getInclass() != null ? enrollment.getInclass() : 0.0;
+        Double midTerm = enrollment.getMidTermGrade() != null ? enrollment.getMidTermGrade() : 0.0;
+        Double finalG = enrollment.getFinalGrade() != null ? enrollment.getFinalGrade() : 0.0;
+
+        double total = (inClass * 0.3) + (midTerm * 0.3) + (finalG * 0.4);
+
+        total = Math.round(total * 100.0) / 100.0;
+
+        enrollment.setTotalGrade(total);
 
         return enrollmentRepository.save(enrollment);
     }

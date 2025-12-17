@@ -1,5 +1,6 @@
 package com.example.studentmanagementsystem.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,4 +36,7 @@ public class Enrollment {
     private Double inclass;
     private Double midTermGrade;
     private Double finalGrade;
+
+    @Column(name = "total")
+    private Double totalGrade;
 }
