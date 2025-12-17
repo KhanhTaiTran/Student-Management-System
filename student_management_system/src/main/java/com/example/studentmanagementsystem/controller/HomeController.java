@@ -19,4 +19,9 @@ public class HomeController {
     public String resetPasswordPage() {
         return "auth/reset-password";
     }
+
+    @GetMapping("/contact")
+    public String contact() {
+        return "contact";
+    }
 }
