@@ -4,9 +4,13 @@ import com.example.studentmanagementsystem.dto.request.CreateUserRequestDTO;
 import com.example.studentmanagementsystem.dto.response.UserResponseDTO;
 import com.example.studentmanagementsystem.entity.Role;
 import com.example.studentmanagementsystem.entity.User;
+import com.example.studentmanagementsystem.exception.ResourceNotFoundException;
+import com.example.studentmanagementsystem.repository.EnrollmentRepository;
+import com.example.studentmanagementsystem.repository.RefreshTokenRepository;
 import com.example.studentmanagementsystem.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,10 +19,15 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
+    private RefreshTokenRepository refreshTokenRepository;
+    private EnrollmentRepository enrollmentRepository;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
+            RefreshTokenRepository refreshTokenRepository, EnrollmentRepository enrollmentRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.enrollmentRepository = enrollmentRepository;
     }
 
     @Override
@@ -81,6 +90,27 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return mapToResponse(user);
+    }
+
+    @Override
+    @Transactional // use to ensure that erase all record relate to this id
+    public void deleteUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 1. Xóa Token đăng nhập trước (nếu có)
+        refreshTokenRepository.deleteByUser(user);
+
+        // 2. Nếu là Sinh viên -> Xóa dữ liệu đăng ký môn học
+        if (user.getRole() == Role.STUDENT) {
+            enrollmentRepository.deleteByStudentId(id);
+        }
+
+        // (Lưu ý: Nếu là Teacher, bạn sẽ cần xóa hoặc set null trong bảng Classroom
+        // tương tự)
+
+        // 3. Cuối cùng mới xóa User
+        userRepository.delete(user);
     }
 
     // helper function

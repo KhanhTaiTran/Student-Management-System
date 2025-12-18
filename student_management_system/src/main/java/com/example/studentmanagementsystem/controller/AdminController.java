@@ -1,5 +1,6 @@
 package com.example.studentmanagementsystem.controller;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -54,6 +55,13 @@ public class AdminController {
     public ResponseEntity<UserResponseDTO> createUser(@RequestBody CreateUserRequestDTO request) {
         UserResponseDTO newUser = userService.createUser(request);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/users/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok("User deleted successfully");
     }
 
     // get list of all users
