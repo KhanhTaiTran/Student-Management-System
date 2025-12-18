@@ -22,3 +22,5 @@ It look like : `abcd efgh ijkl mnop`
 
 - Coppy these password and paste into `application.properties` file of this project to test the MailSender function
 - Replace it with `${GMAIL_APP_PASSWORD}`
+
+### Or you can use environment variable
