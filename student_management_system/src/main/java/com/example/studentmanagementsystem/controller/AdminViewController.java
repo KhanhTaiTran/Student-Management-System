@@ -23,4 +23,9 @@ public class AdminViewController {
     public String courseList() {
         return "admin/course-list";
     }
+
+    @GetMapping("/classes")
+    public String classList() {
+        return "admin/class-list";
+    }
 }

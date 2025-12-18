@@ -161,4 +161,17 @@ public class AdminController {
 
         return ResponseEntity.ok(dtos);
     }
+
+    // get all teachers
+    @GetMapping("/teachers")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<UserResponseDTO>> getAllTeachers() {
+        List<User> teachers = userRepository.findByRole(Role.TEACHER);
+        // Convert to DTO
+        List<UserResponseDTO> dtos = teachers.stream()
+                .map(t -> new UserResponseDTO(t.getId(), t.getFullName(), t.getUsername(), t.getEmail(),
+                        t.getRole().name(), t.getIsActive()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
 }

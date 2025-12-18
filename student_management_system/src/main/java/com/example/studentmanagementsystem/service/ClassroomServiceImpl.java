@@ -11,6 +11,7 @@ import com.example.studentmanagementsystem.repository.UserRepository;
 import com.example.studentmanagementsystem.entity.Classroom;
 import com.example.studentmanagementsystem.entity.Course;
 import com.example.studentmanagementsystem.entity.User;
+import com.example.studentmanagementsystem.exception.ResourceNotFoundException;
 
 @Service
 public class ClassroomServiceImpl implements ClassroomService {
@@ -60,6 +61,42 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     public List<Classroom> getAllClassrooms() {
         return classroomRepository.findAll();
+    }
+
+    @Override
+    public Classroom getClassroomById(Long id) {
+        return classroomRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Classroom not found with id: " + id));
+    }
+
+    @Override
+    public Classroom updateClassroom(Long id, CreateClassRequestDTO request) {
+        Classroom classroom = classroomRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Classroom not found with id: " + id));
+
+        // if class name changed, ensure uniqueness
+        if (!classroom.getClassName().equals(request.getClassName())
+                && classroomRepository.existsByClassName(request.getClassName())) {
+            throw new RuntimeException("Error: Class Name is unique!");
+        }
+
+        Course course = courseRepository.findById(request.getCourseId())
+                .orElseThrow(() -> new ResourceNotFoundException("Can't find the course!"));
+
+        User teacher = userRepository.findById(request.getTeacherId())
+                .orElseThrow(() -> new ResourceNotFoundException("Can't find teacher!"));
+
+        if (!teacher.getRole().name().equals("TEACHER")) {
+            throw new RuntimeException("This User ID is not a teacher!");
+        }
+
+        classroom.setClassName(request.getClassName());
+        classroom.setCourse(course);
+        classroom.setTeacher(teacher);
+        classroom.setSemester(request.getSemester());
+        classroom.setClassRoom(request.getClassRoom());
+
+        return classroomRepository.save(classroom);
     }
 
     @Override
