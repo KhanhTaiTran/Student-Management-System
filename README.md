@@ -46,6 +46,8 @@ src/main/resources
 │   ├── student            # Student dashboard & pages
 │   └── fragments          # Reusable UI components (Header, Footer)
 └── application.properties # Database & Application properties
+└── messase.properties     # Use to change language between VietNam and English
+└── message-vi.properties
 ```
 
 ---
