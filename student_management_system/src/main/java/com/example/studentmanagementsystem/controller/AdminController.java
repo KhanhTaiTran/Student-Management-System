@@ -56,6 +56,13 @@ public class AdminController {
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
+    // get list of all users
+    @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
     @GetMapping("/users/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
@@ -79,7 +86,7 @@ public class AdminController {
 
     // JS will call it to take num and fill
     @GetMapping("/stats")
-    @PreAuthorize("hasRole('ADMIN')") // only admin can access to this page
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, Long>> getDashboardStats() {
 
         // call repo to count user by role
