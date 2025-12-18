@@ -56,6 +56,12 @@
                 <span th:text="#{admin.sidebar.classes}">Classes</span></a
               >
             </li>
+            <li class="nav-item mt-5">
+              <a href="#" onclick="logout()" class="nav-link text-danger">
+                <i class="fa-solid fa-sign-out-alt me-2"></i>
+                <span th:text="#{admin.sidebar.logout}">Logout</span>
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -64,10 +70,30 @@
             class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-4 border-bottom"
           >
             <h1 class="h2" th:text="#{class.title}">Class Management</h1>
-            <button class="btn btn-primary" onclick="openModal()">
-              <i class="fa-solid fa-plus me-2"></i>
-              <span th:text="#{class.btn.add}">Add Class</span>
-            </button>
+
+            <div class="btn-toolbar mb-2 mb-md-0">
+              <div class="dropdown me-2">
+                <button
+                  class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                >
+                  <i class="fa-solid fa-globe"></i> Language
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" href="?lang=en">🇺🇸 English</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="?lang=vi">🇻🇳 Tiếng Việt</a>
+                  </li>
+                </ul>
+              </div>
+              <button class="btn btn-sm btn-primary" onclick="openModal()">
+                <i class="fa-solid fa-plus me-2"></i>
+                <span th:text="#{course.btn.add}">Add Class</span>
+              </button>
+            </div>
           </div>
 
           <div class="card shadow-sm">
