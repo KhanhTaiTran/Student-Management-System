@@ -331,6 +331,11 @@
           console.error(err);
         }
       };
+      function logout() {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("role");
+        window.location.href = "/";
+      }
     </script>
   </body>
 </html>
