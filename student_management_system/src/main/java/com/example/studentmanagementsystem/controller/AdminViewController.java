@@ -18,4 +18,9 @@ public class AdminViewController {
     public String userList() {
         return "admin/user-list";
     }
+
+    @GetMapping("/courses")
+    public String courseList() {
+        return "admin/course-list";
+    }
 }

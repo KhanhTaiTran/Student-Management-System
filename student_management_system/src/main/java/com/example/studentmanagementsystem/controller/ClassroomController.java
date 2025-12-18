@@ -16,7 +16,7 @@ import com.example.studentmanagementsystem.entity.Classroom;
 import com.example.studentmanagementsystem.service.ClassroomService;
 
 @RestController
-@RequestMapping("/api/admin/classrooms")
+@RequestMapping("/api/classrooms")
 public class ClassroomController {
 
     private ClassroomService classroomService;
@@ -25,19 +25,19 @@ public class ClassroomController {
         this.classroomService = classroomService;
     }
 
-    // POST: http://localhost:8080/api/admin/classrooms
+    // POST: http://localhost:8080/api/classrooms
     @PostMapping
     public ResponseEntity<Classroom> createClassroom(@RequestBody CreateClassRequestDTO request) {
         return ResponseEntity.ok(classroomService.createClassroom(request));
     }
 
-    // GET: http://localhost:8080/api/admin/classrooms
+    // GET: http://localhost:8080/api/classrooms
     @GetMapping
     public ResponseEntity<List<Classroom>> getAllClassrooms() {
         return ResponseEntity.ok(classroomService.getAllClassrooms());
     }
 
-    // DELETE: http://localhost:8080/api/admin/classrooms/{id}
+    // DELETE: http://localhost:8080/api/classrooms/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteClassroom(@PathVariable Long id) {
         classroomService.deleteClassroom(id);

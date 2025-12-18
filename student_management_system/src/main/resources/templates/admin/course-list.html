@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="#{course.title}">Course Management</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div
+          class="col-md-3 col-lg-2 sidebar p-3 collapse d-md-block bg-dark text-white"
+          style="min-height: 100vh"
+        >
+          <a
+            href="/"
+            class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+          >
+            <i class="fa-solid fa-graduation-cap fs-4 me-2"></i>
+            <span class="fs-5 fw-bold" th:text="#{nav.brand}">SMS Admin</span>
+          </a>
+          <hr />
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a href="/admin/dashboard" class="nav-link text-white"
+                ><i class="fa-solid fa-chart-line me-2"></i>
+                <span th:text="#{admin.sidebar.dashboard}">Dashboard</span></a
+              >
+            </li>
+            <li class="nav-item">
+              <a href="/admin/users" class="nav-link text-white"
+                ><i class="fa-solid fa-users me-2"></i>
+                <span th:text="#{admin.sidebar.users}">Users</span></a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                href="/admin/courses"
+                class="nav-link active bg-primary text-white"
+                ><i class="fa-solid fa-book me-2"></i>
+                <span th:text="#{admin.sidebar.courses}">Courses</span></a
+              >
+            </li>
+            <li class="nav-item">
+              <a href="/admin/classes" class="nav-link text-white"
+                ><i class="fa-solid fa-chalkboard me-2"></i>
+                <span th:text="#{admin.sidebar.classes}">Classes</span></a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+          <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-4 border-bottom"
+          >
+            <h1 class="h2" th:text="#{course.title}">Course Management</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+              <button class="btn btn-primary" onclick="openModal()">
+                <i class="fa-solid fa-plus me-2"></i>
+                <span th:text="#{course.btn.add}">Add Course</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="card shadow-sm">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>ID</th>
+                      <th th:text="#{course.table.code}">Code</th>
+                      <th th:text="#{course.table.name}">Name</th>
+                      <th th:text="#{course.table.credits}">Credits</th>
+                      <th th:text="#{course.table.desc}">Description</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="courseTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <div class="modal fade" id="courseModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" th:text="#{course.modal.title}">
+              Course Info
+            </h5>
+            <button
+              title="courseInfo"
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="courseForm">
+              <input type="hidden" id="courseId" name="id" />
+              <div class="mb-3">
+                <label class="form-label" th:text="#{course.form.code}"
+                  >Code</label
+                >
+                <input
+                  title="courseCode"
+                  type="text"
+                  class="form-control"
+                  id="courseCode"
+                  name="courseCode"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label" th:text="#{course.form.name}"
+                  >Name</label
+                >
+                <input
+                  title="courseName"
+                  type="text"
+                  class="form-control"
+                  id="courseName"
+                  name="courseName"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label" th:text="#{course.form.credits}"
+                  >Credits</label
+                >
+                <input
+                  title="credits"
+                  type="number"
+                  class="form-control"
+                  id="credits"
+                  name="credits"
+                  min="1"
+                  max="10"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label" th:text="#{course.form.desc}"
+                  >Description</label
+                >
+                <textarea
+                  title="description"
+                  class="form-control"
+                  id="description"
+                  name="description"
+                  rows="3"
+                ></textarea>
+              </div>
+              <div class="d-flex justify-content-end">
+                <button
+                  type="button"
+                  class="btn btn-secondary me-2"
+                  data-bs-dismiss="modal"
+                >
+                  Close
+                </button>
+                <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const token = localStorage.getItem("accessToken");
+      const modal = new bootstrap.Modal(document.getElementById("courseModal"));
+
+      document.addEventListener("DOMContentLoaded", loadCourses);
+
+      // Load list
+      async function loadCourses() {
+        try {
+          const res = await fetch("/api/courses", {
+            headers: { Authorization: "Bearer " + token },
+          });
+          const courses = await res.json();
+          const tbody = document.getElementById("courseTableBody");
+          tbody.innerHTML = "";
+
+          courses.forEach((c) => {
+            const row = `
+                    <tr>
+                        <td>${c.id}</td>
+                        <td><span class="badge bg-info text-dark">${
+                          c.courseCode
+                        }</span></td>
+                        <td class="fw-bold">${c.courseName}</td>
+                        <td>${c.credits}</td>
+                        <td class="text-muted small">${c.description || ""}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="editCourse(${
+                              c.id
+                            }, '${c.courseCode}', '${c.courseName}', ${
+              c.credits
+            }, '${c.description || ""}')">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteCourse(${
+                              c.id
+                            })">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            tbody.innerHTML += row;
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      function openModal() {
+        document.getElementById("courseForm").reset();
+        document.getElementById("courseId").value = ""; // Clear ID -> Mode Create
+        document.getElementById("courseCode").disabled = false; // Allow edit code for new
+        modal.show();
+      }
+
+      window.editCourse = function (id, code, name, credits, desc) {
+        document.getElementById("courseId").value = id;
+        document.getElementById("courseCode").value = code;
+        document.getElementById("courseName").value = name;
+        document.getElementById("credits").value = credits;
+        document.getElementById("description").value = desc;
+
+        // document.getElementById("courseCode").disabled = true;
+
+        modal.show();
+      };
+
+      // handle submit
+      document
+        .getElementById("courseForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const id = document.getElementById("courseId").value;
+          const data = {
+            courseCode: document.getElementById("courseCode").value,
+            courseName: document.getElementById("courseName").value,
+            credits: document.getElementById("credits").value,
+            description: document.getElementById("description").value,
+          };
+
+          const method = id ? "PUT" : "POST"; // if you give the id it is Put request , otherwise Post request
+          const url = id ? `/api/courses/${id}` : "/api/courses";
+
+          try {
+            const res = await fetch(url, {
+              method: method,
+              headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            });
+
+            if (res.ok) {
+              alert("Success!");
+              modal.hide();
+              loadCourses();
+            } else {
+              alert("Failed! " + data.courseCode + " is used.");
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        });
+
+      // 5. delete Course
+      window.deleteCourse = async function (id) {
+        if (
+          !confirm("Are you sure? This will delete all classes in this course!")
+        )
+          return;
+        try {
+          const res = await fetch(`/api/courses/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: "Bearer " + token },
+          });
+          if (res.ok) {
+            loadCourses();
+          } else {
+            alert("Cannot delete course. Maybe classes exist?");
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      };
+    </script>
+  </body>
+</html>

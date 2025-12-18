@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
-@RequestMapping("api/admin/courses")
+@RequestMapping("api/courses")
 public class CourseController {
     private CourseService courseService;
 
