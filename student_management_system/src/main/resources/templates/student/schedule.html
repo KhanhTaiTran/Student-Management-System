@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Student Schedule - SMS</title>
+    <title th:text="#{student.schedule.title}">Schedule - SMS</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -19,8 +19,6 @@
       <div class="row">
         <div
           class="col-md-3 col-lg-2 sidebar p-3 collapse d-md-block bg-dark text-white"
-          id="sidebarMenu"
-          style="min-height: 100vh"
         >
           <a
             href="/"
@@ -31,230 +29,337 @@
               >SMS Student</span
             >
           </a>
-          <hr class="text-white" />
+          <hr />
           <ul class="nav flex-column">
             <li class="nav-item">
-              <a href="/student/dashboard" class="nav-link text-white">
-                <i class="fa-solid fa-chart-line me-2"></i>
-                <span th:text="#{student.sidebar.dashboard}">Dashboard</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="/student/schedule" class="nav-link text-white active">
-                <i class="fa-solid fa-calendar-alt me-2"></i>
-                <span th:text="#{student.sidebar.schedule}">Schedule</span>
-              </a>
+              <a href="/student/dashboard" class="nav-link text-white"
+                ><i class="fa-solid fa-chart-line me-2"></i>
+                <span th:text="#{student.sidebar.dashboard}">Dashboard</span></a
+              >
             </li>
             <li class="nav-item">
               <a
-                href="/student/course-registration"
-                class="nav-link text-white"
-              >
-                <i class="fa-solid fa-cart-plus me-2"></i>
-                <span th:text="#{student.sidebar.registration}">Registration<span ></a
+                href="/student/schedule"
+                class="nav-link active bg-primary text-white"
+                ><i class="fa-solid fa-calendar-days me-2"></i>
+                <span th:text="#{student.sidebar.schedule}">Schedule</span></a
               >
             </li>
             <li class="nav-item">
-              <a href="/student/grades" class="nav-link text-white">
-                <i class="fa-solid fa-book me-2"></i>
-                <span th:text="#{student.sidebar.grades}">Grades</span>
-              </a>
+              <a href="/student/course-registration" class="nav-link text-white"
+                ><i class="fa-solid fa-cart-plus me-2"></i>
+                <span th:text="#{student.sidebar.registration}"
+                  >Registration</span
+                ></a
+              >
             </li>
             <li class="nav-item">
-              <a href="/student/payment" class="nav-link text-white">
-                <i class="fa-solid fa-credit-card me-2"></i>
-                <span th:text="#{student.sidebar.payment}">Payment</span>
-              </a>
+              <a href="/student/grades" class="nav-link text-white"
+                ><i class="fa-solid fa-book me-2"></i>
+                <span th:text="#{student.sidebar.grades}">Grades</span></a
+              >
+            </li>
+            <li class="nav-item">
+              <a href="/student/payment" class="nav-link text-white"
+                ><i class="fa-solid fa-credit-card me-2"></i>
+                <span th:text="#{student.sidebar.payment}">Payment</span></a
+              >
             </li>
             <li class="nav-item mt-5">
-              <a href="#" onclick="logout()" class="nav-link text-danger">
-                <i class="fa-solid fa-sign-out-alt me-2"></i>
-                <span th:text="#{student.sidebar.logout}">Logout</span>
-              </a>
+              <a href="#" onclick="logout()" class="nav-link text-danger"
+                ><i class="fa-solid fa-sign-out-alt me-2"></i>
+                <span th:text="#{student.sidebar.logout}">Logout</span></a
+              >
             </li>
           </ul>
         </div>
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fa-solid fa-calendar-days me-2"></i> Thời khóa biểu</h2>
-                
-                <div class="btn-group">
-                    <button class="btn btn-outline-primary" onclick="changeWeek(-1)">
-                        <i class="fa-solid fa-chevron-left"></i> Tuần trước
-                    </button>
-                    <button class="btn btn-primary disabled fw-bold" id="currentWeekDisplay" style="min-width: 250px;">
-                        Loading...
-                    </button>
-                    <button class="btn btn-outline-primary" onclick="changeWeek(1)">
-                        Tuần sau <i class="fa-solid fa-chevron-right"></i>
-                    </button>
-                </div>
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center gap-3">
+              <h2 class="mb-0">
+                <i class="fa-solid fa-calendar-days me-2"></i>
+                <span th:text="#{student.schedule.title}">Schedule</span>
+              </h2>
+
+              <div class="dropdown">
+                <button
+                  title="dropdown"
+                  class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                >
+                  <i class="fa-solid fa-globe"></i>
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" href="?lang=en">🇺🇸 English</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="?lang=vi">🇻🇳 Tiếng Việt</a>
+                  </li>
+                </ul>
+              </div>
             </div>
 
-            <div class="card shadow-sm">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-bordered schedule-table mb-0">
-                            <thead class="schedule-header">
-                                <tr>
-                                    <th style="width: 80px;">Tiết</th>
-                                    <th id="th-2">Thứ 2<br><small class="text-muted">Loading...</small></th>
-                                    <th id="th-3">Thứ 3<br><small class="text-muted">Loading...</small></th>
-                                    <th id="th-4">Thứ 4<br><small class="text-muted">Loading...</small></th>
-                                    <th id="th-5">Thứ 5<br><small class="text-muted">Loading...</small></th>
-                                    <th id="th-6">Thứ 6<br><small class="text-muted">Loading...</small></th>
-                                    <th id="th-7">Thứ 7<br><small class="text-muted">Loading...</small></th>
-                                    <th id="th-8">CN<br><small class="text-muted">Loading...</small></th>
-                                </tr>
-                            </thead>
-                            <tbody id="scheduleBody"></tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="btn-group">
+              <button class="btn btn-outline-primary" onclick="changeWeek(-1)">
+                <i class="fa-solid fa-chevron-left"></i>
+                <span th:text="#{student.schedule.prev}">Prev</span>
+              </button>
+              <button
+                class="btn btn-primary disabled fw-bold"
+                id="currentWeekDisplay"
+                style="min-width: 280px"
+              >
+                Loading...
+              </button>
+              <button class="btn btn-outline-primary" onclick="changeWeek(1)">
+                <span th:text="#{student.schedule.next}">Next</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
             </div>
+          </div>
+
+          <div class="card shadow-sm">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-bordered schedule-table mb-0">
+                  <thead class="schedule-header">
+                    <tr>
+                      <th
+                        style="width: 70px"
+                        th:text="#{student.schedule.period}"
+                      >
+                        Tiết
+                      </th>
+                      <th id="th-2">
+                        <span th:text="#{day.2}">Mon</span><br /><small
+                          class="text-muted"
+                          >Loading...</small
+                        >
+                      </th>
+                      <th id="th-3">
+                        <span th:text="#{day.3}">Tue</span><br /><small
+                          class="text-muted"
+                          >Loading...</small
+                        >
+                      </th>
+                      <th id="th-4">
+                        <span th:text="#{day.4}">Wed</span><br /><small
+                          class="text-muted"
+                          >Loading...</small
+                        >
+                      </th>
+                      <th id="th-5">
+                        <span th:text="#{day.5}">Thu</span><br /><small
+                          class="text-muted"
+                          >Loading...</small
+                        >
+                      </th>
+                      <th id="th-6">
+                        <span th:text="#{day.6}">Fri</span><br /><small
+                          class="text-muted"
+                          >Loading...</small
+                        >
+                      </th>
+                      <th id="th-7">
+                        <span th:text="#{day.7}">Sat</span><br /><small
+                          class="text-muted"
+                          >Loading...</small
+                        >
+                      </th>
+                      <th id="th-8">
+                        <span th:text="#{day.8}">Sun</span><br /><small
+                          class="text-muted"
+                          >Loading...</small
+                        >
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody id="scheduleBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </main>
       </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script th:inline="javascript">
+      const i18n = {
+        week: /*[[#{student.schedule.week}]]*/ "Week",
+        lblCode: /*[[#{label.course_code}]]*/ "Code",
+        lblClass: /*[[#{label.class_name}]]*/ "Class",
+        lblTeacher: /*[[#{label.teacher}]]*/ "Teacher",
+        lblRoom: /*[[#{label.room}]]*/ "Room",
+        lblTime: /*[[#{label.time}]]*/ "Time",
+      };
+
+      const currentLang =
+        document.documentElement.lang === "vi" ? "vi-VN" : "en-US";
+    </script>
+
     <script>
-      function logout() {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("role");
-        window.location.href = "/";
-      }
+      // State manage current date
+      let currentMonday = getMonday(new Date());
+      let scheduleData = [];
 
-      // State manage 
-      let currentMonday = getMonday(new Date()); 
-      let scheduleData = []; 
-
-      document.addEventListener("DOMContentLoaded", function() {
-          fetchSchedule();
+      document.addEventListener("DOMContentLoaded", function () {
+        fetchSchedule();
       });
 
-      // 1. function lấy thứ 2 của tuần chứa ngày d
+      // function get monday
       function getMonday(d) {
-          d = new Date(d);
-          var day = d.getDay(),
-              diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
-          return new Date(d.setDate(diff));
+        d = new Date(d);
+        var day = d.getDay(),
+          diff = d.getDate() - day + (day == 0 ? -6 : 1);
+        return new Date(d.setDate(diff));
       }
 
-      // 2. change week
+      // 2. Change Week
       function changeWeek(offset) {
-          currentMonday.setDate(currentMonday.getDate() + (offset * 7));
-          renderHeaderDates();
-          renderTableBody(); // load body again
+        currentMonday.setDate(currentMonday.getDate() + offset * 7);
+        renderHeaderDates();
+        renderTableBody();
       }
 
-    // 3. Render Header (Ngày tháng)
-    function renderHeaderDates() {
-        const options = { day: '2-digit', month: '2-digit' };
+      // 3. Render Header (Updated with i18n)
+      function renderHeaderDates() {
+        // format date
+        const options = { day: "2-digit", month: "2-digit" };
         let tempDate = new Date(currentMonday);
-        
-        // Hiển thị khoảng thời gian ở nút giữa
+
         let endWeek = new Date(currentMonday);
         endWeek.setDate(endWeek.getDate() + 6);
-        document.getElementById("currentWeekDisplay").innerText = 
-            `Tuần: ${tempDate.toLocaleDateString('vi-VN')} - ${endWeek.toLocaleDateString('vi-VN')}`;
 
-        // Loop from Thứ 2 (day 2) đến CN (day 8)
-        for(let i=2; i<=8; i++) {
-            const th = document.getElementById(`th-${i}`);
-            if(th) {
-                // Update text day, month in tags <small>
-                th.querySelector("small").innerText = tempDate.toLocaleDateString('vi-VN', options);
-            }
-            tempDate.setDate(tempDate.getDate() + 1);
+        // use i18n.week to display "Tuần" or "Week"
+        document.getElementById("currentWeekDisplay").innerText = `${
+          i18n.week
+        }: ${tempDate.toLocaleDateString(
+          currentLang
+        )} - ${endWeek.toLocaleDateString(currentLang)}`;
+
+        for (let i = 2; i <= 8; i++) {
+          const th = document.getElementById(`th-${i}`);
+          if (th) {
+            th.querySelector("small").innerText = tempDate.toLocaleDateString(
+              currentLang,
+              options
+            );
+          }
+          tempDate.setDate(tempDate.getDate() + 1);
         }
-    }
+      }
 
-    // 4. call api to get data
-    async function fetchSchedule() {
+      // 4. API Call
+      async function fetchSchedule() {
         const token = localStorage.getItem("accessToken");
-        if (!token) { window.location.href = "/"; return; }
+        if (!token) {
+          window.location.href = "/";
+          return;
+        }
 
         try {
-            const res = await fetch("/api/student/schedule", { //student schedule api
-                headers: { "Authorization": "Bearer " + token }
-            });
-            if (res.ok) {
-                scheduleData = await res.json();
-                renderHeaderDates();
-                renderTableBody();
-            } else {
-                console.error("Failed to load schedule");
-            }
-        } catch (err) { console.error(err); }
-    }
+          const res = await fetch("/api/student/schedule", {
+            headers: { Authorization: "Bearer " + token },
+          });
+          if (res.ok) {
+            scheduleData = await res.json();
+            renderHeaderDates();
+            renderTableBody();
+          } else {
+            console.error("Failed to load schedule");
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
 
-    // 5. Render table (Logic ghép ô rowspan)
-    function renderTableBody() {
+      // 5. Render Body (Updated with i18n Tooltip)
+      function renderTableBody() {
         const tbody = document.getElementById("scheduleBody");
         tbody.innerHTML = "";
 
-        // Mảng 2 chiều đánh dấu ô nào đã được vẽ (để skip khi có rowspan)
-        // 13 tiết (index 1-12), 9 ngày (index 2-8)
-        let occupied = Array(13).fill().map(() => Array(9).fill(false));
+        let occupied = Array(13)
+          .fill()
+          .map(() => Array(9).fill(false));
 
-        // Loop qua từng tiết học (1 -> 12)
-        for (let period = 1; period <= 10; period++) { // Giả sử hiển thị 10 tiết
-            let tr = document.createElement("tr");
-            
-            // Cột đầu tiên: Số tiết
-            let tdPeriod = document.createElement("td");
-            tdPeriod.className = "fw-bold bg-light";
-            tdPeriod.innerText = period;
-            tr.appendChild(tdPeriod);
+        for (let period = 1; period <= 10; period++) {
+          let tr = document.createElement("tr");
 
-            // Loop qua các thứ (2 -> 8)
-            for (let day = 2; day <= 8; day++) {
-                if (occupied[period][day]) continue; // Nếu ô này đã bị chiếm bởi lớp trước đó (rowspan), bỏ qua
+          let tdPeriod = document.createElement("td");
+          tdPeriod.className = "fw-bold bg-light";
+          tdPeriod.innerText = period;
+          tr.appendChild(tdPeriod);
 
-                // Tìm xem có lớp nào học vào (Thứ 'day', Tiết bắt đầu 'period') không
-                const classInfo = scheduleData.find(c => c.dayOfWeek === day && c.startPeriod === period);
+          for (let day = 2; day <= 8; day++) {
+            if (occupied[period][day]) continue;
 
-                let td = document.createElement("td");
+            const classInfo = scheduleData.find(
+              (c) => c.dayOfWeek === day && c.startPeriod === period
+            );
 
-                if (classInfo) {
-                    // Có lớp học -> Set rowspan
-                    td.rowSpan = classInfo.totalPeriods;
-                    td.className = "p-1 align-top"; // padding nhỏ để thẻ div full
+            let td = document.createElement("td");
 
-                    const tooltipPositionClass = classInfo.startPeriod <= 5 ? "show-below" : "";//if period 1-5 -> detail appear at top, else at bottom
-                    
-                    // Nội dung thẻ
-                    td.innerHTML = `
+            if (classInfo) {
+              td.rowSpan = classInfo.totalPeriods;
+              td.className = "p-1 align-top";
+
+              const tooltipPositionClass =
+                classInfo.startPeriod <= 5 ? "show-below" : "";
+
+              // use i18n in HTML
+              td.innerHTML = `
                         <div class="class-block">
                             <div class="fw-bold">${classInfo.courseName}</div>
                             <div class="small">${classInfo.room}</div>
                             
                             <div class="class-details-tooltip ${tooltipPositionClass}">
-                                <div class="fw-bold text-warning mb-1">${classInfo.courseName}</div>
-                                <div><i class="fa-solid fa-code me-2"></i>Mã: ${classInfo.courseCode}</div>
-                                <div><i class="fa-solid fa-layer-group me-2"></i>Lớp: ${classInfo.className}</div>
-                                <div><i class="fa-solid fa-user-tie me-2"></i>GV: ${classInfo.teacherName}</div>
-                                <div><i class="fa-solid fa-location-dot me-2"></i>Phòng: ${classInfo.room}</div>
-                                <div><i class="fa-solid fa-clock me-2"></i>Tiết: ${classInfo.startPeriod} - ${classInfo.startPeriod + classInfo.totalPeriods - 1}</div>
+                                <div class="fw-bold text-warning mb-1">${
+                                  classInfo.courseName
+                                }</div>
+                                <div><i class="fa-solid fa-code me-2"></i>${
+                                  i18n.lblCode
+                                }: ${classInfo.courseCode}</div>
+                                <div><i class="fa-solid fa-layer-group me-2"></i>${
+                                  i18n.lblClass
+                                }: ${classInfo.className}</div>
+                                <div><i class="fa-solid fa-user-tie me-2"></i>${
+                                  i18n.lblTeacher
+                                }: ${classInfo.teacherName}</div>
+                                <div><i class="fa-solid fa-location-dot me-2"></i>${
+                                  i18n.lblRoom
+                                }: ${classInfo.room}</div>
+                                <div><i class="fa-solid fa-clock me-2"></i>${
+                                  i18n.lblTime
+                                }: ${classInfo.startPeriod} - ${
+                classInfo.startPeriod + classInfo.totalPeriods - 1
+              }</div>
                             </div>
                         </div>
                     `;
 
-                    // Đánh dấu các ô phía dưới là đã bị chiếm (occupied)
-                    for (let k = 0; k < classInfo.totalPeriods; k++) {
-                        if (period + k <= 12) occupied[period + k][day] = true;
-                    }
-                } else {
-                    // Không có lớp -> Ô trống
-                    td.innerHTML = "";
-                }
-                
-                tr.appendChild(td);
+              for (let k = 0; k < classInfo.totalPeriods; k++) {
+                if (period + k <= 12) occupied[period + k][day] = true;
+              }
+            } else {
+              td.innerHTML = "";
             }
-            tbody.appendChild(tr);
+
+            tr.appendChild(td);
+          }
+          tbody.appendChild(tr);
         }
-    }
+      }
+
+      function logout() {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("role");
+        window.location.href = "/";
+      }
     </script>
   </body>
 </html>
