@@ -54,6 +54,9 @@ public class ClassroomServiceImpl implements ClassroomService {
         classroom.setTeacher(teacher);
         classroom.setSemester(request.getSemester());
         classroom.setClassRoom(request.getClassRoom());
+        classroom.setDayOfWeek(request.getDayOfWeek());
+        classroom.setStartPeriod(request.getStartPeriod());
+        classroom.setTotalPeriods(request.getTotalPeriods());
 
         return classroomRepository.save(classroom);
     }
@@ -95,6 +98,9 @@ public class ClassroomServiceImpl implements ClassroomService {
         classroom.setTeacher(teacher);
         classroom.setSemester(request.getSemester());
         classroom.setClassRoom(request.getClassRoom());
+        classroom.setDayOfWeek(request.getDayOfWeek());
+        classroom.setStartPeriod(request.getStartPeriod());
+        classroom.setTotalPeriods(request.getTotalPeriods());
 
         return classroomRepository.save(classroom);
     }

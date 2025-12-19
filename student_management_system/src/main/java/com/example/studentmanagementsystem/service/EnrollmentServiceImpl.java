@@ -88,9 +88,23 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         return enrollmentRepository.save(enrollment);
     }
 
+    @Override
+    public void dropCourse(Long studentId, Long classId) {
+        Enrollment enrollment = enrollmentRepository.findByStudentIdAndClassRoomId(studentId, classId)
+                .orElseThrow(() -> new RuntimeException("Bạn chưa đăng ký lớp này!"));
+
+        // (Optional) Kiểm tra xem có điểm chưa? Nếu có điểm rồi thì không cho hủy
+        if (enrollment.getTotalGrade() != null) {
+            throw new RuntimeException("Không thể hủy môn đã có điểm tổng kết!");
+        }
+
+        enrollmentRepository.delete(enrollment);
+    }
+
     private EnrollmentResponseDTO mapToResponse(Enrollment enrollment) {
         EnrollmentResponseDTO dto = new EnrollmentResponseDTO();
         dto.setId(enrollment.getId());
+        dto.setClassId(enrollment.getClassRoom().getId());
         dto.setStudentName(enrollment.getStudent().getFullName());
         dto.setStudentId(enrollment.getStudent().getStudentId());
         dto.setClassName(enrollment.getClassRoom().getClassName());

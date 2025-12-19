@@ -1,19 +1,17 @@
 package com.example.studentmanagementsystem.security;
 
+import com.example.studentmanagementsystem.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.example.studentmanagementsystem.entity.User;
-
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
-
-import javax.crypto.SecretKey;
 
 @Component
 public class JwtTokenProvider {
@@ -25,12 +23,13 @@ public class JwtTokenProvider {
     private long jwtExpirationDate;
 
     public String generateToken(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Date currnDate = new Date();
         Date expiryDate = new Date(currnDate.getTime() + jwtExpirationDate);
 
         return Jwts.builder()
                 .subject(userDetails.getUsername())
+                .claim("id", userDetails.getId())
                 .issuedAt(currnDate)
                 .expiration(expiryDate)
                 .signWith(key())
@@ -45,6 +44,7 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .subject(username)
+                .claim("id", user.getId())
                 .issuedAt(new Date())
                 .expiration(expireDate)
                 .signWith(key())
@@ -57,9 +57,8 @@ public class JwtTokenProvider {
 
     // get username from token
     public String getUsernameFromToken(String token) {
-        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
         Claims claims = Jwts.parser()
-                .verifyWith(key)
+                .verifyWith((SecretKey) key())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
@@ -67,13 +66,22 @@ public class JwtTokenProvider {
         return claims.getSubject();
     }
 
+    // get user id from token
+    public Long getUserIdFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith((SecretKey) key())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return claims.get("id", Long.class);
+    }
+
     // validate token
     public boolean validateToken(String token) {
         try {
-            SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
-
             Jwts.parser()
-                    .verifyWith(key)
+                    .verifyWith((SecretKey) key())
                     .build()
                     .parseSignedClaims(token);
             return true;
@@ -85,6 +93,8 @@ public class JwtTokenProvider {
             System.err.println("JWT token is unsupported: " + e.getMessage());
         } catch (IllegalArgumentException e) {
             System.err.println("JWT claims string is empty: " + e.getMessage());
+        } catch (SignatureException e) {
+            System.err.println("Invalid JWT signature: " + e.getMessage());
         }
         return false;
     }

@@ -1,0 +1,49 @@
+body {
+    background-color: #f8f9fa;
+    overflow-x: hidden;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    min-height: 100vh;
+    background: #212529; 
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.sidebar .nav-link {
+    color: rgba(255,255,255,0.8);
+    padding: 15px 20px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.sidebar .nav-link:hover, .sidebar .nav-link.active {
+    background: #198754; /* Green color for student active link */
+    color: white;
+}
+
+.sidebar .nav-link i {
+    width: 25px; 
+}
+
+.stat-card {
+    border: none;
+    border-radius: 10px;
+    transition: transform 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.icon-box {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}

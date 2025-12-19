@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Schedule - SMS</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" th:href="@{/css/student.css}" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div
+          class="col-md-3 col-lg-2 sidebar p-3 collapse d-md-block bg-dark text-white"
+          id="sidebarMenu"
+          style="min-height: 100vh"
+        >
+          <a
+            href="/"
+            class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+          >
+            <i class="fa-solid fa-graduation-cap fs-4 me-2"></i>
+            <span class="fs-5 fw-bold" th:text="#{nav.brand.student}"
+              >SMS Student</span
+            >
+          </a>
+          <hr class="text-white" />
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a href="/student/dashboard" class="nav-link text-white">
+                <i class="fa-solid fa-chart-line me-2"></i>
+                <span th:text="#{student.sidebar.dashboard}">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/student/schedule" class="nav-link text-white active">
+                <i class="fa-solid fa-calendar-alt me-2"></i>
+                <span th:text="#{student.sidebar.schedule}">Schedule</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                href="/student/course-registration"
+                class="nav-link  bg-success text-white"
+              >
+                <i class="fa-solid fa-cart-plus me-2"></i>
+                <span th:text="#{student.sidebar.registration}">Registration<span ></a
+              >
+            </li>
+            <li class="nav-item">
+              <a href="/student/grades" class="nav-link text-white">
+                <i class="fa-solid fa-book me-2"></i>
+                <span th:text="#{student.sidebar.grades}">Grades</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/student/payment" class="nav-link text-white">
+                <i class="fa-solid fa-credit-card me-2"></i>
+                <span th:text="#{student.sidebar.payment}">Payment</span>
+              </a>
+            </li>
+            <li class="nav-item mt-5">
+              <a href="#" onclick="logout()" class="nav-link text-danger">
+                <i class="fa-solid fa-sign-out-alt me-2"></i>
+                <span th:text="#{student.sidebar.logout}">Logout</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <main
+          class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4"
+          id="main-content"
+        >
+          <h1 th:text="#{student.sidebar.schedule}">Schedule</h1>
+        </main>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      function logout() {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("role");
+        window.location.href = "/";
+      }
+    </script>
+  </body>
+</html>

@@ -15,4 +15,7 @@ public class CreateClassRequestDTO {
     private Long teacherId;
     private String semester;
     private String classRoom; // e.g. A1.202
+    private Integer dayOfWeek;
+    private Integer startPeriod;
+    private Integer totalPeriods;
 }

@@ -63,7 +63,6 @@ public class SecurityConfig {
                         .requestMatchers("/", "/login", "/register", "/error", "/reset-password").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/img/**", "/assets/**").permitAll()
 
-                        .requestMatchers("/admin/**", "/teacher/**", "/student/**").permitAll()
                         // 2. ADMIN ENDPOINTS (API + Admin page)
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")

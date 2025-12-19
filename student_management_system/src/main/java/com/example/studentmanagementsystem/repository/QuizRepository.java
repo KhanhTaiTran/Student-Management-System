@@ -1,5 +1,10 @@
 package com.example.studentmanagementsystem.repository;
 
-public class QuizRepository {
+import com.example.studentmanagementsystem.entity.Quiz;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
 }

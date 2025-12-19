@@ -91,7 +91,7 @@
               </div>
               <button class="btn btn-sm btn-primary" onclick="openModal()">
                 <i class="fa-solid fa-plus me-2"></i>
-                <span th:text="#{course.btn.add}">Add Class</span>
+                <span th:text="#{class.btn.add}">Add Class</span>
               </button>
             </div>
           </div>
@@ -204,6 +204,57 @@
                     name="semester"
                     required
                   />
+                </div>
+                <div class="row">
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Thứ (Day)</label>
+                    <select
+                      title="selectDay"
+                      class="form-select"
+                      name="dayOfWeek"
+                      required
+                    >
+                      <option value="2">Thứ 2 (Monday)</option>
+                      <option value="3">Thứ 3 (Tuesday)</option>
+                      <option value="4">Thứ 4 (Wednesday)</option>
+                      <option value="5">Thứ 5 (Thursday)</option>
+                      <option value="6">Thứ 6 (Friday)</option>
+                      <option value="7">Thứ 7 (Saturday)</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Tiết BĐ (Start)</label>
+                    <select
+                      title="selectPeriod"
+                      class="form-select"
+                      name="startPeriod"
+                      required
+                    >
+                      <option value="1">Tiết 1 (7:30)</option>
+                      <option value="2">Tiết 2 (8:15)</option>
+                      <option value="3">Tiết 3 (9:00)</option>
+                      <option value="4">Tiết 4 (10:00)</option>
+                      <option value="5">Tiết 5 (10:45)</option>
+                      <option value="6">Tiết 6 (11:30)</option>
+                      <option value="7">Tiết 7 (13:00)</option>
+                      <option value="8">Tiết 8 (13:45)</option>
+                      <option value="9">Tiết 9 (14:30)</option>
+                      <option value="10">Tiết 10 (15:30)</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Số tiết (Total)</label>
+                    <input
+                      title="totalPeriods"
+                      type="number"
+                      class="form-control"
+                      name="totalPeriods"
+                      min="1"
+                      max="5"
+                      value="3"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
 

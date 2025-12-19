@@ -24,4 +24,8 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Long> {
     // return list object: [Course name, Number of class]
     @Query("SELECT c.courseName, COUNT(cl) FROM Classroom cl JOIN cl.course c GROUP BY c.courseName")
     List<Object[]> countClassesByCourse();
+
+    Boolean existsByTeacherId(Long teacherId);
+
+    void deleteByTeacherId(Long teacherId);
 }

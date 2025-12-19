@@ -64,4 +64,16 @@ public class EnrollmentController {
             @RequestBody GradeRequestDTO gradeRequest) {
         return ResponseEntity.ok(enrollmentService.updateGrade(enrollmentId, gradeRequest));
     }
+
+    // drop course
+    @DeleteMapping("/drop/{classId}")
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<String> dropCourse(@PathVariable Long classId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        User currentUser = userRepository.findByUsername(username).orElseThrow();
+
+        enrollmentService.dropCourse(currentUser.getId(), classId);
+        return ResponseEntity.ok("Drop course successfully!");
+    }
 }
