@@ -1,13 +1,19 @@
 package com.example.studentmanagementsystem.entity;
 
-import jakarta.persistence.*;
-import lombok.Data;
-
 import java.time.LocalDate;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
-@Data
 @Table(name = "attendances")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Attendance {
 
     @Id
@@ -18,8 +24,8 @@ public class Attendance {
     @JoinColumn(name = "student_id", nullable = false)
     private User student;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "classroom_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "class_id", nullable = false)
     private Classroom classroom;
 
     @Column(nullable = false)
@@ -32,4 +38,10 @@ public class Attendance {
     protected void onCreate() {
         this.attendanceDate = LocalDate.now();
     }
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AttendanceStatus status;
+
+    private String note;
 }

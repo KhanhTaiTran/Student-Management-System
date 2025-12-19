@@ -1,12 +1,16 @@
 package com.example.studentmanagementsystem.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 @Entity
-@Data
 @Table(name = "grades")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Grade {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,4 +27,16 @@ public class Grade {
     private Double score;
 
     // You might want to add semester, exam date, etc.
+
+    // Lớp học
+    @ManyToOne
+    @JoinColumn(name = "class_id", nullable = false)
+    private Classroom classroom;
+
+    private Double inClass;
+    private Double midTerm;
+    private Double finalExam;
+
+    @Column(name = "total")
+    private Double total;
 }

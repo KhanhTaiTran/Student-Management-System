@@ -1,10 +1,13 @@
 package com.example.studentmanagementsystem.repository;
 
-import com.example.studentmanagementsystem.entity.Quiz;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-@Repository
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.studentmanagementsystem.entity.Quiz;
+
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
+    // Lấy danh sách quiz theo lớp
+    List<Quiz> findByClassroomId(Long classId);
 }

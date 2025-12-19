@@ -9,4 +9,7 @@ import java.util.List;
 @Repository
 public interface GradeRepository extends JpaRepository<Grade, Long> {
     List<Grade> findByStudentId(Long studentId);
+
+    // take list of grade of 1 class
+    List<Grade> findByClassroomId(Long classId);
 }
