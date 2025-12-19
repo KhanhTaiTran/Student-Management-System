@@ -15,4 +15,6 @@ public interface ClassroomService {
     Classroom updateClassroom(Long id, CreateClassRequestDTO request);
 
     void deleteClassroom(Long id);
+
+    List<Classroom> getClassesByTeacher(Long teacherId);
 }
