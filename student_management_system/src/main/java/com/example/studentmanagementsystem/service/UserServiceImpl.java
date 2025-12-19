@@ -1,6 +1,7 @@
 package com.example.studentmanagementsystem.service;
 
 import com.example.studentmanagementsystem.dto.request.CreateUserRequestDTO;
+import com.example.studentmanagementsystem.dto.response.ScheduleResponseDTO;
 import com.example.studentmanagementsystem.dto.response.StudentDashboardDTO;
 import com.example.studentmanagementsystem.dto.response.UserResponseDTO;
 import com.example.studentmanagementsystem.entity.Classroom;
@@ -207,6 +208,28 @@ public class UserServiceImpl implements UserService {
     public User getUserEntityById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+    }
+
+    @Override
+    public List<ScheduleResponseDTO> getStudentSchedule(Long studentId) {
+        List<Enrollment> enrollments = enrollmentRepository.findByStudentId(studentId);
+        List<ScheduleResponseDTO> schedule = new ArrayList<>();
+
+        for (Enrollment e : enrollments) {
+            Classroom cls = e.getClassRoom();
+            if (cls.getDayOfWeek() != null && cls.getStartPeriod() != null) {
+                schedule.add(new ScheduleResponseDTO(
+                        cls.getCourse().getCourseName(),
+                        cls.getCourse().getCourseCode(),
+                        cls.getClassName(),
+                        cls.getClassRoom(),
+                        cls.getTeacher().getFullName(),
+                        cls.getDayOfWeek(),
+                        cls.getStartPeriod(),
+                        cls.getTotalPeriods()));
+            }
+        }
+        return schedule;
     }
 
     // helper function
