@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Student Payment - SMS</title>
+    <title th:text="#{payment.title}">Payment</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -19,8 +19,6 @@
       <div class="row">
         <div
           class="col-md-3 col-lg-2 sidebar p-3 collapse d-md-block bg-dark text-white"
-          id="sidebarMenu"
-          style="min-height: 100vh"
         >
           <a
             href="/"
@@ -31,61 +29,348 @@
               >SMS Student</span
             >
           </a>
-          <hr class="text-white" />
+          <hr />
           <ul class="nav flex-column">
             <li class="nav-item">
-              <a href="/student/dashboard" class="nav-link text-white">
-                <i class="fa-solid fa-chart-line me-2"></i>
-                <span th:text="#{student.sidebar.dashboard}">Dashboard</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="/student/schedule" class="nav-link text-white">
-                <i class="fa-solid fa-calendar-alt me-2"></i>
-                <span th:text="#{student.sidebar.schedule}">Schedule</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                href="/student/course-registration"
-                class="nav-link text-white"
-              >
-                <i class="fa-solid fa-cart-plus me-2"></i>
-                <span th:text="#{student.sidebar.registration}">Registration<span ></a
+              <a href="/student/dashboard" class="nav-link text-white"
+                ><i class="fa-solid fa-chart-line me-2"></i>
+                <span th:text="#{student.sidebar.dashboard}">Dashboard</span></a
               >
             </li>
             <li class="nav-item">
-              <a href="/student/grades" class="nav-link text-white">
-                <i class="fa-solid fa-book me-2"></i>
-                <span th:text="#{student.sidebar.grades}">Grades</span>
-              </a>
+              <a href="/student/schedule" class="nav-link text-white"
+                ><i class="fa-solid fa-calendar-days me-2"></i>
+                <span th:text="#{student.sidebar.schedule}">Schedule</span></a
+              >
             </li>
             <li class="nav-item">
-              <a href="/student/payment" class="nav-link text-white active">
-                <i class="fa-solid fa-credit-card me-2"></i>
-                <span th:text="#{student.sidebar.payment}">Payment</span>
-              </a>
+              <a href="/student/course-registration" class="nav-link text-white"
+                ><i class="fa-solid fa-cart-plus me-2"></i>
+                <span th:text="#{student.sidebar.registration}"
+                  >Registration</span
+                ></a
+              >
+            </li>
+            <li class="nav-item">
+              <a href="/student/grades" class="nav-link text-white"
+                ><i class="fa-solid fa-book me-2"></i>
+                <span th:text="#{student.sidebar.grades}">Grades</span></a
+              >
+            </li>
+            <li class="nav-item">
+              <a href="/student/payment" class="nav-link active text-white"
+                ><i class="fa-solid fa-credit-card me-2"></i>
+                <span th:text="#{student.sidebar.payment}">Payment</span></a
+              >
             </li>
             <li class="nav-item mt-5">
-              <a href="#" onclick="logout()" class="nav-link text-danger">
-                <i class="fa-solid fa-sign-out-alt me-2"></i>
-                <span th:text="#{student.sidebar.logout}">Logout</span>
-              </a>
+              <a href="#" onclick="logout()" class="nav-link text-danger"
+                ><i class="fa-solid fa-sign-out-alt me-2"></i>
+                <span th:text="#{student.sidebar.logout}">Logout</span></a
+              >
             </li>
           </ul>
         </div>
 
-        <main
-          class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4"
-          id="main-content"
-        >
-          <h1 th:text="#{student.sidebar.payment}">Payment</h1>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">
+              <i class="fa-solid fa-file-invoice-dollar me-2"></i>
+              <span th:text="#{payment.title}">Payment</span>
+            </h2>
+
+            <div class="dropdown">
+              <button
+                title="dropdown"
+                class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+              >
+                <i class="fa-solid fa-globe"></i>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="?lang=en">🇺🇸 English</a></li>
+                <li>
+                  <a class="dropdown-item" href="?lang=vi">🇻🇳 Tiếng Việt</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="row g-4 mb-4">
+            <div class="col-md-4">
+              <div
+                class="card bg-light shadow-sm h-100 border-start border-primary border-4"
+              >
+                <div class="card-body">
+                  <h6 class="text-muted" th:text="#{payment.card.total}">
+                    Total Tuition
+                  </h6>
+                  <h3 class="fw-bold text-primary" id="txtTotal">0 đ</h3>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div
+                class="card bg-light shadow-sm h-100 border-start border-success border-4"
+              >
+                <div class="card-body">
+                  <h6 class="text-muted" th:text="#{payment.card.paid}">
+                    Paid
+                  </h6>
+                  <h3 class="fw-bold text-success" id="txtPaid">0 đ</h3>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div
+                class="card bg-light shadow-sm h-100 border-start border-danger border-4"
+              >
+                <div
+                  class="card-body d-flex justify-content-between align-items-center"
+                >
+                  <div>
+                    <h6 class="text-muted" th:text="#{payment.card.balance}">
+                      Remaining
+                    </h6>
+                    <h3 class="fw-bold text-danger" id="txtBalance">0 đ</h3>
+                  </div>
+                  <button
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#paymentModal"
+                  >
+                    <i class="fa-solid fa-paper-plane me-2"></i>
+                    <span th:text="#{payment.btn.pay}">Pay</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card shadow-sm">
+            <div class="card-header bg-white py-3">
+              <h5 class="mb-0 fw-bold" th:text="#{payment.history.title}">
+                History
+              </h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th th:text="#{payment.table.date}">Date</th>
+                      <th th:text="#{payment.table.desc}">Description</th>
+                      <th class="text-end" th:text="#{payment.table.amount}">
+                        Amount
+                      </th>
+                      <th class="text-center">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="txList">
+                    <tr>
+                      <td colspan="4" class="text-center p-3">Loading...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </main>
       </div>
     </div>
 
+    <div class="modal fade" id="paymentModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" th:text="#{payment.modal.title}">
+              Make Payment
+            </h5>
+            <button
+              title="btn-close"
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label" th:text="#{payment.modal.amount}"
+                >Amount</label
+              >
+              <input
+                type="number"
+                id="payAmount"
+                class="form-control"
+                placeholder="5000000"
+                step="10000"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Note</label>
+              <input
+                title="payDesc"
+                type="text"
+                id="payDesc"
+                class="form-control"
+                value="Tuition Payment"
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="submitPayment()"
+              th:text="#{payment.modal.btn}"
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script th:inline="javascript">
+      const i18n = {
+        success: /*[[#{payment.msg.success}]]*/ "Success",
+        error: /*[[#{payment.msg.error}]]*/ "Error",
+        empty: /*[[#{payment.empty}]]*/ "No data",
+      };
+      const currentLang =
+        document.documentElement.lang === "vi" ? "vi-VN" : "en-US";
+    </script>
+
     <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        loadData();
+      });
+
+      const token = localStorage.getItem("accessToken");
+
+      // 1. Load Data
+      async function loadData() {
+        if (!token) {
+          window.location.href = "/";
+          return;
+        }
+
+        // Load Summary
+        try {
+          const resSum = await fetch("/api/payment/summary", {
+            headers: { Authorization: "Bearer " + token },
+          });
+          if (resSum.ok) {
+            const sumData = await resSum.json();
+            document.getElementById("txtTotal").innerText = formatMoney(
+              sumData.totalTuition
+            );
+            document.getElementById("txtPaid").innerText = formatMoney(
+              sumData.totalPaid
+            );
+            document.getElementById("txtBalance").innerText = formatMoney(
+              sumData.balance
+            );
+          }
+        } catch (err) {
+          console.error(err);
+        }
+
+        // Load History
+        try {
+          const resHist = await fetch("/api/payment/history", {
+            headers: { Authorization: "Bearer " + token },
+          });
+          if (resHist.ok) {
+            const txData = await resHist.json();
+            renderTable(txData);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      function renderTable(data) {
+        const tbody = document.getElementById("txList");
+        tbody.innerHTML = "";
+
+        if (data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted p-3">${i18n.empty}</td></tr>`;
+          return;
+        }
+
+        data.forEach((tx) => {
+          const date = new Date(tx.transactionDate).toLocaleString(currentLang);
+          const row = `
+                <tr>
+                    <td>${date}</td>
+                    <td>${tx.description}</td>
+                    <td class="text-end fw-bold text-success">+ ${formatMoney(
+                      tx.amount
+                    )}</td>
+                    <td class="text-center"><span class="badge bg-success">Success</span></td>
+                </tr>
+            `;
+          tbody.innerHTML += row;
+        });
+      }
+
+      // 2. Handle Payment (Deposit)
+      async function submitPayment() {
+        const amount = document.getElementById("payAmount").value;
+        const desc = document.getElementById("payDesc").value;
+
+        if (!amount || amount <= 0) {
+          alert("Invalid Amount");
+          return;
+        }
+
+        try {
+          const res = await fetch("/api/payment/pay", {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ amount: amount, description: desc }),
+          });
+
+          if (res.ok) {
+            alert(i18n.success);
+            // Close modal manually
+            const modal = bootstrap.Modal.getInstance(
+              document.getElementById("paymentModal")
+            );
+            modal.hide();
+            // Reload data
+            loadData();
+            document.getElementById("payAmount").value = "";
+          } else {
+            alert(i18n.error);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      // Helper: Format Money
+      function formatMoney(amount) {
+        return new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(amount || 0);
+      }
+
       function logout() {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("role");
