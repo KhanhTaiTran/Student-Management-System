@@ -1,10 +1,14 @@
 package com.example.studentmanagementsystem.controller;
 
+import com.example.studentmanagementsystem.dto.response.ScheduleResponseDTO;
 import com.example.studentmanagementsystem.dto.response.StudentDashboardDTO;
 import com.example.studentmanagementsystem.security.CustomUserDetails;
 import com.example.studentmanagementsystem.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,5 +35,11 @@ public class StudentController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         StudentDashboardDTO dashboardInfo = userService.getStudentDashboardInfo(userDetails.getId());
         return ResponseEntity.ok(dashboardInfo);
+    }
+
+    @GetMapping("/schedule")
+    public ResponseEntity<List<ScheduleResponseDTO>> getSchedule(Authentication authentication) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok(userService.getStudentSchedule(userDetails.getId()));
     }
 }
