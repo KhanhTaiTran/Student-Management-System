@@ -1,0 +1,56 @@
+<div th:fragment="sidebar" class="bg-dark text-white border-end" style="width: 250px; min-height: 100vh;">
+    <div class="sidebar-heading p-3 fs-4 border-bottom fw-bold text-center">
+        <i class="fa-solid fa-graduation-cap me-2"></i>SMS Portal
+    </div>
+    
+    <div class="list-group list-group-flush mt-2">
+        <a href="/" class="list-group-item list-group-item-action bg-dark text-white-50 p-3">
+            <i class="fa-solid fa-house me-3" style="width: 20px"></i>Trang chủ
+        </a>
+
+        <div th:if="${session.role == 'STUDENT'}">
+            <small class="text-uppercase text-muted fw-bold ps-3 mt-3 mb-1" style="font-size: 0.75rem;">Sinh viên</small>
+            <a href="/student/dashboard" class="list-group-item list-group-item-action bg-dark text-white p-3 border-0">
+                <i class="fa-solid fa-gauge me-3" style="width: 20px"></i>Dashboard
+            </a>
+            <a href="/student/schedule" class="list-group-item list-group-item-action bg-dark text-white-50 p-3 border-0">
+                <i class="fa-solid fa-calendar-days me-3" style="width: 20px"></i>Lịch học
+            </a>
+            <a href="/student/grades" class="list-group-item list-group-item-action bg-dark text-white-50 p-3 border-0">
+                <i class="fa-solid fa-marker me-3" style="width: 20px"></i>Xem điểm
+            </a>
+            <a href="/student/payment" class="list-group-item list-group-item-action bg-dark text-white-50 p-3 border-0">
+                <i class="fa-solid fa-receipt me-3" style="width: 20px"></i>Học phí
+            </a>
+            <a href="/student/course-registration" class="list-group-item list-group-item-action bg-dark text-white-50 p-3 border-0">
+                <i class="fa-solid fa-book-medical me-3" style="width: 20px"></i>Đăng ký môn
+            </a>
+        </div>
+
+        <div th:if="${session.role == 'TEACHER'}">
+            <small class="text-uppercase text-muted fw-bold ps-3 mt-3 mb-1" style="font-size: 0.75rem;">Giáo viên</small>
+            <a href="/teacher/dashboard" class="list-group-item list-group-item-action bg-dark text-white p-3 border-0">
+                <i class="fa-solid fa-gauge me-3" style="width: 20px"></i>Dashboard
+            </a>
+            <a href="/teacher/class-list" class="list-group-item list-group-item-action bg-dark text-white-50 p-3 border-0">
+                <i class="fa-solid fa-chalkboard-user me-3" style="width: 20px"></i>Lớp giảng dạy
+            </a>
+        </div>
+
+        <div th:if="${session.role == 'ADMIN'}">
+            <small class="text-uppercase text-muted fw-bold ps-3 mt-3 mb-1" style="font-size: 0.75rem;">Quản trị</small>
+            <a href="/admin/dashboard" class="list-group-item list-group-item-action bg-dark text-white p-3 border-0">
+                <i class="fa-solid fa-gauge me-3" style="width: 20px"></i>Dashboard
+            </a>
+            <a href="/admin/user-list" class="list-group-item list-group-item-action bg-dark text-white-50 p-3 border-0">
+                <i class="fa-solid fa-users me-3" style="width: 20px"></i>Quản lý User
+            </a>
+        </div>
+        
+        <div class="mt-auto border-top pt-2">
+            <a href="/logout" class="list-group-item list-group-item-action bg-dark text-danger p-3">
+                <i class="fa-solid fa-right-from-bracket me-3" style="width: 20px"></i>Đăng xuất
+            </a>
+        </div>
+    </div>
+</div>

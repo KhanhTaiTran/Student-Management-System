@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: main-layout('Đăng ký môn học', ~{::section})}">
+<body>
+    
+    <section>
+        <h2 class="fw-bold mb-4">Đăng ký môn học - Học kỳ 2 (2025-2026)</h2>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body bg-light rounded">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted">Loại môn học</label>
+                        <select class="form-select">
+                            <option selected>Tất cả</option>
+                            <option>Môn bắt buộc</option>
+                            <option>Môn tự chọn</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-muted">Tìm kiếm môn học</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white"><i class="fa-solid fa-search text-muted"></i></span>
+                            <input type="text" class="form-control" placeholder="Nhập mã môn hoặc tên môn...">
+                        </div>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100 fw-bold">Tìm kiếm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="fw-bold text-primary"><i class="fa-solid fa-list-check me-2"></i>Danh sách lớp học phần</span>
+                    <span class="badge bg-warning text-dark"><i class="fa-solid fa-clock me-1"></i>Hạn đăng ký: 30/12/2025</span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light text-uppercase small">
+                            <tr>
+                                <th class="ps-4">Mã LHP</th>
+                                <th>Tên môn học</th>
+                                <th class="text-center">Số TC</th>
+                                <th>Giảng viên</th>
+                                <th>Lịch học</th>
+                                <th class="text-center">Sĩ số</th>
+                                <th class="text-end pe-4">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="ps-4 fw-bold">INT3306_1</td>
+                                <td>
+                                    <span class="fw-bold text-primary">An toàn thông tin</span>
+                                    <br><small class="text-muted">Nhóm 1</small>
+                                </td>
+                                <td class="text-center">3</td>
+                                <td>TS. Lê Văn C</td>
+                                <td>
+                                    <small class="d-block">Thứ 3 (7:00-9:00) - P.301</small>
+                                    <small class="d-block">Thứ 6 (9:00-11:00) - P.302</small>
+                                </td>
+                                <td class="text-center">
+                                    <span class="fw-bold">45</span>/60
+                                    <div class="progress mt-1" style="height: 4px; width: 60px; margin: 0 auto;">
+                                        <div class="progress-bar bg-success" style="width: 75%"></div>
+                                    </div>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <button class="btn btn-sm btn-primary px-3 rounded-pill">
+                                        <i class="fa-solid fa-plus me-1"></i>Đăng ký
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <tr class="table-active">
+                                <td class="ps-4 fw-bold">INT3309_2</td>
+                                <td>
+                                    <span class="fw-bold text-dark">Trí tuệ nhân tạo</span>
+                                    <br><small class="text-muted">Nhóm 2</small>
+                                </td>
+                                <td class="text-center">3</td>
+                                <td>PGS. Trần Thị D</td>
+                                <td>
+                                    <small class="d-block">Thứ 2 (13:00-15:00) - P.405</small>
+                                </td>
+                                <td class="text-center">
+                                    <span class="fw-bold">58</span>/60
+                                </td>
+                                <td class="text-end pe-4">
+                                    <button class="btn btn-sm btn-outline-danger px-3 rounded-pill">
+                                        <i class="fa-solid fa-xmark me-1"></i>Hủy môn
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="ps-4 fw-bold text-muted">INT2204_1</td>
+                                <td class="text-muted">
+                                    <span class="fw-bold">Lập trình Java nâng cao</span>
+                                    <br><small>Nhóm 1</small>
+                                </td>
+                                <td class="text-center text-muted">3</td>
+                                <td class="text-muted">Thầy Nguyễn Văn A</td>
+                                <td class="text-muted">
+                                    <small class="d-block">Thứ 4 (7:00-9:00) - P.202</small>
+                                </td>
+                                <td class="text-center">
+                                    <span class="fw-bold text-danger">60</span>/60
+                                    <div class="progress mt-1" style="height: 4px; width: 60px; margin: 0 auto;">
+                                        <div class="progress-bar bg-danger" style="width: 100%"></div>
+                                    </div>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <button class="btn btn-sm btn-secondary px-3 rounded-pill" disabled>
+                                        <i class="fa-solid fa-ban me-1"></i>Hết chỗ
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h5 class="fw-bold text-success mb-3"><i class="fa-solid fa-cart-shopping me-2"></i>Môn đã chọn (1 môn)</h5>
+            <div class="alert alert-success border-0 shadow-sm d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>INT3309_2 - Trí tuệ nhân tạo</strong> (3 Tín chỉ)
+                    <br><small>Thứ 2 (13:00-15:00) - Giảng viên: PGS. Trần Thị D</small>
+                </div>
+                <span class="fw-bold text-success">Đăng ký thành công</span>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

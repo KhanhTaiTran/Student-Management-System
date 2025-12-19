@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: main-layout('Bảng điểm', ~{::section})}">
+<body>
+    
+    <section>
+        <h2 class="fw-bold mb-4">Kết quả học tập</h2>
+
+        <div class="row mb-4 g-3">
+            <div class="col-md-4">
+                <div class="card bg-primary text-white h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-uppercase opacity-75 small">Điểm Trung Bình (CPA)</h6>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="display-4 fw-bold">3.65</span>
+                            <i class="fa-solid fa-chart-line fa-3x opacity-50"></i>
+                        </div>
+                        <small class="mt-2 d-block">Xếp loại: <span class="fw-bold">Xuất sắc</span></small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-success text-white h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-uppercase opacity-75 small">Tổng tín chỉ tích lũy</h6>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="display-4 fw-bold">115</span>
+                            <i class="fa-solid fa-layer-group fa-3x opacity-50"></i>
+                        </div>
+                        <small class="mt-2 d-block">Tiến độ: <span class="fw-bold">85%</span> (Còn 15 TC)</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-warning text-dark h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-uppercase opacity-75 small">Tổng số môn đã học</h6>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="display-4 fw-bold">42</span>
+                            <i class="fa-solid fa-book fa-3x opacity-50"></i>
+                        </div>
+                        <small class="mt-2 d-block">Học lại: <span class="fw-bold">0 môn</span></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 fw-bold">
+                <i class="fa-solid fa-list me-2 text-primary"></i>Chi tiết các học phần
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Mã HP</th>
+                                <th>Tên học phần</th>
+                                <th class="text-center">Số TC</th>
+                                <th class="text-center">Điểm hệ 10</th>
+                                <th class="text-center">Điểm chữ</th>
+                                <th class="text-end pe-4">Kết quả</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="ps-4 fw-bold text-muted">INT3306</td>
+                                <td>Lập trình Web với Java</td>
+                                <td class="text-center">3</td>
+                                <td class="text-center fw-bold">9.5</td>
+                                <td class="text-center"><span class="badge bg-success">A+</span></td>
+                                <td class="text-end pe-4 text-success"><i class="fa-solid fa-check-circle me-1"></i>Đạt</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4 fw-bold text-muted">INT2204</td>
+                                <td>Lập trình hướng đối tượng</td>
+                                <td class="text-center">3</td>
+                                <td class="text-center fw-bold">8.0</td>
+                                <td class="text-center"><span class="badge bg-primary">B+</span></td>
+                                <td class="text-end pe-4 text-success"><i class="fa-solid fa-check-circle me-1"></i>Đạt</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4 fw-bold text-muted">MAT1093</td>
+                                <td>Đại số tuyến tính</td>
+                                <td class="text-center">3</td>
+                                <td class="text-center fw-bold">7.5</td>
+                                <td class="text-center"><span class="badge bg-info text-dark">B</span></td>
+                                <td class="text-end pe-4 text-success"><i class="fa-solid fa-check-circle me-1"></i>Đạt</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4 fw-bold text-muted">PHY1101</td>
+                                <td>Vật lý đại cương 1</td>
+                                <td class="text-center">2</td>
+                                <td class="text-center fw-bold">6.0</td>
+                                <td class="text-center"><span class="badge bg-warning text-dark">C</span></td>
+                                <td class="text-end pe-4 text-success"><i class="fa-solid fa-check-circle me-1"></i>Đạt</td>
+                            </tr>
+                             <tr>
+                                <td class="ps-4 fw-bold text-muted">PES101</td>
+                                <td>Giáo dục thể chất</td>
+                                <td class="text-center">1</td>
+                                <td class="text-center fw-bold">4.0</td>
+                                <td class="text-center"><span class="badge bg-danger">D</span></td>
+                                <td class="text-end pe-4 text-warning"><i class="fa-solid fa-triangle-exclamation me-1"></i>Qua môn</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

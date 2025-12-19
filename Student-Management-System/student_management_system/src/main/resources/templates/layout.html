@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="main-layout(title, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">SMS Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { overflow-x: hidden; background-color: #f3f4f6; }
+        /* Sidebar Styling */
+        #sidebar-wrapper {
+            min-height: 100vh;
+            margin-left: -15rem;
+            transition: margin 0.25s ease-out;
+            background-color: #212529; /* Dark Sidebar */
+        }
+        #sidebar-wrapper .sidebar-heading { padding: 0.875rem 1.25rem; font-size: 1.2rem; color: white; background: #00000030;}
+        #sidebar-wrapper .list-group { width: 15rem; }
+        #page-content-wrapper { min-width: 100vw; }
+        body.sb-sidenav-toggled #sidebar-wrapper { margin-left: 0; }
+        
+        /* Responsive */
+        @media (min-width: 768px) {
+            #sidebar-wrapper { margin-left: 0; }
+            #page-content-wrapper { min-width: 0; width: 100%; }
+            body.sb-sidenav-toggled #sidebar-wrapper { margin-left: -15rem; }
+        }
+        .list-group-item-dark { background-color: #212529; color: #adb5bd; border: none; }
+        .list-group-item-dark:hover, .list-group-item-dark.active { background-color: #0d6efd; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="d-flex" id="wrapper">
+    <div class="border-end bg-dark" id="sidebar-wrapper">
+        <div class="sidebar-heading border-bottom fw-bold"><i class="fa-solid fa-school me-2"></i>SMS Portal</div>
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    </div>
+
+    <div id="page-content-wrapper">
+        
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm px-3 py-2">
+            <button class="btn btn-outline-secondary btn-sm" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+            <div class="ms-auto d-flex align-items-center">
+                <span class="me-2 small text-muted">Xin chào, <b>User</b></span>
+                <img src="https://ui-avatars.com/api/?name=User" class="rounded-circle" width="32">
+            </div>
+        </nav>
+
+        <div class="container-fluid py-4 px-4">
+             <div th:replace="${content}"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', event => {
+        const sidebarToggle = document.body.querySelector('#sidebarToggle');
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', event => {
+                event.preventDefault();
+                document.body.classList.toggle('sb-sidenav-toggled');
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

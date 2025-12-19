@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: main-layout('Học phí', ~{::section})}">
+<body>
+    
+    <section>
+        <h2 class="fw-bold mb-4">Thông tin học phí</h2>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fa-solid fa-file-invoice-dollar fa-2x text-primary"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted text-uppercase fw-bold">Tổng học phí năm học</small>
+                                <h4 class="fw-bold mb-0">25.000.000đ</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fa-solid fa-wallet fa-2x text-success"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted text-uppercase fw-bold">Đã thanh toán</small>
+                                <h4 class="fw-bold text-success mb-0">25.000.000đ</h4>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 5px;">
+                            <div class="progress-bar bg-success" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 bg-light">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-warning bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fa-solid fa-sack-dollar fa-2x text-warning"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted text-uppercase fw-bold">Dư nợ hiện tại</small>
+                                <h4 class="fw-bold text-muted mb-0">0đ</h4>
+                            </div>
+                        </div>
+                        <small class="text-success"><i class="fa-solid fa-check-circle me-1"></i>Bạn đã hoàn thành nghĩa vụ học phí!</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <span class="fw-bold"><i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i>Lịch sử giao dịch</span>
+                <button class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-download me-1"></i>Xuất hóa đơn</button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Mã hóa đơn</th>
+                                <th>Nội dung thu</th>
+                                <th>Hạn nộp</th>
+                                <th>Số tiền</th>
+                                <th>Ngày thanh toán</th>
+                                <th class="text-center">Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="ps-4 fw-bold text-primary">#INV-2025-001</td>
+                                <td>Học phí Học kỳ 1 (2025-2026)</td>
+                                <td>15/09/2025</td>
+                                <td class="fw-bold">12.500.000đ</td>
+                                <td>10/09/2025</td>
+                                <td class="text-center">
+                                    <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">Đã thanh toán</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4 fw-bold text-primary">#INV-2025-002</td>
+                                <td>Bảo hiểm Y tế (Bắt buộc)</td>
+                                <td>30/09/2025</td>
+                                <td class="fw-bold">850.000đ</td>
+                                <td>10/09/2025</td>
+                                <td class="text-center">
+                                    <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">Đã thanh toán</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4 fw-bold text-primary">#INV-2025-003</td>
+                                <td>Học phí Học kỳ 2 (2025-2026)</td>
+                                <td>15/02/2026</td>
+                                <td class="fw-bold">11.650.000đ</td>
+                                <td>12/12/2025</td>
+                                <td class="text-center">
+                                    <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">Đã thanh toán</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

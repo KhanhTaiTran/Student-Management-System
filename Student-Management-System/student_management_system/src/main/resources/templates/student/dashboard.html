@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: main-layout('Student Dashboard', ~{::section})}">
+<body>
+    
+    <section>
+        <h2 class="fw-bold mb-4">Tổng quan học tập</h2>
+        
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm bg-primary text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-uppercase mb-1 opacity-75">Điểm TB (GPA)</h6>
+                                <h2 class="mb-0 fw-bold">3.8</h2>
+                            </div>
+                            <i class="fa-solid fa-star fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm bg-success text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-uppercase mb-1 opacity-75">Tín chỉ</h6>
+                                <h2 class="mb-0 fw-bold">115</h2>
+                            </div>
+                            <i class="fa-solid fa-book-open fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm bg-warning text-dark h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-uppercase mb-1 opacity-75">Học phí nợ</h6>
+                                <h2 class="mb-0 fw-bold">0đ</h2>
+                            </div>
+                            <i class="fa-solid fa-wallet fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white fw-bold py-3">
+                        <i class="fa-solid fa-calendar-check me-2 text-primary"></i>Lịch học hôm nay
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Môn học</th>
+                                    <th>Giờ</th>
+                                    <th>Phòng</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Lập trình Java Web</td>
+                                    <td>07:00 - 09:15</td>
+                                    <td>P.302</td>
+                                    <td><span class="badge bg-success">Đang học</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Cấu trúc dữ liệu</td>
+                                    <td>12:30 - 15:00</td>
+                                    <td>P.405</td>
+                                    <td><span class="badge bg-secondary">Sắp tới</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white fw-bold py-3">
+                        <i class="fa-solid fa-bullhorn me-2 text-danger"></i>Thông báo
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-3 border-bottom pb-2">
+                                <small class="text-muted">17/12/2025</small><br>
+                                <strong>Nộp đồ án cuối kỳ</strong>
+                            </li>
+                            <li class="mb-3 border-bottom pb-2">
+                                <small class="text-muted">15/12/2025</small><br>
+                                <strong>Lịch nghỉ tết nguyên đán</strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</body>
+</html>
