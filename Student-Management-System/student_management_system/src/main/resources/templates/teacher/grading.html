@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: main-layout('Nhập điểm', ~{::section})}">
+<body>
+    
+    <section>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1">
+                        <li class="breadcrumb-item"><a href="/teacher/class-list" class="text-decoration-none">Lớp giảng dạy</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Nhập điểm</li>
+                    </ol>
+                </nav>
+                <h2 class="fw-bold mb-0">Lập trình Java Web <span class="badge bg-primary fs-6 align-middle ms-2">INT3306_1</span></h2>
+            </div>
+            <div class="d-flex gap-2">
+                 <button class="btn btn-outline-success"><i class="fa-solid fa-file-excel me-2"></i>Nhập từ Excel</button>
+                 <button class="btn btn-primary" onclick="alert('Đã lưu dữ liệu thành công!')"><i class="fa-solid fa-save me-2"></i>Lưu bảng điểm</button>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <span class="fw-bold text-muted"><i class="fa-solid fa-users me-2"></i>Danh sách sinh viên (58)</span>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <small class="text-muted me-3"><i class="fa-solid fa-circle text-primary me-1" style="font-size: 8px"></i>CC: Chuyên cần (10%)</small>
+                        <small class="text-muted me-3"><i class="fa-solid fa-circle text-warning me-1" style="font-size: 8px"></i>GK: Giữa kỳ (40%)</small>
+                        <small class="text-muted"><i class="fa-solid fa-circle text-success me-1" style="font-size: 8px"></i>CK: Cuối kỳ (50%)</small>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="gradingTable">
+                        <thead class="table-light text-center align-middle">
+                            <tr>
+                                <th style="width: 50px;">#</th>
+                                <th style="width: 120px;" class="text-start ps-3">Mã SV</th>
+                                <th class="text-start">Họ và Tên</th>
+                                <th style="width: 100px;">CC (10%)</th>
+                                <th style="width: 100px;">GK (40%)</th>
+                                <th style="width: 100px;">CK (50%)</th>
+                                <th style="width: 100px;" class="bg-light fw-bold">Tổng kết</th>
+                                <th style="width: 100px;">Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-center">1</td>
+                                <td class="fw-bold text-primary ps-3">2102001</td>
+                                <td>Nguyễn Văn An</td>
+                                <td><input type="number" class="form-control text-center grade-input" min="0" max="10" value="10"></td>
+                                <td><input type="number" class="form-control text-center grade-input" min="0" max="10" value="8.5"></td>
+                                <td><input type="number" class="form-control text-center grade-input" min="0" max="10" value="9.0"></td>
+                                <td class="text-center fw-bold fs-5 text-primary total-grade">8.9</td>
+                                <td><input type="text" class="form-control form-control-sm border-0 bg-light" placeholder="..."></td>
+                            </tr>
+
+                            <tr>
+                                <td class="text-center">2</td>
+                                <td class="fw-bold text-primary ps-3">2102002</td>
+                                <td>Trần Thị Bình</td>
+                                <td><input type="number" class="form-control text-center grade-input" min="0" max="10" value="9"></td>
+                                <td><input type="number" class="form-control text-center grade-input" min="0" max="10" value="7.0"></td>
+                                <td><input type="number" class="form-control text-center grade-input" min="0" max="10" value=""></td>
+                                <td class="text-center fw-bold fs-5 text-muted total-grade">-</td>
+                                <td><input type="text" class="form-control form-control-sm border-0 bg-light" placeholder="..."></td>
+                            </tr>
+
+                            <tr>
+                                <td class="text-center">3</td>
+                                <td class="fw-bold text-primary ps-3">2102003</td>
+                                <td>Lê Hoàng Cường</td>
+                                <td><input type="number" class="form-control text-center grade-input" min="0" max="10" value="5"></td>
+                                <td><input type="number" class="form-control text-center grade-input" min="0" max="10" value="4.5"></td>
+                                <td><input type="number" class="form-control text-center grade-input" min="0" max="10" value="6.0"></td>
+                                <td class="text-center fw-bold fs-5 text-danger total-grade">5.3</td>
+                                <td><input type="text" class="form-control form-control-sm border-0 bg-light" value="Cần cố gắng"></td>
+                            </tr>
+                             <tr>
+                                <td class="text-center">4</td>
+                                <td class="fw-bold text-primary ps-3">2102004</td>
+                                <td>Phạm Minh Đạt</td>
+                                <td><input type="number" class="form-control text-center grade-input" min="0" max="10" value="10"></td>
+                                <td><input type="number" class="form-control text-center grade-input" min="0" max="10" value="9.5"></td>
+                                <td><input type="number" class="form-control text-center grade-input" min="0" max="10" value="10"></td>
+                                <td class="text-center fw-bold fs-5 text-success total-grade">9.8</td>
+                                <td><input type="text" class="form-control form-control-sm border-0 bg-light" placeholder="..."></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-white py-3 text-end">
+                <button class="btn btn-secondary me-2">Hủy bỏ</button>
+                <button class="btn btn-primary px-4" onclick="alert('Lưu thành công!')">Lưu lại</button>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const rows = document.querySelectorAll('#gradingTable tbody tr');
+
+                rows.forEach(row => {
+                    const inputs = row.querySelectorAll('.grade-input');
+                    const totalCell = row.querySelector('.total-grade');
+
+                    inputs.forEach(input => {
+                        input.addEventListener('input', () => calculateRow(row));
+                    });
+                });
+
+                function calculateRow(row) {
+                    const inputs = row.querySelectorAll('.grade-input');
+                    const cc = parseFloat(inputs[0].value) || 0;
+                    const gk = parseFloat(inputs[1].value) || 0;
+                    const ck = parseFloat(inputs[2].value) || 0;
+                    
+                    // Kiểm tra xem đã nhập đủ chưa (để hiển thị gạch ngang nếu chưa đủ)
+                    // Ở đây demo nên cứ tính luôn nếu có số
+                    if(inputs[0].value && inputs[1].value && inputs[2].value) {
+                        // Công thức: 10% + 40% + 50%
+                        const total = (cc * 0.1) + (gk * 0.4) + (ck * 0.5);
+                        const roundedTotal = Math.round(total * 10) / 10; // Làm tròn 1 chữ số thập phân
+                        
+                        const totalCell = row.querySelector('.total-grade');
+                        totalCell.textContent = roundedTotal;
+                        
+                        // Đổi màu
+                        totalCell.className = 'text-center fw-bold fs-5 total-grade'; // Reset class
+                        if(roundedTotal >= 8.5) totalCell.classList.add('text-success');
+                        else if(roundedTotal < 4.0) totalCell.classList.add('text-danger');
+                        else totalCell.classList.add('text-primary');
+                    }
+                }
+            });
+        </script>
+    </section>
+
+</body>
+</html>

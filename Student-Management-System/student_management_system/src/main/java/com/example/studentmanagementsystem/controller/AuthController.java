@@ -40,7 +40,6 @@ public class AuthController {
             authService.forgotPassword(request.getEmail());
             return ResponseEntity.ok("Link reset Password has been send to your email!");
         } catch (Exception e) {
-            // TODO: handle exception
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

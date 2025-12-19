@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: main-layout('Tạo Quiz', ~{::section})}">
+<body>
+    
+    <section>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1">
+                        <li class="breadcrumb-item"><a href="/teacher/dashboard" class="text-decoration-none">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Ngân hàng câu hỏi</li>
+                    </ol>
+                </nav>
+                <h2 class="fw-bold mb-0">Tạo bài kiểm tra mới</h2>
+            </div>
+            <div class="d-flex gap-2">
+                 <button class="btn btn-outline-secondary">Hủy bỏ</button>
+                 <button class="btn btn-success" onclick="alert('Đã xuất bản bài thi thành công!')"><i class="fa-solid fa-check me-2"></i>Xuất bản</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="card border-0 shadow-sm sticky-top" style="top: 20px; z-index: 1;">
+                    <div class="card-header bg-white fw-bold py-3">
+                        <i class="fa-solid fa-sliders me-2 text-primary"></i>Cấu hình bài thi
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Chọn lớp/Học phần</label>
+                            <select class="form-select">
+                                <option>Lập trình Java Web (INT3306_1)</option>
+                                <option>Phát triển Mobile (INT3310_2)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tên bài kiểm tra</label>
+                            <input type="text" class="form-control" placeholder="Ví dụ: Kiểm tra giữa kỳ Chương 1-3" value="Kiểm tra 15 phút - Java Core">
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-bold">Thời gian (phút)</label>
+                                <input type="number" class="form-control" value="15">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold">Số câu hỏi</label>
+                                <input type="number" class="form-control" value="10" readonly id="totalQuestionsDisplay">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Mô tả / Hướng dẫn</label>
+                            <textarea class="form-control" rows="3" placeholder="Nhập hướng dẫn làm bài cho sinh viên..."></textarea>
+                        </div>
+                        <hr>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="shuffle" checked>
+                            <label class="form-check-label" for="shuffle">Đảo câu hỏi</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="instantResult">
+                            <label class="form-check-label" for="instantResult">Xem điểm ngay sau khi nộp</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div id="questions-container">
+                    <div class="card border-0 shadow-sm mb-3 question-card" id="q1">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-3">
+                                <h5 class="fw-bold text-primary">Câu hỏi 1</h5>
+                                <button class="btn btn-sm btn-outline-danger border-0" onclick="removeQuestion('q1')"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                            <div class="mb-3">
+                                <textarea class="form-control" rows="2" placeholder="Nhập nội dung câu hỏi...">Java là ngôn ngữ lập trình kiểu gì?</textarea>
+                            </div>
+                            
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <div class="input-group-text bg-white">
+                                            <input class="form-check-input mt-0" type="radio" name="q1_correct" value="A">
+                                            <span class="ms-2 fw-bold text-muted">A</span>
+                                        </div>
+                                        <input type="text" class="form-control" placeholder="Đáp án A" value="Biên dịch (Compiled)">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <div class="input-group-text bg-white">
+                                            <input class="form-check-input mt-0" type="radio" name="q1_correct" value="B">
+                                            <span class="ms-2 fw-bold text-muted">B</span>
+                                        </div>
+                                        <input type="text" class="form-control" placeholder="Đáp án B" value="Thông dịch (Interpreted)">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <div class="input-group-text bg-light border-success">
+                                            <input class="form-check-input mt-0" type="radio" name="q1_correct" value="C" checked>
+                                            <span class="ms-2 fw-bold text-success">C</span>
+                                        </div>
+                                        <input type="text" class="form-control border-success" placeholder="Đáp án C" value="Cả hai (Hybrid)">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <div class="input-group-text bg-white">
+                                            <input class="form-check-input mt-0" type="radio" name="q1_correct" value="D">
+                                            <span class="ms-2 fw-bold text-muted">D</span>
+                                        </div>
+                                        <input type="text" class="form-control" placeholder="Đáp án D" value="Không đáp án nào đúng">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-outline-primary w-100 py-3 border-dashed fw-bold" onclick="addQuestion()" style="border-style: dashed !important;">
+                    <i class="fa-solid fa-plus-circle me-2"></i>Thêm câu hỏi mới
+                </button>
+            </div>
+        </div>
+
+        <script>
+            let questionCount = 1;
+
+            function addQuestion() {
+                questionCount++;
+                const container = document.getElementById('questions-container');
+                
+                const html = `
+                    <div class="card border-0 shadow-sm mb-3 question-card" id="q${questionCount}">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-3">
+                                <h5 class="fw-bold text-primary">Câu hỏi ${questionCount}</h5>
+                                <button class="btn btn-sm btn-outline-danger border-0" onclick="removeQuestion('q${questionCount}')"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                            <div class="mb-3">
+                                <textarea class="form-control" rows="2" placeholder="Nhập nội dung câu hỏi..."></textarea>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <div class="input-group-text bg-white">
+                                            <input class="form-check-input mt-0" type="radio" name="q${questionCount}_correct" value="A">
+                                            <span class="ms-2 fw-bold text-muted">A</span>
+                                        </div>
+                                        <input type="text" class="form-control" placeholder="Đáp án A">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <div class="input-group-text bg-white">
+                                            <input class="form-check-input mt-0" type="radio" name="q${questionCount}_correct" value="B">
+                                            <span class="ms-2 fw-bold text-muted">B</span>
+                                        </div>
+                                        <input type="text" class="form-control" placeholder="Đáp án B">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <div class="input-group-text bg-white">
+                                            <input class="form-check-input mt-0" type="radio" name="q${questionCount}_correct" value="C">
+                                            <span class="ms-2 fw-bold text-muted">C</span>
+                                        </div>
+                                        <input type="text" class="form-control" placeholder="Đáp án C">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <div class="input-group-text bg-white">
+                                            <input class="form-check-input mt-0" type="radio" name="q${questionCount}_correct" value="D">
+                                            <span class="ms-2 fw-bold text-muted">D</span>
+                                        </div>
+                                        <input type="text" class="form-control" placeholder="Đáp án D">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Chèn HTML mới vào cuối danh sách
+                container.insertAdjacentHTML('beforeend', html);
+                updateTotal();
+                
+                // Cuộn xuống câu hỏi mới
+                document.getElementById(`q${questionCount}`).scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function removeQuestion(id) {
+                if(confirm('Bạn có chắc muốn xóa câu hỏi này?')) {
+                    document.getElementById(id).remove();
+                    updateTotal();
+                }
+            }
+
+            function updateTotal() {
+                const count = document.querySelectorAll('.question-card').length;
+                document.getElementById('totalQuestionsDisplay').value = count;
+            }
+        </script>
+    </section>
+
+</body>
+</html>

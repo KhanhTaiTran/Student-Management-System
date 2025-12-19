@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: main-layout('Dashboard Giáo Viên', ~{::section})}">
+<body>
+    
+    <section>
+        <h2 class="fw-bold mb-4">Tổng quan giảng dạy</h2>
+        
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm bg-primary text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-uppercase mb-1 opacity-75">Lớp đang dạy</h6>
+                                <h2 class="mb-0 fw-bold">4</h2>
+                            </div>
+                            <i class="fa-solid fa-chalkboard-user fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm bg-info text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-uppercase mb-1 opacity-75">Tổng sinh viên</h6>
+                                <h2 class="mb-0 fw-bold">185</h2>
+                            </div>
+                            <i class="fa-solid fa-users fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm bg-warning text-dark h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-uppercase mb-1 opacity-75">Giờ giảng tháng này</h6>
+                                <h2 class="mb-0 fw-bold">42h</h2>
+                            </div>
+                            <i class="fa-solid fa-clock fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm bg-success text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-uppercase mb-1 opacity-75">Đánh giá SV</h6>
+                                <h2 class="mb-0 fw-bold">4.8/5</h2>
+                            </div>
+                            <i class="fa-solid fa-star fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white fw-bold py-3">
+                        <i class="fa-solid fa-calendar-day me-2 text-primary"></i>Lịch dạy hôm nay (18/12)
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Ca học</th>
+                                        <th>Lớp học phần</th>
+                                        <th>Phòng</th>
+                                        <th>Sĩ số</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="ps-4">
+                                            <span class="badge bg-primary">Ca 1</span><br>
+                                            <small class="text-muted">07:00 - 09:15</small>
+                                        </td>
+                                        <td>
+                                            <strong>Lập trình Java Web</strong>
+                                            <br><small class="text-muted">INT3306_1</small>
+                                        </td>
+                                        <td>P.302</td>
+                                        <td>58/60</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary rounded-pill">Điểm danh</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="ps-4">
+                                            <span class="badge bg-warning text-dark">Ca 3</span><br>
+                                            <small class="text-muted">12:30 - 15:00</small>
+                                        </td>
+                                        <td>
+                                            <strong>Phát triển ứng dụng Mobile</strong>
+                                            <br><small class="text-muted">INT3310_2</small>
+                                        </td>
+                                        <td>Lab 4</td>
+                                        <td>30/30</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary rounded-pill">Điểm danh</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-3 text-center border-top bg-light">
+                            <a href="/teacher/schedule" class="text-decoration-none small fw-bold">Xem toàn bộ lịch dạy <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white fw-bold py-3">
+                        <i class="fa-solid fa-bell me-2 text-danger"></i>Cần xử lý
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <div>
+                                    <small class="text-muted">Hạn: 20/12</small><br>
+                                    <strong>Nhập điểm giữa kỳ INT3306</strong>
+                                </div>
+                                <span class="badge bg-danger rounded-pill">Gấp</span>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <div>
+                                    <small class="text-muted">Hạn: 25/12</small><br>
+                                    <strong>Duyệt danh sách thi lại</strong>
+                                </div>
+                                <span class="badge bg-warning text-dark rounded-pill">Chờ</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</body>
+</html>
