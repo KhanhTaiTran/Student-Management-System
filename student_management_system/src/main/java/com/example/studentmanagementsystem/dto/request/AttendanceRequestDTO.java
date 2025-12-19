@@ -14,6 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AttendanceRequestDTO {
 
+    // TODO: create and not use???
     private Long studentId;
     private Long classId;
 
