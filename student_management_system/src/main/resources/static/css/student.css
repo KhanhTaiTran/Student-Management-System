@@ -47,3 +47,116 @@ body {
     font-size: 1.5rem;
     color: white;
 }
+
+.schedule-table {
+    table-layout: fixed; 
+    width: 100%;
+}
+
+.schedule-table th, .schedule-table td {
+    text-align: center;
+    vertical-align: middle;
+    height: 60px; 
+    border: 1px solid #dee2e6;
+   
+}
+
+.schedule-header {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.class-block {
+    background-color: #e3f2fd;
+    border-left: 4px solid #0d6efd;
+    color: #0d6efd;
+    padding: 4px; 
+    border-radius: 4px;
+    font-size: 0.85rem; 
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+    height: 100%;
+    
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    white-space: normal; 
+    word-wrap: break-word; 
+    
+}
+
+.class-block .fw-bold {
+    /* limit name of course max 2 rows if too long, appear ... */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.2;
+    margin-bottom: 4px;
+}
+
+.class-block:hover {
+    background-color: #bbdefb;
+    z-index: 10;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+
+.class-details-tooltip {
+    display: none; 
+    position: absolute;
+    /*Default show the details at the top*/
+    bottom: 100%; 
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 250px;
+    background-color: #343a40;
+    color: #fff;
+    text-align: left;
+    padding: 10px;
+    border-radius: 6px;
+    z-index: 100;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+
+    margin-bottom: 10px;
+
+    font-size: 0.9rem;
+    line-height: 1.5;
+    white-space: normal;
+}
+
+
+.class-details-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #343a40 transparent transparent transparent;
+}
+
+.class-details-tooltip.show-below {
+    bottom: auto; 
+    top: 100%;    
+    
+    margin-bottom: 0;
+    margin-top: 12px; 
+}
+
+
+.class-details-tooltip.show-below::after {
+    top: auto;    
+    bottom: 100%; 
+    border-color: transparent transparent #343a40 transparent; 
+}
+
+.class-block:hover .class-details-tooltip {
+    display: block; 
+}
