@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.example.studentmanagementsystem.entity.Enrollment;
 
@@ -19,4 +21,14 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
 
     // delete enrollment by student id
     void deleteByStudentId(Long studentId);
+
+    @Query("""
+                SELECT COUNT(e)
+                FROM Enrollment e
+                WHERE e.classRoom.teacher.id = :teacherId
+            """)
+    long countTotalStudentsByTeacher(@Param("teacherId") Long teacherId);
+
+    long countByClassRoomId(Long classRoomId);
+
 }

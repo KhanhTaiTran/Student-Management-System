@@ -53,6 +53,9 @@ public class User {
     @Column(name = "reset_token_expiry")
     private LocalDateTime resetTokenExpiry;
 
+    @Column(name = "teacher_id")
+    private Long teacherId;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

@@ -1,16 +1,19 @@
 package com.example.studentmanagementsystem.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.example.studentmanagementsystem.dto.request.CreateClassRequestDTO;
+import com.example.studentmanagementsystem.dto.response.ClassWithStudentCountDTO;
 import com.example.studentmanagementsystem.entity.Classroom;
 import com.example.studentmanagementsystem.entity.Course;
 import com.example.studentmanagementsystem.entity.User;
 import com.example.studentmanagementsystem.exception.ResourceNotFoundException;
 import com.example.studentmanagementsystem.repository.ClassroomRepository;
 import com.example.studentmanagementsystem.repository.CourseRepository;
+import com.example.studentmanagementsystem.repository.EnrollmentRepository;
 import com.example.studentmanagementsystem.repository.UserRepository;
 
 @Service
@@ -19,14 +22,18 @@ public class ClassroomServiceImpl implements ClassroomService {
     private ClassroomRepository classroomRepository;
     private CourseRepository courseRepository;
     private UserRepository userRepository;
+    private EnrollmentRepository enrollmentRepository; // 🔥 ADD
 
     public ClassroomServiceImpl(
             ClassroomRepository classroomRepository,
             CourseRepository courseRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            EnrollmentRepository enrollmentRepository // 🔥 ADD
+    ) {
         this.classroomRepository = classroomRepository;
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
+        this.enrollmentRepository = enrollmentRepository;
     }
 
     // ===================== CREATE =====================
@@ -71,10 +78,26 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .orElseThrow(() -> new ResourceNotFoundException("Classroom not found with id: " + id));
     }
 
-    // ✅ THÊM METHOD NÀY
     @Override
     public List<Classroom> getClassesByTeacher(Long teacherId) {
         return classroomRepository.findByTeacherId(teacherId);
+    }
+
+    // ===================== ⭐ NEW METHOD =====================
+    @Override
+    public List<ClassWithStudentCountDTO> getClassesWithStudentCount(Long teacherId) {
+
+        List<Classroom> classes = classroomRepository.findByTeacherId(teacherId);
+
+        return classes.stream()
+                .map(c -> new ClassWithStudentCountDTO(
+                        c.getId(),
+                        c.getClassName(),
+                        c.getCourse().getCourseName(),
+                        c.getSemester(),
+                        c.getClassRoom(),
+                        enrollmentRepository.countByClassRoomId(c.getId())))
+                .collect(Collectors.toList());
     }
 
     // ===================== UPDATE =====================

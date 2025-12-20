@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/teacher")
 @PreAuthorize("hasRole('TEACHER')")
-public class TeacherPageController {
+public class TeacherViewController {
 
     @GetMapping("/dashboard")
     public String dashboard() {
@@ -16,22 +16,27 @@ public class TeacherPageController {
     }
 
     @GetMapping("/classes")
-    public String classList() {
-        return "teacher/class-list";
+    public String classes() {
+        return "teacher/classes";
     }
 
-    @GetMapping("/grading")
-    public String grading() {
-        return "teacher/grading";
+    @GetMapping("/grades/{classId}")
+    public String grades() {
+        return "teacher/grades";
+    }
+
+    @GetMapping("/attendance/{classId}")
+    public String attendance() {
+        return "teacher/attendance";
+    }
+
+    @GetMapping("/quizzes/{classId}")
+    public String quizzes() {
+        return "teacher/quizzes";
     }
 
     @GetMapping("/quiz/create")
     public String createQuiz() {
         return "teacher/quiz-create";
-    }
-
-    @GetMapping("/contact")
-    public String contact() {
-        return "teacher/contact";
     }
 }

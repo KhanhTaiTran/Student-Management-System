@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>My Classes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- ===== SIDEBAR ===== -->
+        <nav class="col-md-3 col-lg-2 sidebar p-3 bg-dark text-white collapse d-md-block" style="min-height:100vh">
+            <a href="/teacher/dashboard" class="d-flex align-items-center mb-3 text-white text-decoration-none">
+                <i class="fa-solid fa-graduation-cap fs-4 me-2"></i>
+                <span class="fs-5 fw-bold">SMS Teacher</span>
+            </a>
+            <hr>
+
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a href="/teacher/dashboard" class="nav-link text-white">
+                        <i class="fa-solid fa-chart-line me-2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/teacher/classes" class="nav-link active bg-primary text-white">
+                        <i class="fa-solid fa-chalkboard-user me-2"></i> Classes
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>My Classes</h2>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Class Name</th>
+                            <th>Course</th>
+                            <th>Semester</th>
+                            <th>Room</th>
+                            <th>Students</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+
+                        <tbody id="classTableBody">
+                        <!-- JS render here -->
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    fetch("/api/teacher/classes", {
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken")
+        }
+    })
+    .then(res => res.json())
+    .then(classes => {
+        const tbody = document.getElementById("classTableBody");
+        tbody.innerHTML = "";
+
+        classes.forEach((c, index) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${c.className}</td>
+                    <td>${c.courseName}</td>
+                    <td>${c.semester ?? ""}</td>
+                    <td>${c.room ?? ""}</td>
+                    <td>
+                        <span class="badge bg-info">
+                            ${c.studentCount}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="/teacher/grades/${c.classId}" class="btn btn-sm btn-outline-primary">
+                            Grades
+                        </a>
+                        <a href="/teacher/attendance/${c.classId}" class="btn btn-sm btn-outline-success">
+                            Attendance
+                        </a>
+                    </td>
+                </tr>
+            `;
+        });
+    })
+    .catch(err => console.error(err));
+});
+</script>
+
+
+</body>
+</html>
