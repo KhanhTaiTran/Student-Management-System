@@ -49,4 +49,10 @@ public class Classroom {
 
     @Column(name = "total_periods")
     private Integer totalPeriods;
+
+    @Column(name = "start_date")
+    private String startData;
+
+    @Column(name = "end_date")
+    private String endData;
 }
