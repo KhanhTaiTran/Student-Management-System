@@ -205,6 +205,34 @@
                     required
                   />
                 </div>
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold"
+                      >Ngày bắt đầu (Start Date)</label
+                    >
+                    <input
+                      title="startDate"
+                      type="date"
+                      class="form-control"
+                      id="startDate"
+                      name="startDate"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold"
+                      >Ngày kết thúc (End Date)</label
+                    >
+                    <input
+                      title="endDate"
+                      type="date"
+                      class="form-control"
+                      id="endDate"
+                      name="endDate"
+                      required
+                    />
+                  </div>
+                </div>
                 <div class="row">
                   <div class="col-md-4 mb-3">
                     <label class="form-label">Thứ (Day)</label>
@@ -266,7 +294,13 @@
                 >
                   Close
                 </button>
-                <button type="submit" class="btn btn-primary">Save</button>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  onclick="saveClass()"
+                >
+                  Save
+                </button>
               </div>
             </form>
           </div>
@@ -363,13 +397,24 @@
           });
           const klass = await res.json();
 
+          // Fill dữ liệu cũ
           classIdInput.value = klass.id;
           classForm.querySelector('[name="className"]').value = klass.className;
-          classForm.querySelector('[name="courseId"]').value = klass.course.id;
-          classForm.querySelector('[name="teacherId"]').value =
-            klass.teacher.id;
+          document.getElementById("courseSelect").value = klass.course.id; // Dùng ID cho chính xác
+          document.getElementById("teacherSelect").value = klass.teacher.id;
           classForm.querySelector('[name="classRoom"]').value = klass.classRoom;
           classForm.querySelector('[name="semester"]').value = klass.semester;
+
+          // --- FILL DỮ LIỆU MỚI (Ngày tháng, Tiết học) ---
+          document.getElementById("startDate").value = klass.startDate || "";
+          document.getElementById("endDate").value = klass.endDate || "";
+          classForm.querySelector('[name="dayOfWeek"]').value =
+            klass.dayOfWeek || 2;
+          classForm.querySelector('[name="startPeriod"]').value =
+            klass.startPeriod || 1;
+          classForm.querySelector('[name="totalPeriods"]').value =
+            klass.totalPeriods || 3;
+          // ------------------------------------------------
 
           modal.show();
         } catch (error) {
@@ -378,37 +423,58 @@
       }
 
       // create or update classroom
-      classForm.addEventListener("submit", async function (e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData.entries());
-        const classId = classIdInput.value;
+      async function saveClass() {
+        if (!classForm.checkValidity()) {
+          classForm.reportValidity();
+          return;
+        }
+        const id = document.getElementById("classId").value;
+        const method = id ? "PUT" : "POST";
+        const url = id ? `/api/classrooms/${id}` : "/api/classrooms";
 
-        const url = classId ? `/api/classrooms/${classId}` : "/api/classrooms";
-        const method = classId ? "PUT" : "POST";
+        // Lấy dữ liệu từ form
+        const payload = {
+          className: document.querySelector("input[name='className']").value,
+          courseId: document.querySelector("select[name='courseId']").value,
+          teacherId: document.querySelector("select[name='teacherId']").value,
+          classRoom: document.querySelector("input[name='classRoom']").value,
+          semester: document.querySelector("input[name='semester']").value,
+
+          // --- THÊM MỚI ---
+          startDate: document.getElementById("startDate").value,
+          endDate: document.getElementById("endDate").value,
+          // ----------------
+
+          dayOfWeek: document.querySelector("select[name='dayOfWeek']").value,
+          startPeriod: document.querySelector("select[name='startPeriod']")
+            .value,
+          totalPeriods: document.querySelector("input[name='totalPeriods']")
+            .value,
+        };
 
         try {
           const res = await fetch(url, {
             method: method,
             headers: {
-              Authorization: "Bearer " + token,
               "Content-Type": "application/json",
+              Authorization: "Bearer " + localStorage.getItem("accessToken"),
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(payload),
           });
 
           if (res.ok) {
-            alert(`Class ${classId ? "updated" : "created"} successfully!`);
-            modal.hide();
-            loadClasses();
+            alert("Saved successfully!");
+            location.reload();
           } else {
+            // Hiển thị thông báo lỗi chi tiết từ Backend (VD: Trùng lịch giáo viên)
             const err = await res.json();
-            alert("Error: " + (err.message || "Something went wrong"));
+            alert("Lỗi: " + (err.message || "Failed to save class"));
           }
-        } catch (err) {
-          console.error(err);
+        } catch (error) {
+          console.error(error);
+          alert("Lỗi hệ thống!");
         }
-      });
+      }
 
       // delete classroom
       window.deleteClass = async function (id) {

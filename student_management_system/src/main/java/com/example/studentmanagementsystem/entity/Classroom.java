@@ -51,8 +51,8 @@ public class Classroom {
     private Integer totalPeriods;
 
     @Column(name = "start_date")
-    private String startData;
+    private String startDate;
 
     @Column(name = "end_date")
-    private String endData;
+    private String endDate;
 }
