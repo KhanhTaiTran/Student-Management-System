@@ -24,9 +24,6 @@ public class Classroom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "class_id", nullable = false, unique = true)
-    private Long classId;
-
     @Column(nullable = false)
     private String className;
 
