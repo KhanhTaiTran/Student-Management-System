@@ -310,11 +310,15 @@
         }
 
         data.forEach((tx) => {
-          const date = new Date(tx.transactionDate).toLocaleString(currentLang);
+          let dateStr = "N/A";
+          if (tx.transactionDate) {
+            dateStr = new Date(tx.transactionDate).toLocaleString(currentLang);
+          }
+
           const row = `
                 <tr>
-                    <td>${date}</td>
-                    <td>${tx.description}</td>
+                    <td>${dateStr}</td>
+                    <td>${tx.description || ""}</td>
                     <td class="text-end fw-bold text-success">+ ${formatMoney(
                       tx.amount
                     )}</td>

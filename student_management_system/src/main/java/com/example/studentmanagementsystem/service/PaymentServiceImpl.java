@@ -28,7 +28,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<Transaction> getStudentTransactions(Long studentId) {
-        return transactionRepository.findByStudentId(studentId);
+        // call func from repository has been sorted
+        return transactionRepository.findByStudentIdOrderByTransactionDateDesc(studentId);
     }
 
     @Override
@@ -58,7 +59,7 @@ public class PaymentServiceImpl implements PaymentService {
         BigDecimal totalTuition = dashboardInfo.getTuitionOwed();
 
         // calculate total tuition have to pay from table Transaction
-        List<Transaction> transactions = transactionRepository.findByStudentId(studentId);
+        List<Transaction> transactions = transactionRepository.findByStudentIdOrderByTransactionDateDesc(studentId);
         BigDecimal totalPaid = transactions.stream()
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
