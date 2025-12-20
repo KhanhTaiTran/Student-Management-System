@@ -83,10 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "Authorization": "Bearer " + localStorage.getItem("accessToken")
         }
     })
-    .then(res => {
-        if (!res.ok) throw new Error("Cannot load classes");
-        return res.json();
-    })
+    .then(res => res.json())
     .then(classes => {
         const tbody = document.getElementById("classTableBody");
         tbody.innerHTML = "";
@@ -96,19 +93,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 <tr>
                     <td>${index + 1}</td>
                     <td>${c.className}</td>
-                    <td>${c.course.courseName}</td>
+                    <td>${c.courseName}</td>
                     <td>${c.semester ?? ""}</td>
-                    <td>${c.classRoom ?? ""}</td>
+                    <td>${c.room ?? ""}</td>
                     <td>
                         <span class="badge bg-info">
-                            ${c.totalStudents ?? "N/A"}
+                            ${c.studentCount}
                         </span>
                     </td>
                     <td>
-                        <a href="/teacher/grades/${c.id}" class="btn btn-sm btn-outline-primary">
+                        <a href="/teacher/grades/${c.classId}" class="btn btn-sm btn-outline-primary">
                             Grades
                         </a>
-                        <a href="/teacher/attendance/${c.id}" class="btn btn-sm btn-outline-success">
+                        <a href="/teacher/attendance/${c.classId}" class="btn btn-sm btn-outline-success">
                             Attendance
                         </a>
                     </td>
@@ -119,6 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .catch(err => console.error(err));
 });
 </script>
+
 
 </body>
 </html>

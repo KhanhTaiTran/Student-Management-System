@@ -28,4 +28,7 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
                 WHERE e.classRoom.teacher.id = :teacherId
             """)
     long countTotalStudentsByTeacher(@Param("teacherId") Long teacherId);
+
+    long countByClassRoomId(Long classRoomId);
+
 }

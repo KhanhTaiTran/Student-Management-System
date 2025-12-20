@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal; // 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.studentmanagementsystem.dto.response.ClassWithStudentCountDTO;
 import com.example.studentmanagementsystem.dto.response.TeacherDashboardDTO;
 import com.example.studentmanagementsystem.entity.*;
 import com.example.studentmanagementsystem.repository.UserRepository;
@@ -47,10 +48,17 @@ public class TeacherController {
     }
 
     // ===================== CLASS =====================
-    @GetMapping("/classes/{teacherId}")
-    public ResponseEntity<List<Classroom>> getMyClasses(@PathVariable Long teacherId) {
-        return ResponseEntity.ok(classroomService.getClassesByTeacher(teacherId));
-    }
+    @GetMapping("/classes")
+public ResponseEntity<List<ClassWithStudentCountDTO>> getMyClasses(
+        @AuthenticationPrincipal UserDetails userDetails) {
+
+    User teacher = userRepository
+            .findByUsername(userDetails.getUsername())
+            .orElseThrow();
+
+    return ResponseEntity.ok(
+            classroomService.getClassesWithStudentCount(teacher.getId()));
+}
 
     // ===================== GRADE =====================
 
@@ -100,5 +108,8 @@ public class TeacherController {
     public ResponseEntity<List<Quiz>> getQuizzes(@PathVariable Long classId) {
         return ResponseEntity.ok(
                 quizService.getQuizzesByClass(classId));
+
+        // classes
+
     }
 }
