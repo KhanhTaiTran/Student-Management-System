@@ -1,1 +1,14 @@
-<!--Menu on the lefts-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="sidebar" class="sidebar">
+  <ul>
+    <li><a th:href="@{/teacher/dashboard}">Dashboard</a></li>
+    <li><a th:href="@{/teacher/classes}">Classes</a></li>
+    <li><a th:href="@{/teacher/quiz/create}">Create Quiz</a></li>
+  </ul>
+</div>
+
+</body>
+</html>
