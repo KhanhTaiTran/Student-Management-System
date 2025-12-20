@@ -1,14 +1,20 @@
 package com.example.studentmanagementsystem.controller;
 
-import com.example.studentmanagementsystem.entity.*;
-import com.example.studentmanagementsystem.service.*;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
 import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal; // 🔥 BẮT BUỘC
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.studentmanagementsystem.dto.response.TeacherDashboardDTO;
+import com.example.studentmanagementsystem.entity.*;
+import com.example.studentmanagementsystem.repository.UserRepository;
+import com.example.studentmanagementsystem.service.*;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/teacher")
@@ -21,13 +27,29 @@ public class TeacherController {
     private final AttendanceService attendanceService;
     private final QuizService quizService;
 
-    // ===================== CLASS =====================
+    // 🔥 ADD
+    private final TeacherDashboardService dashboardService;
+    private final UserRepository userRepository;
 
-    // Xem các lớp giáo viên đang dạy
+    // ===================== DASHBOARD =====================
+    @GetMapping("/dashboard")
+    public ResponseEntity<TeacherDashboardDTO> getDashboard(
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        User teacher = userRepository
+                .findByUsername(userDetails.getUsername())
+                .orElseThrow();
+
+        return ResponseEntity.ok(
+                new TeacherDashboardDTO(
+                        dashboardService.getTotalTeachingClasses(teacher.getId()),
+                        dashboardService.getTotalStudents(teacher.getId())));
+    }
+
+    // ===================== CLASS =====================
     @GetMapping("/classes/{teacherId}")
     public ResponseEntity<List<Classroom>> getMyClasses(@PathVariable Long teacherId) {
-        return ResponseEntity.ok(
-                classroomService.getClassesByTeacher(teacherId));
+        return ResponseEntity.ok(classroomService.getClassesByTeacher(teacherId));
     }
 
     // ===================== GRADE =====================

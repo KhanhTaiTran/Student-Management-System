@@ -1,110 +1,124 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"/>
     <title>My Classes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
+    <!-- Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
 </head>
 
 <body>
 <div class="container-fluid">
     <div class="row">
 
-        <!-- SIDEBAR -->
-        <nav class="col-md-3 col-lg-2 sidebar bg-dark text-white p-3">
-            <a class="text-white text-decoration-none fw-bold fs-5">
-                🎓 SMS Teacher
+        <!-- ===== SIDEBAR ===== -->
+        <nav class="col-md-3 col-lg-2 sidebar p-3 bg-dark text-white collapse d-md-block" style="min-height:100vh">
+            <a href="/teacher/dashboard" class="d-flex align-items-center mb-3 text-white text-decoration-none">
+                <i class="fa-solid fa-graduation-cap fs-4 me-2"></i>
+                <span class="fs-5 fw-bold">SMS Teacher</span>
             </a>
             <hr>
+
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a href="/teacher/dashboard" class="nav-link text-white">Dashboard</a>
+                    <a href="/teacher/dashboard" class="nav-link text-white">
+                        <i class="fa-solid fa-chart-line me-2"></i> Dashboard
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/teacher/classes" class="nav-link active bg-primary text-white">Classes</a>
+                    <a href="/teacher/classes" class="nav-link active bg-primary text-white">
+                        <i class="fa-solid fa-chalkboard-user me-2"></i> Classes
+                    </a>
                 </li>
             </ul>
         </nav>
 
-        <!-- MAIN -->
-        <main class="col-md-9 col-lg-10 p-4">
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
 
-            <h2 class="mb-4">My Teaching Classes</h2>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>My Classes</h2>
+            </div>
 
-            <div id="classContainer"></div>
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Class Name</th>
+                            <th>Course</th>
+                            <th>Semester</th>
+                            <th>Room</th>
+                            <th>Students</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+
+                        <tbody id="classTableBody">
+                        <!-- JS render here -->
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
 
         </main>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-const token = localStorage.getItem("accessToken");
+document.addEventListener("DOMContentLoaded", function () {
 
-document.addEventListener("DOMContentLoaded", loadClasses);
-
-async function loadClasses() {
-    const res = await fetch("/api/teacher/classes", {
+    fetch("/api/teacher/classes", {
         headers: {
-            "Authorization": "Bearer " + token
+            "Authorization": "Bearer " + localStorage.getItem("accessToken")
         }
-    });
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Cannot load classes");
+        return res.json();
+    })
+    .then(classes => {
+        const tbody = document.getElementById("classTableBody");
+        tbody.innerHTML = "";
 
-    const classes = await res.json();
-    const container = document.getElementById("classContainer");
-    container.innerHTML = "";
-
-    classes.forEach(cls => {
-        let studentsHtml = "";
-        cls.enrollments.forEach(e => {
-            studentsHtml += `
+        classes.forEach((c, index) => {
+            tbody.innerHTML += `
                 <tr>
-                    <td>${e.student.studentId}</td>
-                    <td>${e.student.fullName}</td>
+                    <td>${index + 1}</td>
+                    <td>${c.className}</td>
+                    <td>${c.course.courseName}</td>
+                    <td>${c.semester ?? ""}</td>
+                    <td>${c.classRoom ?? ""}</td>
+                    <td>
+                        <span class="badge bg-info">
+                            ${c.totalStudents ?? "N/A"}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="/teacher/grades/${c.id}" class="btn btn-sm btn-outline-primary">
+                            Grades
+                        </a>
+                        <a href="/teacher/attendance/${c.id}" class="btn btn-sm btn-outline-success">
+                            Attendance
+                        </a>
+                    </td>
                 </tr>
             `;
         });
-
-        container.innerHTML += `
-            <div class="card shadow-sm mb-4">
-                <div class="card-header fw-bold">
-                    ${cls.course.courseName} (${cls.course.courseCode}) - ${cls.className}
-                </div>
-
-                <div class="card-body">
-                    <p class="text-muted">
-                        Room: ${cls.classRoom} | Semester: ${cls.semester}
-                    </p>
-
-                    <table class="table table-sm table-bordered">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Student ID</th>
-                                <th>Full Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${studentsHtml}
-                        </tbody>
-                    </table>
-
-                    <div class="mt-2">
-                        <a href="/teacher/grades?classId=${cls.id}" class="btn btn-sm btn-outline-primary">
-                            Grades
-                        </a>
-                        <a href="/teacher/attendance?classId=${cls.id}" class="btn btn-sm btn-outline-warning">
-                            Attendance
-                        </a>
-                        <a href="/teacher/quizzes?classId=${cls.id}" class="btn btn-sm btn-outline-success">
-                            Quizzes
-                        </a>
-                    </div>
-                </div>
-            </div>
-        `;
-    });
-}
+    })
+    .catch(err => console.error(err));
+});
 </script>
+
 </body>
 </html>
