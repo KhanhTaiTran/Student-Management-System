@@ -53,6 +53,17 @@ public class ClassroomServiceImpl implements ClassroomService {
             throw new RuntimeException("This User ID is not a teacher!");
         }
 
+        int endPeriod = request.getStartPeriod() + request.getTotalPeriods();
+        boolean isConflict = classroomRepository.existsByTeacherAndSchedule(
+                request.getTeacherId(),
+                request.getDayOfWeek(),
+                request.getStartPeriod(),
+                endPeriod);
+
+        if (isConflict) {
+            throw new RuntimeException("Error: Teacher has a schedule conflict at this time!");
+        }
+
         Classroom classroom = new Classroom();
         classroom.setClassName(request.getClassName());
         classroom.setCourse(course);
@@ -62,6 +73,8 @@ public class ClassroomServiceImpl implements ClassroomService {
         classroom.setDayOfWeek(request.getDayOfWeek());
         classroom.setStartPeriod(request.getStartPeriod());
         classroom.setTotalPeriods(request.getTotalPeriods());
+        classroom.setStartDate(request.getStartDate());
+        classroom.setEndDate(request.getEndDate());
 
         return classroomRepository.save(classroom);
     }

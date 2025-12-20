@@ -13,4 +13,6 @@ public interface PaymentService {
     Transaction makePayment(Long studentId, DepositeRequestDTO request);
 
     PaymentResponseDTO getPaymentSummary(Long studentId);
+
+    Transaction payTuitionFromWallet(Long studentId);
 }

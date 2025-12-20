@@ -39,4 +39,10 @@ public class PaymentController {
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok(paymentService.makePayment(user.getId(), request));
     }
+
+    @PostMapping("/pay-tuition")
+    public ResponseEntity<Transaction> payTuition(Authentication authentication) {
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok(paymentService.payTuitionFromWallet(user.getId()));
+    }
 }

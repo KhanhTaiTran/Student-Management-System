@@ -19,8 +19,9 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course createCourse(Course course) {
+        // LOGIC ADMIN: Check course code exists
         if (courseRepository.existsByCourseCode(course.getCourseCode())) {
-            throw new RuntimeException("Course Code existed!");
+            throw new RuntimeException("Error: Course code " + course.getCourseCode() + " already exists!");
         }
         return courseRepository.save(course);
     }

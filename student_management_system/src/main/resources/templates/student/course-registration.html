@@ -212,23 +212,19 @@
         tbody.innerHTML = "";
 
         classes.forEach((c) => {
-          // --- Xử lý đa ngôn ngữ cho Lịch học ---
+          // Multilingual support for the School Calendar
           let scheduleText = i18n.noSchedule;
 
           if (c.dayOfWeek) {
-            // Lấy thứ từ biến i18n
+            // Get the variable i18n
             // c.dayOfWeek = 2 => i18n['day2']
             const dayName = i18n["day" + c.dayOfWeek] || "Day " + c.dayOfWeek;
             const endPeriod = c.startPeriod + c.totalPeriods - 1;
 
             scheduleText = `${dayName} (${i18n.period} ${c.startPeriod} - ${endPeriod})`;
           }
-          // ---------------------------------------
 
-          // Kiểm tra đã đăng ký chưa
-          // Lưu ý: Đảm bảo EnrollmentResponseDTO có trả về classId nhé!
-          // Nếu chưa có, bạn cần update DTO ở backend.
-          // Tạm thời nếu chưa có classId trong DTO trả về, logic này sẽ sai.
+          // Check if you are registered
           const isRegistered = myRegisteredClassIds.includes(c.id);
 
           let statusBadge = `<span class="badge bg-secondary">${i18n.notRegistered}</span>`;

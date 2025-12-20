@@ -38,8 +38,20 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                 .orElseThrow(() -> new RuntimeException("Class not found"));
 
         // 3. Check Duplicate
-        if (enrollmentRepository.existsByStudentIdAndClassRoomId(studentId, classId)) {
-            throw new RuntimeException("Student already enrolled in this class!");
+        if (enrollmentRepository.hasStudentEnrolledCourse(studentId, classroom.getCourse().getId())) {
+            throw new RuntimeException("Error: You have already registered for this course ("
+                    + classroom.getCourse().getCourseName() + ")!");
+        }
+        // check overlap schedule
+        int endPeriod = classroom.getStartPeriod() + classroom.getTotalPeriods();
+        boolean isConflict = enrollmentRepository.isStudentScheduleConflicted(
+                studentId,
+                classroom.getDayOfWeek(),
+                classroom.getStartPeriod(),
+                endPeriod);
+
+        if (isConflict) {
+            throw new RuntimeException("Error: Schedule conflict! You have another class at this time.");
         }
 
         // 4. Save
@@ -91,11 +103,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     @Override
     public void dropCourse(Long studentId, Long classId) {
         Enrollment enrollment = enrollmentRepository.findByStudentIdAndClassRoomId(studentId, classId)
-                .orElseThrow(() -> new RuntimeException("Bạn chưa đăng ký lớp này!"));
+                .orElseThrow(() -> new RuntimeException("You are not enrolled in this class!"));
 
-        // (Optional) Kiểm tra xem có điểm chưa? Nếu có điểm rồi thì không cho hủy
         if (enrollment.getTotalGrade() != null) {
-            throw new RuntimeException("Không thể hủy môn đã có điểm tổng kết!");
+            throw new RuntimeException("Can't drop course has the total grade!");
         }
 
         enrollmentRepository.delete(enrollment);

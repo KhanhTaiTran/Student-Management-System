@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.example.studentmanagementsystem.entity.Classroom;
 
@@ -44,4 +45,20 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Long> {
                 GROUP BY c.courseName
             """)
     List<Object[]> countClassesByCourse();
+
+    // check overlap schedule of teacher
+    @Query("""
+                SELECT CASE WHEN COUNT(c) > 0 THEN TRUE ELSE FALSE END
+                FROM Classroom c
+                WHERE c.teacher.id = :teacherId
+                  AND c.dayOfWeek = :dayOfWeek
+                  AND (
+                      (c.startPeriod < :endPeriod AND :startPeriod < (c.startPeriod + c.totalPeriods))
+                  )
+            """)
+    boolean existsByTeacherAndSchedule(
+            @Param("teacherId") Long teacherId,
+            @Param("dayOfWeek") Integer dayOfWeek,
+            @Param("startPeriod") Integer startPeriod,
+            @Param("endPeriod") Integer endPeriod);
 }

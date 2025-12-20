@@ -9,8 +9,8 @@
       rel="stylesheet"
     />
     <link
-      rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
     />
     <link rel="stylesheet" th:href="@{/css/student.css}" />
   </head>
@@ -72,106 +72,67 @@
           </ul>
         </div>
 
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-          <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="mb-0">
-              <i class="fa-solid fa-file-invoice-dollar me-2"></i>
-              <span th:text="#{payment.title}">Payment</span>
-            </h2>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+          <h2 class="mb-4">
+            <i class="fa-solid fa-wallet text-warning"></i>
+            <span th:text="#{payment.title}">Payment & Balance</span>
+          </h2>
 
-            <div class="dropdown">
-              <button
-                title="dropdown"
-                class="btn btn-sm btn-outline-secondary dropdown-toggle"
-                type="button"
-                data-bs-toggle="dropdown"
-              >
-                <i class="fa-solid fa-globe"></i>
-              </button>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="?lang=en">🇺🇸 English</a></li>
-                <li>
-                  <a class="dropdown-item" href="?lang=vi">🇻🇳 Tiếng Việt</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="row g-4 mb-4">
-            <div class="col-md-4">
-              <div
-                class="card bg-light shadow-sm h-100 border-start border-primary border-4"
-              >
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <div class="card bg-success text-white shadow h-100">
                 <div class="card-body">
-                  <h6 class="text-muted" th:text="#{payment.card.total}">
-                    Total Tuition
-                  </h6>
-                  <h3 class="fw-bold text-primary" id="txtTotal">0 đ</h3>
+                  <h5 class="card-title">
+                    <i class="fa-solid fa-money-bill-wave"></i> Wallet Balance
+                  </h5>
+                  <h2 class="display-5 fw-bold" id="userBalance">Loading...</h2>
+                  <p class="mb-0">Current available funds</p>
                 </div>
               </div>
             </div>
-            <div class="col-md-4">
-              <div
-                class="card bg-light shadow-sm h-100 border-start border-success border-4"
-              >
+
+            <div class="col-md-6">
+              <div class="card bg-danger text-white shadow h-100">
                 <div class="card-body">
-                  <h6 class="text-muted" th:text="#{payment.card.paid}">
-                    Paid
-                  </h6>
-                  <h3 class="fw-bold text-success" id="txtPaid">0 đ</h3>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div
-                class="card bg-light shadow-sm h-100 border-start border-danger border-4"
-              >
-                <div
-                  class="card-body d-flex justify-content-between align-items-center"
-                >
-                  <div>
-                    <h6 class="text-muted" th:text="#{payment.card.balance}">
-                      Remaining
-                    </h6>
-                    <h3 class="fw-bold text-danger" id="txtBalance">0 đ</h3>
-                  </div>
+                  <h5 class="card-title">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Tuition Debt
+                  </h5>
+                  <h2 class="display-5 fw-bold" id="totalDebt">Loading...</h2>
+                  <p class="mb-0">Amount needed to pay</p>
                   <button
-                    class="btn btn-primary"
-                    data-bs-toggle="modal"
-                    data-bs-target="#paymentModal"
+                    class="btn btn-light text-danger fw-bold mt-2"
+                    onclick="payTuition()"
                   >
-                    <i class="fa-solid fa-paper-plane me-2"></i>
-                    <span th:text="#{payment.btn.pay}">Pay</span>
+                    <i class="fa-solid fa-credit-card"></i> Pay Now
                   </button>
                 </div>
               </div>
             </div>
           </div>
 
+          <div class="mb-4">
+            <button
+              class="btn btn-primary btn-lg shadow"
+              data-bs-toggle="modal"
+              data-bs-target="#paymentModal"
+            >
+              <i class="fa-solid fa-plus-circle me-2"></i> Top Up Balance
+            </button>
+          </div>
+
           <div class="card shadow-sm">
-            <div class="card-header bg-white py-3">
-              <h5 class="mb-0 fw-bold" th:text="#{payment.history.title}">
-                History
-              </h5>
-            </div>
+            <div class="card-header bg-white fw-bold">Transaction History</div>
             <div class="card-body p-0">
               <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                  <thead class="table-light">
+                <table class="table table-striped mb-0">
+                  <thead class="table-dark">
                     <tr>
-                      <th th:text="#{payment.table.date}">Date</th>
-                      <th th:text="#{payment.table.desc}">Description</th>
-                      <th class="text-end" th:text="#{payment.table.amount}">
-                        Amount
-                      </th>
-                      <th class="text-center">Status</th>
+                      <th>Date</th>
+                      <th>Description</th>
+                      <th class="text-end">Amount</th>
                     </tr>
                   </thead>
-                  <tbody id="txList">
-                    <tr>
-                      <td colspan="4" class="text-center p-3">Loading...</td>
-                    </tr>
-                  </tbody>
+                  <tbody id="historyBody"></tbody>
                 </table>
               </div>
             </div>
@@ -184,11 +145,9 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" th:text="#{payment.modal.title}">
-              Make Payment
-            </h5>
+            <h5 class="modal-title">Top Up Balance</h5>
             <button
-              title="btn-close"
+              title="btnTopUp"
               type="button"
               class="btn-close"
               data-bs-dismiss="modal"
@@ -196,25 +155,22 @@
           </div>
           <div class="modal-body">
             <div class="mb-3">
-              <label class="form-label" th:text="#{payment.modal.amount}"
-                >Amount</label
-              >
+              <label class="form-label">Amount (VND)</label>
               <input
                 type="number"
-                id="payAmount"
                 class="form-control"
-                placeholder="5000000"
-                step="10000"
+                id="payAmount"
+                placeholder="Enter amount (e.g. 500000)"
               />
             </div>
             <div class="mb-3">
-              <label class="form-label">Note</label>
+              <label class="form-label">Description</label>
               <input
                 title="payDesc"
                 type="text"
-                id="payDesc"
                 class="form-control"
-                value="Tuition Payment"
+                id="payDesc"
+                value="Top up balance"
               />
             </div>
           </div>
@@ -230,9 +186,8 @@
               type="button"
               class="btn btn-primary"
               onclick="submitPayment()"
-              th:text="#{payment.modal.btn}"
             >
-              Confirm
+              Confirm Pay
             </button>
           </div>
         </div>
@@ -241,101 +196,88 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script th:inline="javascript">
-      const i18n = {
-        success: /*[[#{payment.msg.success}]]*/ "Success",
-        error: /*[[#{payment.msg.error}]]*/ "Error",
-        empty: /*[[#{payment.empty}]]*/ "No data",
-      };
-      const currentLang =
-        document.documentElement.lang === "vi" ? "vi-VN" : "en-US";
-    </script>
-
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        loadData();
-      });
-
       const token = localStorage.getItem("accessToken");
 
-      // 1. Load Data
+      // Run the loadData function when the page has just finished loading.
+      document.addEventListener("DOMContentLoaded", loadData);
+
       async function loadData() {
-        if (!token) {
-          window.location.href = "/";
-          return;
-        }
-
-        // Load Summary
         try {
-          const resSum = await fetch("/api/payment/summary", {
+          // Obtain financial information.
+          const res = await fetch("/api/payment/summary", {
             headers: { Authorization: "Bearer " + token },
           });
-          if (resSum.ok) {
-            const sumData = await resSum.json();
-            document.getElementById("txtTotal").innerText = formatMoney(
-              sumData.totalTuition
+
+          if (res.ok) {
+            const data = await res.json();
+            console.log("Payment Data:", data); // Check the console to see if the data has arrived.
+
+            // Fill in the data in the two h2 tags above.
+            document.getElementById("totalDebt").innerText = formatMoney(
+              data.debt
             );
-            document.getElementById("txtPaid").innerText = formatMoney(
-              sumData.totalPaid
+            document.getElementById("userBalance").innerText = formatMoney(
+              data.walletBalance
             );
-            document.getElementById("txtBalance").innerText = formatMoney(
-              sumData.balance
-            );
+          } else {
+            console.error("Failed to load summary");
           }
         } catch (err) {
           console.error(err);
         }
 
-        // Load History
-        try {
-          const resHist = await fetch("/api/payment/history", {
-            headers: { Authorization: "Bearer " + token },
-          });
-          if (resHist.ok) {
-            const txData = await resHist.json();
-            renderTable(txData);
-          }
-        } catch (err) {
-          console.error(err);
-        }
+        loadHistory();
       }
 
-      function renderTable(data) {
-        const tbody = document.getElementById("txList");
-        tbody.innerHTML = "";
+      async function loadHistory() {
+        try {
+          const res = await fetch("/api/payment/history", {
+            headers: { Authorization: "Bearer " + token },
+          });
+          const transactions = await res.json();
+          const tbody = document.getElementById("historyBody");
+          tbody.innerHTML = "";
 
-        if (data.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted p-3">${i18n.empty}</td></tr>`;
-          return;
-        }
-
-        data.forEach((tx) => {
-          let dateStr = "N/A";
-          if (tx.transactionDate) {
-            dateStr = new Date(tx.transactionDate).toLocaleString(currentLang);
+          if (transactions.length === 0) {
+            tbody.innerHTML =
+              "<tr><td colspan='3' class='text-center'>No transactions found</td></tr>";
+            return;
           }
 
-          const row = `
+          transactions.forEach((t) => {
+            // Check if the money is positive or negative.
+            const isNegative = t.amount < 0;
+
+            // Logic display
+            // - If Negative: Red (text-danger), displays the number normally (it automatically has a minus sign)
+            // - If Positive: Green (text-success), adds a plus sign in front
+            const colorClass = isNegative ? "text-danger" : "text-success";
+            const displayAmount = isNegative
+              ? formatMoney(t.amount)
+              : "+" + formatMoney(t.amount);
+
+            tbody.innerHTML += `
                 <tr>
-                    <td>${dateStr}</td>
-                    <td>${tx.description || ""}</td>
-                    <td class="text-end fw-bold text-success">+ ${formatMoney(
-                      tx.amount
-                    )}</td>
-                    <td class="text-center"><span class="badge bg-success">Success</span></td>
+                    <td>${new Date(t.transactionDate).toLocaleString()}</td>
+                    <td>${t.description}</td>
+                    <td class="text-end fw-bold ${colorClass}">
+                        ${displayAmount}
+                    </td>
                 </tr>
             `;
-          tbody.innerHTML += row;
-        });
+          });
+        } catch (err) {
+          console.error(err);
+        }
       }
 
-      // 2. Handle Payment (Deposit)
       async function submitPayment() {
         const amount = document.getElementById("payAmount").value;
         const desc = document.getElementById("payDesc").value;
 
         if (!amount || amount <= 0) {
-          alert("Invalid Amount");
+          alert("Please enter a valid amount!");
           return;
         }
 
@@ -350,24 +292,23 @@
           });
 
           if (res.ok) {
-            alert(i18n.success);
-            // Close modal manually
-            const modal = bootstrap.Modal.getInstance(
-              document.getElementById("paymentModal")
-            );
+            alert("Top up successful!");
+
+            // hide modal and reload data
+            const modalEl = document.getElementById("paymentModal");
+            const modal = bootstrap.Modal.getInstance(modalEl);
             modal.hide();
-            // Reload data
-            loadData();
+
+            loadData(); // reload with the new amount.
             document.getElementById("payAmount").value = "";
           } else {
-            alert(i18n.error);
+            alert("Transaction failed!");
           }
         } catch (err) {
           console.error(err);
         }
       }
 
-      // Helper: Format Money
       function formatMoney(amount) {
         return new Intl.NumberFormat("vi-VN", {
           style: "currency",
@@ -379,6 +320,30 @@
         localStorage.removeItem("accessToken");
         localStorage.removeItem("role");
         window.location.href = "/";
+      }
+
+      async function payTuition() {
+        if (!confirm("Confirm payment for tuition using your wallet balance?"))
+          return;
+
+        try {
+          const res = await fetch("/api/payment/pay-tuition", {
+            method: "POST",
+            headers: { Authorization: "Bearer " + token },
+          });
+
+          if (res.ok) {
+            alert("Tuition Paid Successfully!");
+            loadData();
+          } else {
+            const err = await res.json();
+
+            alert("Failed: " + (err.message || "Not enough balance!"));
+          }
+        } catch (err) {
+          console.error(err);
+          alert("Payment Failed. Check console.");
+        }
       }
     </script>
   </body>

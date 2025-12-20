@@ -8,6 +8,7 @@ import com.example.studentmanagementsystem.entity.Classroom;
 import com.example.studentmanagementsystem.entity.Enrollment;
 import com.example.studentmanagementsystem.entity.Notification;
 import com.example.studentmanagementsystem.entity.Role;
+import com.example.studentmanagementsystem.entity.Transaction;
 import com.example.studentmanagementsystem.entity.User;
 import com.example.studentmanagementsystem.exception.ResourceNotFoundException;
 import com.example.studentmanagementsystem.repository.*;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -133,69 +135,94 @@ public class UserServiceImpl implements UserService {
     @Override
     public StudentDashboardDTO getStudentDashboardInfo(Long studentId) {
 
-        User student = userRepository.findById(studentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + studentId));
-
         StudentDashboardDTO dto = new StudentDashboardDTO();
 
+        // list of class that student enrolled
         List<Enrollment> enrollments = enrollmentRepository.findByStudentId(studentId);
 
         double totalScore = 0;
         int countSubjectWithGrade = 0;
         int totalCredits = 0;
 
+        // loop for calculating GPA and total credits.
         for (Enrollment e : enrollments) {
-            // calculate total credits
             if (e.getClassRoom() != null && e.getClassRoom().getCourse() != null) {
+
                 totalCredits += e.getClassRoom().getCourse().getCredits();
             }
-
-            // gpa (courses that have the total grade)
+            // have total grade or not?
             if (e.getTotalGrade() != null) {
                 totalScore += e.getTotalGrade();
                 countSubjectWithGrade++;
             }
         }
 
+        // cal GPA
         double gpa = countSubjectWithGrade > 0 ? (totalScore / countSubjectWithGrade) : 0.0;
 
         dto.setGpa(Math.round(gpa * 100.0) / 100.0);
         dto.setTotalCredits(totalCredits);
 
-        // 1 credit = 1,526,038 VND
-        java.math.BigDecimal pricePerCredit = new java.math.BigDecimal("1526038");
-        java.math.BigDecimal totalTuition = pricePerCredit.multiply(new java.math.BigDecimal(totalCredits));
-        dto.setTuitionOwed(totalTuition);
+        BigDecimal pricePerCredit = new BigDecimal("1526038");
+        BigDecimal totalCost = pricePerCredit.multiply(new BigDecimal(totalCredits));
 
-        // schedule
+        List<Transaction> transactions = transactionRepository.findByStudentIdOrderByTransactionDateDesc(studentId);
+
+        BigDecimal totalPaid = transactions.stream()
+                .map(Transaction::getAmount)
+                .filter(amount -> amount.compareTo(BigDecimal.ZERO) < 0)
+                .map(BigDecimal::abs)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Calculate the remaining debt
+        BigDecimal remainingDebt = totalCost.subtract(totalPaid);
+
+        if (remainingDebt.compareTo(BigDecimal.ZERO) < 0) {
+            remainingDebt = BigDecimal.ZERO;
+        }
+
+        dto.setTuitionOwed(remainingDebt);
+
+        // Schedule handle
         List<StudentDashboardDTO.ScheduleItem> scheduleItems = new ArrayList<>();
-        int todayInt = LocalDate.now().getDayOfWeek().getValue() + 1; // Java Mon=1 -> App Mon=2
-        if (todayInt == 8)
-            todayInt = 8;
+
+        // Java: Monday=1 ... Sunday=7
+        // +1 => Monday=2 ... Sunday=8
+        int todayInt = LocalDate.now().getDayOfWeek().getValue() + 1;
 
         for (Enrollment e : enrollments) {
             Classroom cls = e.getClassRoom();
 
-            if (cls.getDayOfWeek() != null && cls.getDayOfWeek() == todayInt) {
+            // Check if that class is having a session today.
+            if (cls != null && cls.getDayOfWeek() != null && cls.getDayOfWeek() == todayInt) {
                 StudentDashboardDTO.ScheduleItem item = new StudentDashboardDTO.ScheduleItem();
-                item.setCourseName(cls.getCourse().getCourseName());
+
+                // Null check for subject name
+                String courseName = (cls.getCourse() != null) ? cls.getCourse().getCourseName() : "Unknown Course";
+
+                item.setCourseName(courseName);
                 item.setClassName(cls.getClassName());
                 item.setRoom(cls.getClassRoom());
                 item.setStartTime("Tiết " + cls.getStartPeriod());
-                item.setEndTime("Tiết " + (cls.getStartPeriod() + cls.getTotalPeriods() -
-                        1));
+
+                // Calculating the end lesson: Start + Number of lessons - 1
+                int endPeriod = cls.getStartPeriod() + cls.getTotalPeriods() - 1;
+                item.setEndTime("Tiết " + endPeriod);
+
                 scheduleItems.add(item);
             }
-
         }
         dto.setTodaySchedule(scheduleItems);
 
-        // noti
+        // notis
         List<StudentDashboardDTO.NotificationItem> notificationItems = new ArrayList<>();
+        // 5 most recent notifications
         List<Notification> notifications = notificationRepository.findTop5ByUserIdOrderByCreatedAtDesc(studentId);
+
         for (Notification n : notifications) {
             StudentDashboardDTO.NotificationItem item = new StudentDashboardDTO.NotificationItem();
             item.setMessage(n.getMessage());
+            // Convert date to string
             item.setCreatedAt(n.getCreatedAt().toLocalDate().toString());
             notificationItems.add(item);
         }
