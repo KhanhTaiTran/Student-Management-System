@@ -32,4 +32,20 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findTop5ByOrderByIdDesc();
 
     List<User> findByRole(Role role);
+
+    // check overlap schedule for teacher
+    @Query("""
+                SELECT CASE WHEN COUNT(c) > 0 THEN TRUE ELSE FALSE END
+                FROM Classroom c
+                WHERE c.teacher.id = :teacherId
+                  AND c.dayOfWeek = :dayOfWeek
+                  AND (
+                      (c.startPeriod < :endPeriod AND :startPeriod < (c.startPeriod + c.totalPeriods))
+                  )
+            """)
+    boolean existsByTeacherAndSchedule(
+            @Param("teacherId") Long teacherId,
+            @Param("dayOfWeek") Integer dayOfWeek,
+            @Param("startPeriod") Integer startPeriod,
+            @Param("endPeriod") Integer endPeriod);
 }
