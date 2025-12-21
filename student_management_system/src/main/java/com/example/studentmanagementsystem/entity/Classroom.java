@@ -41,7 +41,7 @@ public class Classroom {
 
     private String semester;
 
-    private String classRoom;// e.g. A1.202
+    private String classroom;// e.g. A1.202
 
     @Column(name = "day_of_week")
     private Integer dayOfWeek;

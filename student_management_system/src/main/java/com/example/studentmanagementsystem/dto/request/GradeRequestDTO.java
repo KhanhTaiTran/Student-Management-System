@@ -11,9 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class GradeRequestDTO {
 
-    private Long studentId;
-    private Long classId;
-
     private Double inclass;
     private Double midTermGrade;
     private Double finalGrade;

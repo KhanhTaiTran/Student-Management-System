@@ -53,16 +53,17 @@ public class EnrollmentController {
     // teacher get the list of class (to get the list of student)
     @GetMapping("/class/{classId}")
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
-    public ResponseEntity<List<Enrollment>> getClassList(@PathVariable Long classId) {
-        return ResponseEntity.ok(enrollmentService.getClassEnrollments(classId));
+    public ResponseEntity<List<EnrollmentResponseDTO>> getStudentsByClass(@PathVariable Long classId) {
+        return ResponseEntity.ok(enrollmentService.getEnrollmentsByClassId(classId));
     }
 
     // input score
-    @PutMapping("/{enrollmentId}/grade")
+    @PutMapping("/{id}/grade")
     @PreAuthorize("hasRole('TEACHER')")
-    public ResponseEntity<Enrollment> updateGrade(@PathVariable Long enrollmentId,
-            @RequestBody GradeRequestDTO gradeRequest) {
-        return ResponseEntity.ok(enrollmentService.updateGrade(enrollmentId, gradeRequest));
+    public ResponseEntity<EnrollmentResponseDTO> updateGrade(
+            @PathVariable Long id,
+            @RequestBody GradeRequestDTO request) {
+        return ResponseEntity.ok(enrollmentService.updateGrade(id, request));
     }
 
     // drop course

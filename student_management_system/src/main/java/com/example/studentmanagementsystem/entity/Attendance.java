@@ -25,10 +25,10 @@ public class Attendance {
     private User student;
 
     @ManyToOne
-    @JoinColumn(name = "class_id", nullable = false)
+    @JoinColumn(name = "classroom_id", nullable = false)
     private Classroom classroom;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "attendance_date")
     private LocalDate attendanceDate;
 
     @Column(nullable = false)

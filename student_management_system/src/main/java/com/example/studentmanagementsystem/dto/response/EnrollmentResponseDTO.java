@@ -12,8 +12,11 @@ import lombok.Setter;
 public class EnrollmentResponseDTO {
     private Long id;
     private Long classId;
+
     private String studentName;
     private String studentId; // student ID (ITITIU...)
+    private Long userId;
+
     private String className;
     private String courseName;
 

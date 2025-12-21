@@ -16,8 +16,10 @@ public interface EnrollmentService {
     List<Enrollment> getClassEnrollments(Long classId);
 
     // teacher input score
-    Enrollment updateGrade(Long enrollmentId, GradeRequestDTO gradeRequestDTO);
+    EnrollmentResponseDTO updateGrade(Long enrollmentId, GradeRequestDTO gradeRequestDTO);
 
     // drop
     void dropCourse(Long studentId, Long classId);
+
+    List<EnrollmentResponseDTO> getEnrollmentsByClassId(Long classId);
 }

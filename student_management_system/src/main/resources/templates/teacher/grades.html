@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Enter Grades</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <nav
+          th:replace="fragments/sidebar :: sidebar"
+          class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse"
+        ></nav>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+          <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+          >
+            <h2><i class="fa-solid fa-marker"></i> Enter Grades</h2>
+            <div class="btn-toolbar mb-2 mb-md-0">
+              <a
+                href="/teacher/classes"
+                class="btn btn-sm btn-outline-secondary"
+              >
+                <i class="fa-solid fa-arrow-left"></i> Back to Classes
+              </a>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 10%">ID</th>
+                  <th style="width: 20%">Full Name</th>
+                  <th style="width: 15%">In-Class (30%)</th>
+                  <th style="width: 15%">Mid-Term (30%)</th>
+                  <th style="width: 15%">Final (40%)</th>
+                  <th style="width: 10%">Total</th>
+                  <th style="width: 10%">Action</th>
+                </tr>
+              </thead>
+              <tbody id="gradeTableBody"></tbody>
+            </table>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Lấy Class ID từ URL (/teacher/grades/1)
+      const pathParts = window.location.pathname.split("/");
+      const classId = pathParts[pathParts.length - 1];
+      const token = localStorage.getItem("accessToken");
+
+      document.addEventListener("DOMContentLoaded", loadStudents);
+
+      async function loadStudents() {
+        try {
+          // Gọi API lấy danh sách sinh viên trong lớp (EnrollmentController)
+          const res = await fetch(`/api/enrollments/class/${classId}`, {
+            headers: { Authorization: "Bearer " + token },
+          });
+          const students = await res.json();
+          const tbody = document.getElementById("gradeTableBody");
+
+          if (students.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center">No students enrolled in this class.</td></tr>`;
+            return;
+          }
+
+          tbody.innerHTML = "";
+          students.forEach((s) => {
+            tbody.innerHTML += `
+                    <tr id="row-${s.id}">
+                        <td>${s.studentId || s.id}</td>
+                        <td class="fw-bold">${s.studentName}</td>
+                        
+                        <td>
+                            <input type="number" class="form-control" id="inclass-${
+                              s.id
+                            }" 
+                                   value="${
+                                     s.inclass ?? ""
+                                   }" step="0.1" min="0" max="10"
+                                   onchange="calcTotal(${s.id})">
+                        </td>
+                        
+                        <td>
+                            <input type="number" class="form-control" id="mid-${
+                              s.id
+                            }" 
+                                   value="${
+                                     s.midTermGrade ?? ""
+                                   }" step="0.1" min="0" max="10"
+                                   onchange="calcTotal(${s.id})">
+                        </td>
+                        
+                        <td>
+                            <input type="number" class="form-control" id="final-${
+                              s.id
+                            }" 
+                                   value="${
+                                     s.finalGrade ?? ""
+                                   }" step="0.1" min="0" max="10"
+                                   onchange="calcTotal(${s.id})">
+                        </td>
+                        
+                        <td class="fw-bold text-center text-primary" id="total-${
+                          s.id
+                        }">
+                            ${s.totalGrade ?? "-"}
+                        </td>
+                        
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-primary" onclick="saveGrade(${
+                              s.id
+                            })">
+                                <i class="fa-solid fa-save"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+          });
+        } catch (err) {
+          console.error(err);
+          alert("Error loading student list");
+        }
+      }
+
+      // Hàm tính điểm tạm thời trên giao diện
+      function calcTotal(id) {
+        const inclass =
+          parseFloat(document.getElementById(`inclass-${id}`).value) || 0;
+        const mid = parseFloat(document.getElementById(`mid-${id}`).value) || 0;
+        const final =
+          parseFloat(document.getElementById(`final-${id}`).value) || 0;
+
+        // Công thức: 30% - 30% - 40%
+        const total = inclass * 0.3 + mid * 0.3 + final * 0.4;
+        document.getElementById(`total-${id}`).innerText = total.toFixed(1);
+      }
+
+      // Hàm lưu điểm xuống Backend
+      async function saveGrade(enrollmentId) {
+        const payload = {
+          inclass: document.getElementById(`inclass-${enrollmentId}`).value,
+          midTermGrade: document.getElementById(`mid-${enrollmentId}`).value,
+          finalGrade: document.getElementById(`final-${enrollmentId}`).value,
+        };
+
+        try {
+          // Gọi API Update Grade của EnrollmentController
+          const res = await fetch(`/api/enrollments/${enrollmentId}/grade`, {
+            method: "PUT",
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+
+          if (res.ok) {
+            // Hiệu ứng nháy xanh khi lưu thành công
+            const row = document.getElementById(`row-${enrollmentId}`);
+            row.classList.add("table-success");
+            setTimeout(() => row.classList.remove("table-success"), 1000);
+          } else {
+            alert("Failed to save grade!");
+          }
+        } catch (err) {
+          console.error(err);
+          alert("System Error");
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -10,12 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GradeResponseDTO {
-    // TODO: not use??
-    private Long studentId;
-    private String studentName;
-
     private Double inclass;
     private Double midTermGrade;
     private Double finalGrade;
-    private Double total;
 }

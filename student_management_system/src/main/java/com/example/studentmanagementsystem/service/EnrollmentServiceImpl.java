@@ -64,6 +64,12 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
+    public List<EnrollmentResponseDTO> getEnrollmentsByClassId(Long classId) {
+        List<Enrollment> enrollments = enrollmentRepository.findByClassRoomId(classId);
+        return enrollments.stream().map(this::mapToResponse).collect(Collectors.toList());
+    }
+
+    @Override
     public List<EnrollmentResponseDTO> getStudentEnrollments(Long studentId) {
         List<Enrollment> list = enrollmentRepository.findByStudentId(studentId);
         // Dùng Java Stream để convert list Entity -> list DTO
@@ -76,7 +82,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
-    public Enrollment updateGrade(Long enrollmentId, GradeRequestDTO request) {
+    public EnrollmentResponseDTO updateGrade(Long enrollmentId, GradeRequestDTO request) {
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
                 .orElseThrow(() -> new RuntimeException("Enrollment not found"));
 
@@ -96,8 +102,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         total = Math.round(total * 100.0) / 100.0;
 
         enrollment.setTotalGrade(total);
-
-        return enrollmentRepository.save(enrollment);
+        Enrollment savedEnrollment = enrollmentRepository.save(enrollment);
+        return mapToResponse(savedEnrollment);
     }
 
     @Override
@@ -116,8 +122,18 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         EnrollmentResponseDTO dto = new EnrollmentResponseDTO();
         dto.setId(enrollment.getId());
         dto.setClassId(enrollment.getClassRoom().getId());
-        dto.setStudentName(enrollment.getStudent().getFullName());
-        dto.setStudentId(enrollment.getStudent().getStudentId());
+        if (enrollment.getStudent() != null) {
+            dto.setStudentName(enrollment.getStudent().getFullName());
+            dto.setStudentId(enrollment.getStudent().getStudentId());
+            dto.setUserId(enrollment.getStudent().getId());
+        }
+        if (enrollment.getClassRoom() != null) {
+            dto.setClassName(enrollment.getClassRoom().getClassName());
+            if (enrollment.getClassRoom().getCourse() != null) {
+                dto.setCourseName(enrollment.getClassRoom().getCourse().getCourseName());
+            }
+        }
+
         dto.setClassName(enrollment.getClassRoom().getClassName());
         dto.setCourseName(enrollment.getClassRoom().getCourse().getCourseName());
 

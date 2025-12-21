@@ -202,7 +202,7 @@ public class UserServiceImpl implements UserService {
 
                 item.setCourseName(courseName);
                 item.setClassName(cls.getClassName());
-                item.setRoom(cls.getClassRoom());
+                item.setRoom(cls.getClassroom());
                 item.setStartTime("Tiết " + cls.getStartPeriod());
 
                 // Calculating the end lesson: Start + Number of lessons - 1
@@ -249,7 +249,7 @@ public class UserServiceImpl implements UserService {
                         cls.getCourse().getCourseName(),
                         cls.getCourse().getCourseCode(),
                         cls.getClassName(),
-                        cls.getClassRoom(),
+                        cls.getClassroom(),
                         cls.getTeacher().getFullName(),
                         cls.getDayOfWeek(),
                         cls.getStartPeriod(),

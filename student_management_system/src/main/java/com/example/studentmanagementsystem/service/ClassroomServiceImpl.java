@@ -69,7 +69,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         classroom.setCourse(course);
         classroom.setTeacher(teacher);
         classroom.setSemester(request.getSemester());
-        classroom.setClassRoom(request.getClassRoom());
+        classroom.setClassroom(request.getClassRoom());
         classroom.setDayOfWeek(request.getDayOfWeek());
         classroom.setStartPeriod(request.getStartPeriod());
         classroom.setTotalPeriods(request.getTotalPeriods());
@@ -108,7 +108,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                         c.getClassName(),
                         c.getCourse().getCourseName(),
                         c.getSemester(),
-                        c.getClassRoom(),
+                        c.getClassroom(),
                         enrollmentRepository.countByClassRoomId(c.getId())))
                 .collect(Collectors.toList());
     }
@@ -138,7 +138,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         classroom.setCourse(course);
         classroom.setTeacher(teacher);
         classroom.setSemester(request.getSemester());
-        classroom.setClassRoom(request.getClassRoom());
+        classroom.setClassroom(request.getClassRoom());
         classroom.setDayOfWeek(request.getDayOfWeek());
         classroom.setStartPeriod(request.getStartPeriod());
         classroom.setTotalPeriods(request.getTotalPeriods());

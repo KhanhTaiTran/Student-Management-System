@@ -33,10 +33,6 @@ public class Grade {
     @JoinColumn(name = "class_id", nullable = false)
     private Classroom classroom;
 
-    private Double inClass;
-    private Double midTerm;
-    private Double finalExam;
-
     @Column(name = "total")
     private Double total;
 }
