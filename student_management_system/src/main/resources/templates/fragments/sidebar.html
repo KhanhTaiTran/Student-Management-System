@@ -1,58 +1,89 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <body>
-    <nav
-      th:fragment="sidebar"
-      class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse"
-      style="min-height: 100vh"
-    >
-      <div class="position-sticky pt-3">
-        <a
-          href="/teacher/dashboard"
-          class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none px-3"
-        >
-          <i class="fa-solid fa-graduation-cap fs-4 me-2"></i>
-          <span class="fs-5 fw-bold">SMS Teacher</span>
+<body>
+<nav th:fragment="sidebar"
+     class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse"
+     style="min-height: 100vh">
+
+  <div class="position-sticky pt-3">
+    <a href="/teacher/dashboard"
+       class="d-flex align-items-center mb-3 text-white text-decoration-none px-3">
+      <i class="fa-solid fa-graduation-cap fs-4 me-2"></i>
+      <span class="fs-5 fw-bold">SMS Teacher</span>
+    </a>
+
+    <hr class="text-white"/>
+
+    <ul class="nav flex-column">
+
+      <li class="nav-item">
+        <a class="nav-link text-white" href="/teacher/dashboard">
+          <i class="fa-solid fa-chart-line me-2"></i> Dashboard
         </a>
-        <hr class="text-white" />
+      </li>
 
-        <ul class="nav flex-column">
-          <li class="nav-item">
-            <a class="nav-link text-white" th:href="@{/teacher/dashboard}">
-              <i class="fa-solid fa-chart-line me-2"></i> Dashboard
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-white" th:href="@{/teacher/classes}">
-              <i class="fa-solid fa-chalkboard-user me-2"></i> Classes
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-white" th:href="@{/teacher/quizzes}">
-              <i class="fa-solid fa-file-circle-question me-2"></i> Quizzes
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-white" th:href="@{/teacher/attendance}">
-              <i class="fa-solid fa-user-check me-2"></i> Attendance
-            </a>
-          </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" href="/teacher/classes">
+          <i class="fa-solid fa-chalkboard-user me-2"></i> Classes
+        </a>
+      </li>
 
-          <li class="nav-item mt-5">
-            <a href="#" onclick="logout()" class="nav-link text-danger">
-              <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
-            </a>
-          </li>
-        </ul>
-      </div>
+      <!-- 🔥 GRADES = SHORTCUT -->
+      <li class="nav-item">
+        <a class="nav-link text-white" href="#" onclick="goGrades()">
+          <i class="fa-solid fa-pen-to-square me-2"></i> Grades
+        </a>
+      </li>
 
-      <script>
-        function logout() {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("role");
-          window.location.href = "/";
-        }
-      </script>
-    </nav>
-  </body>
+      <li class="nav-item">
+        <a class="nav-link text-white" href="/teacher/quizzes">
+          <i class="fa-solid fa-file-circle-question me-2"></i> Quizzes
+        </a>
+      </li>
+
+      <!-- 🔥 ATTENDANCE = SHORTCUT -->
+      <li class="nav-item">
+        <a class="nav-link text-white" href="#" onclick="goAttendance()">
+          <i class="fa-solid fa-user-check me-2"></i> Attendance
+        </a>
+      </li>
+
+      <li class="nav-item mt-5">
+        <a href="#" onclick="logout()" class="nav-link text-danger">
+          <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+        </a>
+      </li>
+
+    </ul>
+  </div>
+
+  <script>
+    function goAttendance() {
+      const classId = localStorage.getItem("lastAttendanceClassId");
+      if (!classId) {
+        alert("Please select a class first.");
+        window.location.href = "/teacher/classes";
+        return;
+      }
+      window.location.href = "/teacher/attendance/" + classId;
+    }
+
+    function goGrades() {
+      const classId = localStorage.getItem("lastAttendanceClassId");
+      if (!classId) {
+        alert("Please select a class first.");
+        window.location.href = "/teacher/classes";
+        return;
+      }
+      window.location.href = "/teacher/grades/" + classId;
+    }
+
+    function logout() {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("role");
+      window.location.href = "/";
+    }
+  </script>
+</nav>
+</body>
 </html>
