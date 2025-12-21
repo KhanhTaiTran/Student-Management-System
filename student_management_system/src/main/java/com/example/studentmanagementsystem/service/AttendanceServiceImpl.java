@@ -43,7 +43,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         // Convert Entity -> DTO
         return list.stream().map(att -> new AttendanceHistoryDTO(
                 att.getId(),
-                att.getStudent().getId(), // Lấy ID sinh viên
+                att.getStudent().getId(), // get student ID
                 att.getStatus().toString(),
                 att.getNote())).collect(Collectors.toList());
     }
@@ -69,13 +69,13 @@ public class AttendanceServiceImpl implements AttendanceService {
         Attendance attendance;
 
         if (existingAtt.isPresent()) {
-            // A. Nếu có rồi -> Lấy ra để CẬP NHẬT (Không tạo mới)
+
             attendance = existingAtt.get();
         } else {
-            // B. Nếu chưa có -> TẠO MỚI
+
             attendance = new Attendance();
 
-            // Tìm Student & Class (Chỉ tìm khi tạo mới để tối ưu)
+            // find Student & Class
             User student = userRepository.findById(request.getStudentId())
                     .orElseThrow(() -> new RuntimeException("Student not found ID: " + request.getStudentId()));
             Classroom classroom = classroomRepository.findById(request.getClassId())

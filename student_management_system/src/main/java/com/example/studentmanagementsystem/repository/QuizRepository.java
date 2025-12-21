@@ -11,11 +11,11 @@ import java.util.List;
 @Repository
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
-    // Lấy tất cả Quiz của một Lớp cụ thể
+    // get all quiz of a classroom
     List<Quiz> findByClassroomId(Long classroomId);
 
-    // Lấy tất cả Quiz do một Giáo viên tạo (Dựa vào classroom -> teacher)
-    // Cái này dùng cho trang "My Quizzes" của Teacher
+    // Get all quizzes created by a teacher (based on classroom -> teacher)
+    // This is used for the teacher's "My Quizzes" page
     @Query("SELECT q FROM Quiz q WHERE q.classroom.teacher.id = :teacherId")
     List<Quiz> findByClassroomTeacherId(Long teacherId);
 

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,7 +17,6 @@ public class StudentQuizServiceImpl implements StudentQuizService {
     private final QuizRepository quizRepository;
     private final QuestionRepository questionRepository;
     private final QuizResultRepository quizResultRepository;
-    private final EnrollmentRepository enrollmentRepository;
     private final UserRepository userRepository;
 
     public StudentQuizServiceImpl(QuizRepository quizRepository, QuestionRepository questionRepository,
@@ -27,63 +25,61 @@ public class StudentQuizServiceImpl implements StudentQuizService {
         this.quizRepository = quizRepository;
         this.questionRepository = questionRepository;
         this.quizResultRepository = quizResultRepository;
-        this.enrollmentRepository = enrollmentRepository;
         this.userRepository = userRepository;
     }
 
-    // 1. LẤY DANH SÁCH QUIZ CỦA SINH VIÊN
+    // 1. Obtain the list of student quizzes.
     public List<Quiz> getStudentQuizzes(Long studentId) {
 
         return quizRepository.findQuizzesByStudentId(studentId);
     }
 
-    // 2. LẤY ĐỀ BÀI ĐỂ LÀM (QUAN TRỌNG: PHẢI GIẤU ĐÁP ÁN)
+    // 2. USE THE QUESTIONS TO SOLVE THE PROBLEM (IMPORTANT: YOU MUST HIDE THE
+    // ANSWERS)
     public Quiz getQuizForTaking(Long quizId) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new RuntimeException("Quiz not found"));
 
-        // 🔥 LOGIC BẢO MẬT: Xóa correctAnswer trước khi gửi về Frontend
-        // Chúng ta không sửa vào DB, chỉ sửa trên object java tạm thời này thôi
+        // SECURITY LOGIC: Delete correctAnswer before sending to Frontend
+        // We are not modifying the DB, only this temporary Java object
         quiz.getQuestions().forEach(q -> q.setCorrectAnswer(null));
 
         return quiz;
     }
 
-    // 3. CHẤM ĐIỂM TỰ ĐỘNG
+    // auto scoring
     @Transactional
     public QuizResult submitQuiz(Long studentId, QuizSubmissionDTO submission) {
-        // Lấy thông tin sinh viên và bài quiz
+        // Collect student information and quiz
         User student = userRepository.findById(studentId).orElseThrow();
         Quiz quiz = quizRepository.findById(submission.getQuizId()).orElseThrow();
 
-        // Lấy đáp án chuẩn từ Database (Không tin tưởng client)
+        // Get the correct answer from the database
         List<Question> dbQuestions = questionRepository.findByQuizId(submission.getQuizId());
 
-        // Map để tra cứu nhanh: QuestionID -> CorrectAnswer
+        // Map for quick navigation: QuestionID -> CorrectAnswer
         Map<Long, String> correctAnswersMap = dbQuestions.stream()
                 .collect(Collectors.toMap(Question::getId, Question::getCorrectAnswer));
 
         int correctCount = 0;
         int totalQuestions = dbQuestions.size();
 
-        // So sánh đáp án
+        // comapre
         for (QuizSubmissionDTO.AnswerDTO ans : submission.getAnswers()) {
             String correct = correctAnswersMap.get(ans.getQuestionId());
-            // So sánh (bỏ qua chữ hoa thường cho chắc)
+            // compare
             if (correct != null && correct.equalsIgnoreCase(ans.getSelectedOption())) {
                 correctCount++;
             }
         }
 
-        // Tính điểm (Thang 10)
         double score = 0;
         if (totalQuestions > 0) {
-            score = (double) correctCount / totalQuestions * 10.0;
-            // Làm tròn 2 chữ số thập phân
+            score = (double) correctCount / totalQuestions * 100.0;
+
             score = Math.round(score * 100.0) / 100.0;
         }
 
-        // Lưu kết quả
         QuizResult result = new QuizResult();
         result.setStudent(student);
         result.setQuiz(quiz);

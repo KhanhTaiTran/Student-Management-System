@@ -176,22 +176,18 @@
           const btn = document.getElementById("btnSend");
           const alertBox = document.getElementById("alertSuccess");
 
-          // Hiệu ứng loading
           const originalText = btn.innerHTML;
           btn.innerHTML =
             '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
           btn.disabled = true;
 
-          // Giả lập gửi API mất 1.5 giây
           setTimeout(() => {
             btn.innerHTML = originalText;
             btn.disabled = false;
 
-            // Reset form và hiện thông báo
             this.reset();
             alertBox.classList.remove("d-none");
 
-            // Ẩn thông báo sau 3s
             setTimeout(() => {
               alertBox.classList.add("d-none");
             }, 4000);

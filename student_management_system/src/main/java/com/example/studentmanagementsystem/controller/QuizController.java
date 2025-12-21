@@ -31,7 +31,7 @@ public class QuizController {
         this.classroomRepository = classroomRepository;
     }
 
-    // 1. TẠO QUIZ MỚI
+    // create new quiz
     @PostMapping
     @Transactional
     public ResponseEntity<?> createQuiz(@RequestBody QuizRequestDTO request) {
@@ -62,7 +62,7 @@ public class QuizController {
         return ResponseEntity.ok("Quiz created successfully!");
     }
 
-    // 2. LẤY DANH SÁCH QUIZ
+    // get list of quiz
     @GetMapping
     public ResponseEntity<?> getQuizzesByTeacher(@AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null)
@@ -70,7 +70,7 @@ public class QuizController {
         return ResponseEntity.ok(quizRepository.findByClassroomTeacherId(userDetails.getId()));
     }
 
-    // 3. API LẤY CHI TIẾT (Cho Modal Edit)
+    // api get quiz detail
     @GetMapping("/{id}")
     public ResponseEntity<?> getQuizDetail(@PathVariable Long id) {
         Quiz quiz = quizRepository.findById(id)
@@ -78,19 +78,19 @@ public class QuizController {
         return ResponseEntity.ok(quiz);
     }
 
-    // 4. API UPDATE (Fix lỗi 500 PUT Method Not Supported)
+    // api update
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<?> updateQuiz(@PathVariable Long id, @RequestBody QuizRequestDTO request) {
         Quiz quiz = quizRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Quiz not found"));
 
-        // Update thông tin cơ bản
+        // Update title and description
         quiz.setTitle(request.getTitle());
         quiz.setDescription(request.getDescription());
 
-        // Update câu hỏi (Xóa cũ, thêm mới)
-        quiz.getQuestions().clear(); // Cần orphanRemoval = true bên Entity Quiz
+        // Update questions (delete old question, add new question)
+        quiz.getQuestions().clear(); 
 
         List<Question> newQuestions = new ArrayList<>();
         for (var qDto : request.getQuestions()) {

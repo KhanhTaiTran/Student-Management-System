@@ -117,19 +117,18 @@
         </main>
       </div>
     </div>
-
+    <div th:replace="fragments/footer :: footer"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       const pathParts = window.location.pathname.split("/");
       const classId = pathParts[pathParts.length - 1];
       const token = localStorage.getItem("accessToken");
 
-      // Set ngày mặc định và lắng nghe sự kiện đổi ngày
       const dateInput = document.getElementById("attDate");
       dateInput.valueAsDate = new Date();
 
       dateInput.addEventListener("change", function () {
-        loadData(); // Load lại dữ liệu khi chọn ngày khác
+        loadData();
       });
 
       document.addEventListener("DOMContentLoaded", function () {
@@ -138,7 +137,6 @@
 
       let studentList = [];
 
-      // 1. Hàm load dữ liệu thông minh (Merge 2 API)
       async function loadData() {
         const tbody = document.getElementById("attTableBody");
         tbody.innerHTML = `<tr><td colspan="4" class="text-center py-3"><i class="fa-solid fa-spinner fa-spin"></i> Checking data...</td></tr>`;
@@ -146,7 +144,7 @@
         const date = dateInput.value;
 
         try {
-          // Gọi song song 2 API: Lấy HS và Lấy Lịch sử điểm danh ngày hôm đó
+          // Call two APIs in parallel: Retrieve student information and retrieve attendance history for that day.
           const [resStudents, resHistory] = await Promise.all([
             fetch(`/api/enrollments/class/${classId}`, {
               headers: { Authorization: "Bearer " + token },
@@ -168,28 +166,28 @@
             return;
           }
 
-          // Tạo Map để tra cứu nhanh: userId -> attendanceRecord
+          // Create a map for quick lookup: userId -> attendanceRecord
           const historyMap = {};
           history.forEach((h) => {
-            // Backend trả về field tên là studentId
+            // The backend returns a field named studentId.
             if (h.studentId) historyMap[h.studentId] = h;
           });
 
           // Render bảng
           students.forEach((s) => {
-            const existingRecord = historyMap[s.userId]; // Tìm xem em này đã điểm danh chưa
+            const existingRecord = historyMap[s.userId]; // Check if this student has already checked in.
 
-            // Logic hiển thị trạng thái
+            // State display logic
             let statusVal = "PRESENT";
             let noteVal = "";
             let isLocked = ""; // Biến để khóa input
             let rowClass = "";
 
             if (existingRecord) {
-              statusVal = existingRecord.status; // Lấy status cũ (LATE/ABSENT...)
+              statusVal = existingRecord.status;
               noteVal = existingRecord.note || "";
-              isLocked = "disabled"; // 🔒 KHÓA DÒNG NÀY
-              rowClass = "table-active"; // Tô màu xám nhẹ để biết đã xong
+              isLocked = "disabled"; // LOCK
+              rowClass = "table-active";
             }
 
             tbody.innerHTML += `
@@ -234,10 +232,10 @@
         }
       }
 
-      // 2. Hàm Submit (Chỉ gửi những người CHƯA điểm danh)
+      // Submit function (Only send to those who HAVE NOT checked in)
       async function submitAll() {
-        // Lọc ra danh sách những input KHÔNG bị disabled
-        // Cách check: Lấy tất cả select, lọc cái nào !disabled
+        // Filter the list of inputs that are NOT disabled
+        // How to check: Get all selects, filter out those that are !disabled
         const activeSelects = document.querySelectorAll(
           ".status-select:not(:disabled)"
         );
@@ -265,7 +263,7 @@
         let successCount = 0;
 
         for (const select of activeSelects) {
-          // Lấy ID từ id="status-123" -> lấy 123
+          // take ID from id="status-123" -> take 123
           const userId = select.id.split("-")[1];
           const note = document.getElementById(`note-${userId}`).value;
           const status = select.value;
@@ -301,7 +299,7 @@
 
         if (errorCount === 0) {
           alert("✅ Saved successfully!");
-          loadData(); // Load lại bảng để khóa các dòng vừa lưu
+          loadData();
         } else {
           alert(`⚠️ Saved ${successCount}, Failed ${errorCount}.`);
           loadData();

@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
-    // Lấy danh sách câu hỏi của một bài Quiz
+    // get list of question
     List<Question> findByQuizId(Long quizId);
 }

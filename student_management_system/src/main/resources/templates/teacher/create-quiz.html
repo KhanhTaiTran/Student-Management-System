@@ -115,17 +115,17 @@
         </main>
       </div>
     </div>
-
+    <div th:replace="fragments/footer :: footer"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       const token = localStorage.getItem("accessToken");
 
-      // Biến này chỉ dùng để tạo ID duy nhất cho HTML (tránh trùng ID khi xóa)
-      // Nó sẽ tăng mãi mãi, không bao giờ giảm.
+      // This variable is only used to create a unique ID for the HTML (to avoid duplicate IDs when deleting).
+      // It will increment indefinitely, never decrement.
       let uniqueIdCounter = 0;
 
       document.addEventListener("DOMContentLoaded", function () {
-        // Load danh sách lớp
+        // Load list student of class
         fetch("/api/teacher/classes", {
           headers: { Authorization: "Bearer " + token },
         })
@@ -138,13 +138,13 @@
             });
           });
 
-        // Mặc định thêm 1 câu hỏi đầu tiên
+        // default add the first question
         addQuestion();
       });
 
-      // 1. Hàm thêm câu hỏi
+      // add question
       function addQuestion() {
-        uniqueIdCounter++; // Tăng ID định danh
+        uniqueIdCounter++;
 
         const html = `
         <div class="card shadow-sm mb-3 question-card" id="q-card-${uniqueIdCounter}">
@@ -192,26 +192,25 @@
           .getElementById("questionsContainer")
           .insertAdjacentHTML("beforeend", html);
 
-        // 🔥 QUAN TRỌNG: Gọi hàm đánh số lại sau khi thêm
+        // IMPORTANT: Call the numbering function again after adding.
         renumberQuestions();
       }
 
-      // 2. Hàm xóa câu hỏi
+      // deleta question
       function removeQuestion(id) {
         const card = document.getElementById(`q-card-${id}`);
         if (card) {
           card.remove();
-          // 🔥 QUAN TRỌNG: Gọi hàm đánh số lại sau khi xóa
+          // IMPORTANT: Call the numbering function again after deleting.
           renumberQuestions();
         }
       }
 
-      // 3. Hàm đánh số lại (Logic fix lỗi của bạn nằm ở đây)
       function renumberQuestions() {
         const cards = document.querySelectorAll(".question-card");
-        // Duyệt qua tất cả các card đang hiện có trên màn hình
+        // Browse through all the cards currently displayed on the screen.
         cards.forEach((card, index) => {
-          // index chạy từ 0 -> số thứ tự sẽ là index + 1
+          //The index runs from 0 -> the sequence number will be index + 1
           const label = card.querySelector(".q-label");
           if (label) {
             label.innerText = `Question ${index + 1}`;
@@ -219,7 +218,7 @@
         });
       }
 
-      // 4. Xử lý Submit (Giữ nguyên logic cũ)
+      // submit handle
       document
         .getElementById("quizForm")
         .addEventListener("submit", async function (e) {

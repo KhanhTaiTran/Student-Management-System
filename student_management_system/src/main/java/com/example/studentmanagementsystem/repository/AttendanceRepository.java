@@ -12,14 +12,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
-    // Điểm danh theo lớp và ngày
-    List<Attendance> findByClassroomIdAndAttendanceDate(
-            Long classroomId,
-            LocalDate attendanceDate);
+        // check attendance by class and date
+        List<Attendance> findByClassroomIdAndAttendanceDate(
+                        Long classroomId,
+                        LocalDate attendanceDate);
 
-    // all attendance of 1 class
-    List<Attendance> findByClassroom_Id(Long classroomId);
+        // all attendance of 1 class
+        List<Attendance> findByClassroom_Id(Long classroomId);
 
-    Optional<Attendance> findByStudentIdAndClassroomIdAndAttendanceDate(Long studentId, Long classroomId,
-            LocalDate attendanceDate);
+        Optional<Attendance> findByStudentIdAndClassroomIdAndAttendanceDate(Long studentId, Long classroomId,
+                        LocalDate attendanceDate);
 }

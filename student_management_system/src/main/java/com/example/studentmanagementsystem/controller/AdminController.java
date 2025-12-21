@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.studentmanagementsystem.dto.request.CreateUserRequestDTO;
 import com.example.studentmanagementsystem.dto.response.UserResponseDTO;
-import com.example.studentmanagementsystem.entity.Classroom;
-import com.example.studentmanagementsystem.entity.Course;
 import com.example.studentmanagementsystem.entity.Role;
 import com.example.studentmanagementsystem.entity.User;
 import com.example.studentmanagementsystem.repository.ClassroomRepository;

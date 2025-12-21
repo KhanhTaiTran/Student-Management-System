@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,20 +28,18 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
     private final EnrollmentRepository enrollmentRepository;
-    private final GradeRepository gradeRepository;
     private final TransactionRepository transactionRepository;
     private final ClassroomRepository classroomRepository;
     private final NotificationRepository notificationRepository;
 
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
             RefreshTokenRepository refreshTokenRepository, EnrollmentRepository enrollmentRepository,
-            GradeRepository gradeRepository, TransactionRepository transactionRepository,
+            TransactionRepository transactionRepository,
             ClassroomRepository classroomRepository, NotificationRepository notificationRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.refreshTokenRepository = refreshTokenRepository;
         this.enrollmentRepository = enrollmentRepository;
-        this.gradeRepository = gradeRepository;
         this.transactionRepository = transactionRepository;
         this.classroomRepository = classroomRepository;
         this.notificationRepository = notificationRepository;

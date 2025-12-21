@@ -20,7 +20,6 @@ public interface ClassroomService {
 
     List<Classroom> getClassesByTeacher(Long teacherId);
 
-    // ✅ NEW: dùng cho Teacher Classes page
     List<ClassWithStudentCountDTO> getClassesWithStudentCount(Long teacherId);
 
 }

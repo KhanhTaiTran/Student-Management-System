@@ -17,19 +17,19 @@ public class StudentQuizController {
         this.studentQuizService = studentQuizService;
     }
 
-    // 1. Lấy danh sách Quiz của tôi
+    // get list of quizzes
     @GetMapping
     public ResponseEntity<?> getMyQuizzes(@AuthenticationPrincipal CustomUserDetails user) {
         return ResponseEntity.ok(studentQuizService.getStudentQuizzes(user.getId()));
     }
 
-    // 2. Vào làm bài (Lấy câu hỏi)
+    // go to take quiz page
     @GetMapping("/{id}/take")
     public ResponseEntity<?> takeQuiz(@PathVariable Long id) {
         return ResponseEntity.ok(studentQuizService.getQuizForTaking(id));
     }
 
-    // 3. Nộp bài (Chấm điểm)
+    // submit quiz
     @PostMapping("/submit")
     public ResponseEntity<?> submitQuiz(@AuthenticationPrincipal CustomUserDetails user,
             @RequestBody QuizSubmissionDTO submission) {

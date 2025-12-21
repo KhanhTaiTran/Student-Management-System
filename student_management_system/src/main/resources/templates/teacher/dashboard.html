@@ -164,7 +164,7 @@
         </main>
       </div>
     </div>
-
+    <div th:replace="fragments/footer :: footer"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -174,7 +174,7 @@
         window.location.href = "/";
       }
 
-      // 🔥 API DASHBOARD
+      // API DASHBOARD
       document.addEventListener("DOMContentLoaded", function () {
         fetch("/api/teacher/dashboard", {
           method: "GET",
@@ -193,7 +193,7 @@
             document.getElementById("statStudents").innerText =
               data.totalStudents;
 
-            // Cập nhật số lượng Quiz (Nhớ sửa Backend DTO trả về field này)
+            // Update the number of quizzes
             if (data.totalQuizzes !== undefined) {
               document.getElementById("statQuizzes").innerText =
                 data.totalQuizzes;

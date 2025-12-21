@@ -14,12 +14,12 @@ public class TeacherDashboardService {
     private final ClassroomRepository classroomRepository;
     private final EnrollmentRepository enrollmentRepository;
 
-    // Tổng số lớp giáo viên dạy
+    // total of class this teacher is teaching
     public long getTotalTeachingClasses(Long teacherId) {
         return classroomRepository.countByTeacherId(teacherId);
     }
 
-    // Tổng số sinh viên (CÓ TRÙNG)
+    // total of student (duplicated)
     public long getTotalStudents(Long teacherId) {
         return enrollmentRepository.countTotalStudentsByTeacher(teacherId);
     }

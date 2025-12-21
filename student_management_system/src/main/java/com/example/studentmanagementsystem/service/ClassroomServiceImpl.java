@@ -22,14 +22,13 @@ public class ClassroomServiceImpl implements ClassroomService {
     private ClassroomRepository classroomRepository;
     private CourseRepository courseRepository;
     private UserRepository userRepository;
-    private EnrollmentRepository enrollmentRepository; // 🔥 ADD
+    private EnrollmentRepository enrollmentRepository;
 
     public ClassroomServiceImpl(
             ClassroomRepository classroomRepository,
             CourseRepository courseRepository,
             UserRepository userRepository,
-            EnrollmentRepository enrollmentRepository // 🔥 ADD
-    ) {
+            EnrollmentRepository enrollmentRepository) {
         this.classroomRepository = classroomRepository;
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
@@ -96,7 +95,6 @@ public class ClassroomServiceImpl implements ClassroomService {
         return classroomRepository.findByTeacherId(teacherId);
     }
 
-    // ===================== ⭐ NEW METHOD =====================
     @Override
     public List<ClassWithStudentCountDTO> getClassesWithStudentCount(Long teacherId) {
 
