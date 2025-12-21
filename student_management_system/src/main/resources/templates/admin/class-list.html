@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="#{class.title}">Class Management</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div
+          class="col-md-3 col-lg-2 sidebar p-3 collapse d-md-block bg-dark text-white"
+          style="min-height: 100vh"
+        >
+          <a
+            href="/"
+            class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+          >
+            <i class="fa-solid fa-graduation-cap fs-4 me-2"></i>
+            <span class="fs-5 fw-bold" th:text="#{nav.brand}">SMS Admin</span>
+          </a>
+          <hr />
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a href="/admin/dashboard" class="nav-link text-white"
+                ><i class="fa-solid fa-chart-line me-2"></i>
+                <span th:text="#{admin.sidebar.dashboard}">Dashboard</span></a
+              >
+            </li>
+            <li class="nav-item">
+              <a href="/admin/users" class="nav-link text-white"
+                ><i class="fa-solid fa-users me-2"></i>
+                <span th:text="#{admin.sidebar.users}">Users</span></a
+              >
+            </li>
+            <li class="nav-item">
+              <a href="/admin/courses" class="nav-link text-white"
+                ><i class="fa-solid fa-book me-2"></i>
+                <span th:text="#{admin.sidebar.courses}">Courses</span></a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                href="/admin/classes"
+                class="nav-link active bg-primary text-white"
+                ><i class="fa-solid fa-chalkboard me-2"></i>
+                <span th:text="#{admin.sidebar.classes}">Classes</span></a
+              >
+            </li>
+            <li class="nav-item mt-5">
+              <a href="#" onclick="logout()" class="nav-link text-danger">
+                <i class="fa-solid fa-sign-out-alt me-2"></i>
+                <span th:text="#{admin.sidebar.logout}">Logout</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+          <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-4 border-bottom"
+          >
+            <h1 class="h2" th:text="#{class.title}">Class Management</h1>
+
+            <div class="btn-toolbar mb-2 mb-md-0">
+              <div class="dropdown me-2">
+                <button
+                  class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                >
+                  <i class="fa-solid fa-globe"></i> Language
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" href="?lang=en">🇺🇸 English</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="?lang=vi">🇻🇳 Tiếng Việt</a>
+                  </li>
+                </ul>
+              </div>
+              <button class="btn btn-sm btn-primary" onclick="openModal()">
+                <i class="fa-solid fa-plus me-2"></i>
+                <span th:text="#{class.btn.add}">Add Class</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="card shadow-sm">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>ID</th>
+                      <th th:text="#{class.table.name}">Class Name</th>
+                      <th th:text="#{class.table.course}">Course</th>
+                      <th th:text="#{class.table.teacher}">Teacher</th>
+                      <th th:text="#{class.table.room}">Room</th>
+                      <th th:text="#{class.table.semester}">Semester</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="classTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <div class="modal fade" id="classModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" th:text="#{class.modal.title}">
+              Class Info
+            </h5>
+            <button
+              title="classInfo"
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="classForm">
+              <input type="hidden" name="id" id="classId" />
+              <div class="mb-3">
+                <label class="form-label" th:text="#{class.form.name}"
+                  >Class Name</label
+                >
+                <input
+                  title="className"
+                  type="text"
+                  class="form-control"
+                  name="className"
+                  required
+                />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label" th:text="#{class.form.course}"
+                  >Course</label
+                >
+                <select
+                  title="courseId"
+                  class="form-select"
+                  id="courseSelect"
+                  name="courseId"
+                  required
+                >
+                  <option value="">Loading...</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label" th:text="#{class.form.teacher}"
+                  >Teacher</label
+                >
+                <select
+                  title="teacherId"
+                  class="form-select"
+                  id="teacherSelect"
+                  name="teacherId"
+                  required
+                >
+                  <option value="">Loading...</option>
+                </select>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label" th:text="#{class.form.room}"
+                    >Room</label
+                  >
+                  <input
+                    title="classRoom"
+                    type="text"
+                    class="form-control"
+                    name="classRoom"
+                    required
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label" th:text="#{class.form.semester}"
+                    >Semester</label
+                  >
+                  <input
+                    title="semester"
+                    type="text"
+                    class="form-control"
+                    name="semester"
+                    required
+                  />
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label" th:text="#{class.startDate}"
+                      >Start Date</label
+                    >
+                    <input
+                      title="startDate"
+                      type="date"
+                      class="form-control"
+                      id="startDate"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" th:text="#{class.endDate}"
+                      >End Date</label
+                    >
+                    <input
+                      title="endDate"
+                      type="date"
+                      class="form-control"
+                      id="endDate"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Thứ (Day)</label>
+                    <select
+                      title="selectDay"
+                      class="form-select"
+                      name="dayOfWeek"
+                      required
+                    >
+                      <option value="2">Thứ 2 (Monday)</option>
+                      <option value="3">Thứ 3 (Tuesday)</option>
+                      <option value="4">Thứ 4 (Wednesday)</option>
+                      <option value="5">Thứ 5 (Thursday)</option>
+                      <option value="6">Thứ 6 (Friday)</option>
+                      <option value="7">Thứ 7 (Saturday)</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Tiết BĐ (Start)</label>
+                    <select
+                      title="selectPeriod"
+                      class="form-select"
+                      name="startPeriod"
+                      required
+                    >
+                      <option value="1">Tiết 1 (7:30)</option>
+                      <option value="2">Tiết 2 (8:15)</option>
+                      <option value="3">Tiết 3 (9:00)</option>
+                      <option value="4">Tiết 4 (10:00)</option>
+                      <option value="5">Tiết 5 (10:45)</option>
+                      <option value="6">Tiết 6 (11:30)</option>
+                      <option value="7">Tiết 7 (13:00)</option>
+                      <option value="8">Tiết 8 (13:45)</option>
+                      <option value="9">Tiết 9 (14:30)</option>
+                      <option value="10">Tiết 10 (15:30)</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Số tiết (Total)</label>
+                    <input
+                      title="totalPeriods"
+                      type="number"
+                      class="form-control"
+                      name="totalPeriods"
+                      min="1"
+                      max="5"
+                      value="3"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-end">
+                <button
+                  type="button"
+                  class="btn btn-secondary me-2"
+                  data-bs-dismiss="modal"
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  onclick="saveClass()"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const token = localStorage.getItem("accessToken");
+      const modal = new bootstrap.Modal(document.getElementById("classModal"));
+      const classForm = document.getElementById("classForm");
+      const classIdInput = document.getElementById("classId");
+
+      document.addEventListener("DOMContentLoaded", function () {
+        loadClasses();
+        loadDropdowns();
+      });
+
+      // load list of classes
+      async function loadClasses() {
+        try {
+          const res = await fetch("/api/classrooms", {
+            headers: { Authorization: "Bearer " + token },
+          });
+          const classes = await res.json();
+          const tbody = document.getElementById("classTableBody");
+          tbody.innerHTML = "";
+
+          classes.forEach((c) => {
+            const row = `
+                                <tr>
+                                    <td>#${c.id}</td>
+                                    <td class="fw-bold text-primary">${c.className}</td>
+                                    <td><span class="badge bg-info text-dark">${c.course.courseName}</span></td>
+                                    <td>${c.teacher.fullName}</td>
+                                    <td>${c.classRoom}</td>
+                                    <td><span class="badge bg-light text-dark border">${c.semester}</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-warning me-2" onclick="openEditModal(${c.id})">
+                                            <i class="fa-solid fa-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="deleteClass(${c.id})">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+            tbody.innerHTML += row;
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      // Load Dropdown (Courses & Teachers)
+      async function loadDropdowns() {
+        try {
+          const resC = await fetch("/api/courses", {
+            headers: { Authorization: "Bearer " + token },
+          });
+          const courses = await resC.json();
+          const cSelect = document.getElementById("courseSelect");
+          cSelect.innerHTML = `<option value="">-- Select Course --</option>`;
+          courses.forEach((c) => {
+            cSelect.innerHTML += `<option value="${c.id}">${c.courseName} (${c.courseCode})</option>`;
+          });
+
+          const resT = await fetch("/api/admin/teachers", {
+            headers: { Authorization: "Bearer " + token },
+          });
+          const teachers = await resT.json();
+          const tSelect = document.getElementById("teacherSelect");
+          tSelect.innerHTML = `<option value="">-- Select Teacher --</option>`;
+          teachers.forEach((t) => {
+            tSelect.innerHTML += `<option value="${t.id}">${t.fullName} (${t.email})</option>`;
+          });
+        } catch (err) {
+          console.error("Error loading dropdowns", err);
+        }
+      }
+
+      function openModal() {
+        classForm.reset();
+        classIdInput.value = "";
+        modal.show();
+      }
+
+      async function openEditModal(id) {
+        classForm.reset();
+        try {
+          const res = await fetch(`/api/classrooms/${id}`, {
+            headers: { Authorization: "Bearer " + token },
+          });
+          const klass = await res.json();
+
+          // Fill old data
+          classIdInput.value = klass.id;
+          classForm.querySelector('[name="className"]').value = klass.className;
+          document.getElementById("courseSelect").value = klass.course.id; // Dùng ID cho chính xác
+          document.getElementById("teacherSelect").value = klass.teacher.id;
+          classForm.querySelector('[name="classRoom"]').value = klass.classRoom;
+          classForm.querySelector('[name="semester"]').value = klass.semester;
+
+          document.getElementById("startDate").value = klass.startDate || "";
+          document.getElementById("endDate").value = klass.endDate || "";
+          classForm.querySelector('[name="dayOfWeek"]').value =
+            klass.dayOfWeek || 2;
+          classForm.querySelector('[name="startPeriod"]').value =
+            klass.startPeriod || 1;
+          classForm.querySelector('[name="totalPeriods"]').value =
+            klass.totalPeriods || 3;
+
+          modal.show();
+        } catch (error) {
+          console.error("Failed to fetch class details", error);
+        }
+      }
+
+      // create or update classroom
+      async function saveClass() {
+        if (!classForm.checkValidity()) {
+          classForm.reportValidity();
+          return;
+        }
+        const id = document.getElementById("classId").value;
+        const method = id ? "PUT" : "POST";
+        const url = id ? `/api/classrooms/${id}` : "/api/classrooms";
+
+        // Get data from the form
+        const payload = {
+          className: document.querySelector("input[name='className']").value,
+          courseId: document.querySelector("select[name='courseId']").value,
+          teacherId: document.querySelector("select[name='teacherId']").value,
+          classRoom: document.querySelector("input[name='classRoom']").value,
+          semester: document.querySelector("input[name='semester']").value,
+
+          startDate: document.getElementById("startDate").value,
+          endDate: document.getElementById("endDate").value,
+
+          dayOfWeek: document.querySelector("select[name='dayOfWeek']").value,
+          startPeriod: document.querySelector("select[name='startPeriod']")
+            .value,
+          totalPeriods: document.querySelector("input[name='totalPeriods']")
+            .value,
+        };
+
+        try {
+          const res = await fetch(url, {
+            method: method,
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + localStorage.getItem("accessToken"),
+            },
+            body: JSON.stringify(payload),
+          });
+
+          if (res.ok) {
+            alert("Saved successfully!");
+            location.reload();
+          } else {
+            // Display detailed error messages from the backend (e.g., teacher scheduling conflict).
+            const err = await res.json();
+            alert("Error: " + (err.message || "Failed to save class"));
+          }
+        } catch (error) {
+          console.error(error);
+          alert("System Error!");
+        }
+      }
+
+      // delete classroom
+      window.deleteClass = async function (id) {
+        if (!confirm("Delete this class?")) return;
+        try {
+          const res = await fetch(`/api/classrooms/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: "Bearer " + token },
+          });
+          if (res.ok) {
+            loadClasses();
+          } else {
+            alert("Failed to delete.");
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      };
+
+      function logout() {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("role");
+        window.location.href = "/";
+      }
+    </script>
+  </body>
+</html>

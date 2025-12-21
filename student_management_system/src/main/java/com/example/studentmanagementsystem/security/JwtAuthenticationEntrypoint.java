@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class JwtAuthenticationEntrypoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request,

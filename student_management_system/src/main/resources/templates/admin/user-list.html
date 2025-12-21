@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="#{user.title}">User Management</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div
+          class="col-md-3 col-lg-2 sidebar p-3 collapse d-md-block bg-dark text-white"
+          style="min-height: 100vh"
+        >
+          <a
+            href="/"
+            class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+          >
+            <i class="fa-solid fa-graduation-cap fs-4 me-2"></i>
+            <span class="fs-5 fw-bold" th:text="#{nav.brand}">SMS Admin</span>
+          </a>
+          <hr />
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a href="/admin/dashboard" class="nav-link text-white">
+                <i class="fa-solid fa-chart-line me-2"></i>
+                <span th:text="#{admin.sidebar.dashboard}">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                href="/admin/users"
+                class="nav-link active bg-primary text-white"
+              >
+                <i class="fa-solid fa-users me-2"></i>
+                <span th:text="#{admin.sidebar.users}">Users</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/admin/courses" class="nav-link text-white">
+                <i class="fa-solid fa-book me-2"></i>
+                <span th:text="#{admin.sidebar.courses}">Courses</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/admin/classes" class="nav-link text-white">
+                <i class="fa-solid fa-chalkboard me-2"></i>
+                <span th:text="#{admin.sidebar.classes}">Classes</span>
+              </a>
+            </li>
+            <li class="nav-item mt-5">
+              <a href="#" onclick="logout()" class="nav-link text-danger">
+                <i class="fa-solid fa-sign-out-alt me-2"></i>
+                <span th:text="#{admin.sidebar.logout}">Logout</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+          <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-4 border-bottom"
+          >
+            <h1 class="h2" th:text="#{user.header}">User Management</h1>
+
+            <div class="btn-toolbar mb-2 mb-md-0">
+              <div class="dropdown me-2">
+                <button
+                  class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                >
+                  <i class="fa-solid fa-globe"></i> Language
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" href="?lang=en">🇺🇸 English</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="?lang=vi">🇻🇳 Tiếng Việt</a>
+                  </li>
+                </ul>
+              </div>
+
+              <button
+                class="btn btn-primary btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#addUserModal"
+              >
+                <i class="fa-solid fa-plus me-2"></i>
+                <span th:text="#{user.btn.add}">Add User</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="card shadow-sm">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th th:text="#{user.table.id}">ID</th>
+                      <th th:text="#{user.table.name_email}">
+                        Full Name & Email
+                      </th>
+                      <th th:text="#{user.table.username}">Username</th>
+                      <th th:text="#{user.table.role}">Role</th>
+                      <th th:text="#{user.table.status}">Status</th>
+                      <th th:text="#{user.table.action}">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="userTableBody">
+                    <tr>
+                      <td colspan="6" class="text-center p-4">
+                        <div
+                          class="spinner-border text-primary"
+                          role="status"
+                        ></div>
+                        <span class="ms-2" th:text="#{user.table.loading}"
+                          >Loading...</span
+                        >
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <div class="modal fade" id="addUserModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" th:text="#{user.modal.title}">
+              Create New Account
+            </h5>
+            <button
+              title="createAccount"
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="createUserForm">
+              <div class="mb-3">
+                <label class="form-label" th:text="#{user.form.fullname}"
+                  >Full Name</label
+                >
+                <input
+                  title="fullName"
+                  type="text"
+                  class="form-control"
+                  name="fullName"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label" th:text="#{user.form.email}"
+                  >Email</label
+                >
+                <input
+                  title="email"
+                  type="email"
+                  class="form-control"
+                  name="email"
+                  required
+                />
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label" th:text="#{user.form.username}"
+                    >Username</label
+                  >
+                  <input
+                    title="username"
+                    type="text"
+                    class="form-control"
+                    name="username"
+                    required
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label" th:text="#{user.form.password}"
+                    >Password</label
+                  >
+                  <input
+                    title="password"
+                    type="password"
+                    class="form-control"
+                    name="password"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" th:text="#{user.form.role}"
+                  >Role</label
+                >
+                <select
+                  title="roleSelect"
+                  class="form-select"
+                  name="role"
+                  id="roleSelect"
+                  onchange="toggleStudentId()"
+                >
+                  <option value="STUDENT" th:text="#{role.student}">
+                    Student
+                  </option>
+                  <option value="TEACHER" th:text="#{role.teacher}">
+                    Teacher
+                  </option>
+                  <option value="ADMIN" th:text="#{role.admin}">Admin</option>
+                </select>
+              </div>
+              <div class="mb-3" id="studentIdGroup">
+                <label class="form-label" th:text="#{user.form.studentid}"
+                  >Student ID</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  name="studentId"
+                  placeholder="ITITIU..."
+                />
+              </div>
+              <div id="modalAlert" class="alert d-none"></div>
+              <div class="d-flex justify-content-end">
+                <button
+                  type="button"
+                  class="btn btn-secondary me-2"
+                  data-bs-dismiss="modal"
+                  th:text="#{user.btn.cancel}"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  th:text="#{user.btn.save}"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script th:inline="javascript">
+      const i18n = {
+        successCreate: /*[[#{user.msg.success}]]*/ "Created successfully!",
+        confirmReset: /*[[#{user.msg.confirm_reset}]]*/ "Reset password?",
+        successReset: /*[[#{user.msg.reset_success}]]*/ "Password reset!",
+        errorReset: /*[[#{user.msg.reset_error}]]*/ "Error!",
+        confirmDelete:
+          /*[[#{user.msg.confirm_delete}]]*/ "Are you sure you want to delete this user?",
+        successDelete:
+          /*[[#{user.msg.delete_success}]]*/ "User deleted successfully!",
+        errorDelete: /*[[#{user.msg.delete_error}]]*/ "Error deleting user.",
+        roleStudent: /*[[#{role.student}]]*/ "Student",
+        roleTeacher: /*[[#{role.teacher}]]*/ "Teacher",
+        roleAdmin: /*[[#{role.admin}]]*/ "Admin",
+      };
+    </script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", loadUsers);
+
+      async function loadUsers() {
+        const token = localStorage.getItem("accessToken");
+        const tbody = document.getElementById("userTableBody");
+
+        try {
+          const res = await fetch("/api/admin/users", {
+            headers: { Authorization: "Bearer " + token },
+          });
+
+          if (!res.ok) throw new Error("API Error");
+          const users = await res.json();
+
+          tbody.innerHTML = "";
+          users.forEach((u) => {
+            let badge = "bg-secondary";
+            if (u.role === "ADMIN") badge = "bg-warning text-dark";
+            if (u.role === "TEACHER") badge = "bg-success";
+            if (u.role === "STUDENT") badge = "bg-primary";
+
+            const statusHtml = u.active
+              ? `<span class="text-success"><i class="fa-solid fa-circle-check"></i> Active</span>`
+              : `<span class="text-danger"><i class="fa-solid fa-lock"></i> Locked</span>`;
+
+            const row = `
+                    <tr>
+                        <td>#${u.id}</td>
+                        <td>
+                            <div class="fw-bold">${u.fullName}</div>
+                            <div class="text-muted small">${u.email}</div>
+                        </td>
+                        <td>${u.username}</td>
+                        <td><span class="badge ${badge}">${u.role}</span></td>
+                        <td>${statusHtml}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="resetPassword(${u.id})" title="Reset Password">
+                                <i class="fa-solid fa-key"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger ms-1" onclick="deleteUser(${u.id})" title="Delete User">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            tbody.innerHTML += row;
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      //create user
+      document
+        .getElementById("createUserForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const token = localStorage.getItem("accessToken");
+          const formData = new FormData(this);
+          const data = Object.fromEntries(formData.entries());
+
+          if (data.role !== "STUDENT") delete data.studentId;
+
+          try {
+            const res = await fetch("/api/admin/users/create-account", {
+              method: "POST",
+              headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            });
+
+            if (res.ok) {
+              alert(i18n.successCreate);
+              location.reload();
+            } else {
+              const errData = await res.json();
+              const alertBox = document.getElementById("modalAlert");
+              alertBox.innerText = "Error: " + (errData.message || "Unknown");
+              alertBox.classList.remove("d-none");
+              alertBox.classList.add("alert-danger");
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        });
+
+      // 3. Reset Password
+      async function resetPassword(userId) {
+        if (!confirm(i18n.confirmReset)) return;
+
+        const token = localStorage.getItem("accessToken");
+        try {
+          const res = await fetch(`/api/admin/users/${userId}/reset-password`, {
+            method: "PUT",
+            headers: { Authorization: "Bearer " + token },
+          });
+          if (res.ok) {
+            alert(i18n.successReset);
+          } else {
+            alert(i18n.errorReset);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      // 4. Delete User
+      async function deleteUser(userId) {
+        if (!confirm(i18n.confirmDelete)) return;
+
+        const token = localStorage.getItem("accessToken");
+        try {
+          const res = await fetch(`/api/admin/users/${userId}`, {
+            method: "DELETE",
+            headers: { Authorization: "Bearer " + token },
+          });
+          if (res.ok) {
+            alert(i18n.successDelete);
+            loadUsers(); // Reload the user list
+          } else {
+            alert(i18n.errorDelete);
+          }
+        } catch (err) {
+          console.error(err);
+          alert(i18n.errorDelete);
+        }
+      }
+
+      function toggleStudentId() {
+        const role = document.getElementById("roleSelect").value;
+        const div = document.getElementById("studentIdGroup");
+        if (role === "STUDENT") div.classList.remove("d-none");
+        else div.classList.add("d-none");
+      }
+
+      function logout() {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("role");
+        window.location.href = "/";
+      }
+    </script>
+  </body>
+</html>

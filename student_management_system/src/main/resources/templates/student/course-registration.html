@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="#{student.reg.title}">Registration</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" th:href="@{/css/student.css}" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div
+          class="col-md-3 col-lg-2 sidebar p-3 collapse d-md-block bg-dark text-white"
+        >
+          <a
+            href="/"
+            class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+          >
+            <i class="fa-solid fa-graduation-cap fs-4 me-2"></i>
+            <span class="fs-5 fw-bold" th:text="#{nav.brand.student}"
+              >SMS Student</span
+            >
+          </a>
+          <hr />
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a href="/student/dashboard" class="nav-link text-white">
+                <i class="fa-solid fa-chart-line me-2"></i>
+                <span th:text="#{student.sidebar.dashboard}">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/student/schedule" class="nav-link text-white">
+                <i class="fa-solid fa-calendar-days me-2"></i>
+                <span th:text="#{student.sidebar.schedule}">Schedule</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                href="/student/course-registration"
+                class="nav-link active bg-success text-white"
+              >
+                <i class="fa-solid fa-cart-plus me-2"></i>
+                <span th:text="#{student.sidebar.registration}"
+                  >Registration</span
+                >
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/student/grades" class="nav-link text-white">
+                <i class="fa-solid fa-book me-2"></i>
+                <span th:text="#{student.sidebar.grades}">Grades</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/student/payment" class="nav-link text-white">
+                <i class="fa-solid fa-credit-card me-2"></i>
+                <span th:text="#{student.sidebar.payment}">Payment</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/student/quizzes" class="nav-link text-white">
+                <i class="fa-solid fa-list-check me-2"></i> My Quizzes
+              </a>
+            </li>
+            <li class="nav-item mt-5">
+              <a href="#" onclick="logout()" class="nav-link text-danger">
+                <i class="fa-solid fa-sign-out-alt me-2"></i>
+                <span th:text="#{student.sidebar.logout}">Logout</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+          <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-4 border-bottom"
+          >
+            <h2 th:text="#{student.reg.title}">Course Registration</h2>
+            <div class="dropdown">
+              <button
+                class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+              >
+                <i class="fa-solid fa-globe"></i> Language
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="?lang=en">🇺🇸 English</a></li>
+                <li>
+                  <a class="dropdown-item" href="?lang=vi">🇻🇳 Tiếng Việt</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card shadow-sm mb-4">
+            <div class="card-body">
+              <div class="input-group">
+                <span class="input-group-text bg-white"
+                  ><i class="fa-solid fa-search"></i
+                ></span>
+                <input
+                  title="searchInput"
+                  type="text"
+                  id="searchInput"
+                  class="form-control"
+                  th:placeholder="#{student.reg.search}"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="card shadow-sm">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th th:text="#{student.table.course}">Course</th>
+                      <th th:text="#{student.table.class}">Class</th>
+                      <th th:text="#{student.table.teacher}">Lecturer</th>
+                      <th th:text="#{student.table.schedule}">Schedule</th>
+                      <th th:text="#{student.table.room}">Room</th>
+                      <th th:text="#{student.table.status}">Status</th>
+                      <th th:text="#{student.table.action}">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="classListBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <div th:replace="fragments/footer :: footer"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script th:inline="javascript">
+      const i18n = {
+        day2: /*[[#{day.2}]]*/ "Monday",
+        day3: /*[[#{day.3}]]*/ "Tuesday",
+        day4: /*[[#{day.4}]]*/ "Wednesday",
+        day5: /*[[#{day.5}]]*/ "Thursday",
+        day6: /*[[#{day.6}]]*/ "Friday",
+        day7: /*[[#{day.7}]]*/ "Saturday",
+        day8: /*[[#{day.8}]]*/ "Sunday",
+        period: /*[[#{class.period}]]*/ "Period",
+        noSchedule: /*[[#{class.no_schedule}]]*/ "No Schedule",
+        registered: /*[[#{status.registered}]]*/ "Registered",
+        notRegistered: /*[[#{status.not_registered}]]*/ "Not Registered",
+        btnRegister: /*[[#{btn.register}]]*/ "Register",
+        btnDrop: /*[[#{btn.drop}]]*/ "Drop",
+        confirmRegister: /*[[#{confirm.register}]]*/ "Confirm register?",
+        confirmDrop: /*[[#{confirm.drop}]]*/ "Confirm drop?",
+        successRegister: /*[[#{msg.success.register}]]*/ "Success!",
+        successDrop: /*[[#{msg.success.drop}]]*/ "Dropped!",
+      };
+    </script>
+
+    <script>
+      function logout() {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("role");
+        window.location.href = "/";
+      }
+
+      document.addEventListener("DOMContentLoaded", loadClasses);
+
+      let myRegisteredClassIds = [];
+
+      async function loadClasses() {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          window.location.href = "/";
+          return;
+        }
+
+        try {
+          const [resClasses, resMyCourses] = await Promise.all([
+            fetch("/api/classrooms", {
+              headers: { Authorization: "Bearer " + token },
+            }),
+            fetch("/api/enrollments/my-courses", {
+              headers: { Authorization: "Bearer " + token },
+            }),
+          ]);
+
+          if (resClasses.ok && resMyCourses.ok) {
+            const allClasses = await resClasses.json();
+            const myCourses = await resMyCourses.json();
+            // Map classId from student enrollment list
+            myRegisteredClassIds = myCourses.map((c) => {
+              // Backend EnrollmentResponseDTO might not have classId directly if you removed it
+              // Make sure EnrollmentResponseDTO has classId! Or use class name logic.
+              // Assuming you added classId to EnrollmentResponseDTO as discussed previously.
+              return c.classId ? c.classId : -1;
+            });
+            renderTable(allClasses);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      function renderTable(classes) {
+        const tbody = document.getElementById("classListBody");
+        tbody.innerHTML = "";
+
+        classes.forEach((c) => {
+          // Multilingual support for the School Calendar
+          let scheduleText = i18n.noSchedule;
+
+          if (c.dayOfWeek) {
+            // Get the variable i18n
+            // c.dayOfWeek = 2 => i18n['day2']
+            const dayName = i18n["day" + c.dayOfWeek] || "Day " + c.dayOfWeek;
+            const endPeriod = c.startPeriod + c.totalPeriods - 1;
+
+            scheduleText = `${dayName} (${i18n.period} ${c.startPeriod} - ${endPeriod})`;
+          }
+
+          // Check if you are registered
+          const isRegistered = myRegisteredClassIds.includes(c.id);
+
+          let statusBadge = `<span class="badge bg-secondary">${i18n.notRegistered}</span>`;
+          let actionBtn = `
+                    <button class="btn btn-sm btn-primary" onclick="registerClass(${c.id})">
+                        <i class="fa-solid fa-plus"></i> ${i18n.btnRegister}
+                    </button>`;
+
+          if (isRegistered) {
+            statusBadge = `<span class="badge bg-success"><i class="fa-solid fa-check"></i> ${i18n.registered}</span>`;
+            actionBtn = `
+                        <button class="btn btn-sm btn-outline-danger" onclick="dropClass(${c.id})">
+                            <i class="fa-solid fa-xmark"></i> ${i18n.btnDrop}
+                        </button>`;
+          }
+
+          const row = `
+                    <tr class="class-row">
+                        <td>
+                            <div class="fw-bold">${c.course.courseName}</div>
+                            <small class="text-muted">${c.course.courseCode}</small>
+                        </td>
+                        <td><span class="badge bg-info text-dark">${c.className}</span></td>
+                        <td>${c.teacher.fullName}</td>
+                        <td class="fw-bold text-primary">${scheduleText}</td>
+                        <td>${c.classRoom}</td>
+                        <td>${statusBadge}</td>
+                        <td>${actionBtn}</td>
+                    </tr>
+                `;
+          tbody.innerHTML += row;
+        });
+      }
+
+      // Search Logic
+      document
+        .getElementById("searchInput")
+        .addEventListener("keyup", function () {
+          const value = this.value.toLowerCase();
+          const rows = document.querySelectorAll(".class-row");
+          rows.forEach((row) => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(value) ? "" : "none";
+          });
+        });
+
+      // Register Handle
+      async function registerClass(classId) {
+        if (!confirm(i18n.confirmRegister)) return; // Use i18n message
+
+        const token = localStorage.getItem("accessToken");
+        try {
+          const res = await fetch("/api/enrollments/register", {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ classId: classId }),
+          });
+
+          if (res.ok) {
+            alert(i18n.successRegister);
+            loadClasses();
+          } else {
+            const err = await res.json();
+            alert("Error: " + (err.message || "Failed"));
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      // Drop Handle
+      async function dropClass(classId) {
+        if (!confirm(i18n.confirmDrop)) return; // Use i18n message
+        const token = localStorage.getItem("accessToken");
+        try {
+          const res = await fetch(`/api/enrollments/drop/${classId}`, {
+            method: "DELETE",
+            headers: { Authorization: "Bearer " + token },
+          });
+
+          if (res.ok) {
+            alert(i18n.successDrop);
+            loadClasses();
+          } else {
+            const err = await res.json();
+            alert("Error: " + (err.message || "Failed"));
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    </script>
+  </body>
+</html>

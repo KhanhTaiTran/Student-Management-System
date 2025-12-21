@@ -59,7 +59,7 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint))
                 .authorizeHttpRequests(auth -> auth
                         // 1. PUBLIC ENDPOINTS
-                        .requestMatchers("/api/auth/**").permitAll() // API Login/Register
+                        .requestMatchers("/api/auth/**", "favicon.ico", "/contact").permitAll() // API Login/Register
                         .requestMatchers("/", "/login", "/register", "/error", "/reset-password").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/img/**", "/assets/**").permitAll()
 

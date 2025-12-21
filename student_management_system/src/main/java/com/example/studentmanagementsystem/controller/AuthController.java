@@ -25,12 +25,9 @@ public class AuthController {
     // api login: http://localhost:8080/api/auth/login
     @PostMapping("/login")
     public ResponseEntity<JwtAuthResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO) {
-        String token = authService.login(loginRequestDTO);
+        JwtAuthResponseDTO jwtAuthResponse = authService.login(loginRequestDTO);
 
-        JwtAuthResponseDTO jwtAuthResponseDTO = new JwtAuthResponseDTO();
-        jwtAuthResponseDTO.setAccessToken(token);
-
-        return ResponseEntity.ok(jwtAuthResponseDTO);
+        return ResponseEntity.ok(jwtAuthResponse);
     }
 
     // forgot pass
@@ -40,7 +37,6 @@ public class AuthController {
             authService.forgotPassword(request.getEmail());
             return ResponseEntity.ok("Link reset Password has been send to your email!");
         } catch (Exception e) {
-            // TODO: handle exception
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

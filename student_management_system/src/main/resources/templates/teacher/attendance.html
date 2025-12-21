@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Take Attendance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <nav
+          class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse"
+          style="min-height: 100vh"
+        >
+          <div class="position-sticky pt-3">
+            <a
+              href="/teacher/dashboard"
+              class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none px-3"
+            >
+              <i class="fa-solid fa-graduation-cap fs-4 me-2"></i>
+              <span class="fs-5 fw-bold">SMS Teacher</span>
+            </a>
+            <hr class="text-white" />
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a href="/teacher/dashboard" class="nav-link text-white"
+                  ><i class="fa-solid fa-chart-line me-2"></i> Dashboard</a
+                >
+              </li>
+              <li class="nav-item">
+                <a
+                  href="/teacher/classes"
+                  class="nav-link active bg-primary text-white"
+                  ><i class="fa-solid fa-chalkboard-user me-2"></i> Classes</a
+                >
+              </li>
+              <li class="nav-item">
+                <a href="/teacher/quizzes" class="nav-link text-white"
+                  ><i class="fa-solid fa-file-circle-question me-2"></i>
+                  Quizzes</a
+                >
+              </li>
+
+              <li class="nav-item mt-5">
+                <a href="#" onclick="logout()" class="nav-link text-danger"
+                  ><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</a
+                >
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+          <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+          >
+            <h2>
+              <i class="fa-solid fa-clipboard-user text-success"></i> Attendance
+              Check
+            </h2>
+
+            <div class="d-flex align-items-center">
+              <div class="input-group me-2">
+                <span class="input-group-text"
+                  ><i class="fa-regular fa-calendar"></i
+                ></span>
+                <input
+                  title="attDate"
+                  type="date"
+                  id="attDate"
+                  class="form-control"
+                />
+              </div>
+              <button
+                class="btn btn-success"
+                id="btnSubmit"
+                onclick="submitAll()"
+              >
+                <i class="fa-solid fa-floppy-disk"></i> Save Data
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <a href="/teacher/classes" class="btn btn-outline-secondary btn-sm">
+              <i class="fa-solid fa-arrow-left"></i> Back to Classes
+            </a>
+          </div>
+
+          <div class="card shadow-sm">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th style="width: 15%">Student ID</th>
+                      <th style="width: 25%">Full Name</th>
+                      <th style="width: 20%">Status</th>
+                      <th style="width: 40%">Note</th>
+                    </tr>
+                  </thead>
+                  <tbody id="attTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <div th:replace="fragments/footer :: footer"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const pathParts = window.location.pathname.split("/");
+      const classId = pathParts[pathParts.length - 1];
+      const token = localStorage.getItem("accessToken");
+
+      const dateInput = document.getElementById("attDate");
+      dateInput.valueAsDate = new Date();
+
+      dateInput.addEventListener("change", function () {
+        loadData();
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        loadData();
+      });
+
+      let studentList = [];
+
+      async function loadData() {
+        const tbody = document.getElementById("attTableBody");
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center py-3"><i class="fa-solid fa-spinner fa-spin"></i> Checking data...</td></tr>`;
+
+        const date = dateInput.value;
+
+        try {
+          // Call two APIs in parallel: Retrieve student information and retrieve attendance history for that day.
+          const [resStudents, resHistory] = await Promise.all([
+            fetch(`/api/enrollments/class/${classId}`, {
+              headers: { Authorization: "Bearer " + token },
+            }),
+            fetch(
+              `/api/teacher/attendance/history?classId=${classId}&date=${date}`,
+              { headers: { Authorization: "Bearer " + token } }
+            ),
+          ]);
+
+          const students = await resStudents.json();
+          const history = await resHistory.json(); // List Attendance entity
+
+          studentList = students;
+          tbody.innerHTML = "";
+
+          if (students.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">No students found.</td></tr>`;
+            return;
+          }
+
+          // Create a map for quick lookup: userId -> attendanceRecord
+          const historyMap = {};
+          history.forEach((h) => {
+            // The backend returns a field named studentId.
+            if (h.studentId) historyMap[h.studentId] = h;
+          });
+
+          // Render bảng
+          students.forEach((s) => {
+            const existingRecord = historyMap[s.userId]; // Check if this student has already checked in.
+
+            // State display logic
+            let statusVal = "PRESENT";
+            let noteVal = "";
+            let isLocked = ""; // Biến để khóa input
+            let rowClass = "";
+
+            if (existingRecord) {
+              statusVal = existingRecord.status;
+              noteVal = existingRecord.note || "";
+              isLocked = "disabled"; // LOCK
+              rowClass = "table-active";
+            }
+
+            tbody.innerHTML += `
+                    <tr class="${rowClass}">
+                        <td class="text-muted">${s.studentId || "N/A"}</td>
+                        <td class="fw-bold ${
+                          existingRecord ? "text-secondary" : "text-primary"
+                        }">
+                            ${s.studentName} 
+                            ${
+                              existingRecord
+                                ? '<i class="fa-solid fa-check-circle text-success ms-1" title="Already Saved"></i>'
+                                : ""
+                            }
+                        </td>
+                        <td>
+                            <select class="form-select status-select" id="status-${
+                              s.userId
+                            }" ${isLocked}>
+                                <option value="PRESENT" ${
+                                  statusVal === "PRESENT" ? "selected" : ""
+                                }>Present</option>
+                                <option value="ABSENT" ${
+                                  statusVal === "ABSENT" ? "selected" : ""
+                                }>Absent</option>
+                                <option value="LATE" ${
+                                  statusVal === "LATE" ? "selected" : ""
+                                }>Late</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="note-${
+                              s.userId
+                            }" value="${noteVal}" placeholder="Note..." ${isLocked}>
+                        </td>
+                    </tr>
+                `;
+          });
+        } catch (err) {
+          console.error(err);
+          tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Failed to load data. Please try again.</td></tr>`;
+        }
+      }
+
+      // Submit function (Only send to those who HAVE NOT checked in)
+      async function submitAll() {
+        // Filter the list of inputs that are NOT disabled
+        // How to check: Get all selects, filter out those that are !disabled
+        const activeSelects = document.querySelectorAll(
+          ".status-select:not(:disabled)"
+        );
+
+        if (activeSelects.length === 0) {
+          alert("✅ All students have effectively been marked for this date!");
+          return;
+        }
+
+        if (
+          !confirm(
+            `Save attendance for ${activeSelects.length} remaining students?`
+          )
+        )
+          return;
+
+        const btn = document.getElementById("btnSubmit");
+        const date = dateInput.value;
+        const numericClassId = parseInt(classId);
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+        let errorCount = 0;
+        let successCount = 0;
+
+        for (const select of activeSelects) {
+          // take ID from id="status-123" -> take 123
+          const userId = select.id.split("-")[1];
+          const note = document.getElementById(`note-${userId}`).value;
+          const status = select.value;
+
+          const payload = {
+            studentId: userId,
+            classId: numericClassId,
+            attendanceDate: date,
+            status: status,
+            note: note,
+          };
+
+          try {
+            const res = await fetch("/api/teacher/attendance", {
+              method: "POST",
+              headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payload),
+            });
+
+            if (res.ok) successCount++;
+            else errorCount++;
+          } catch (e) {
+            console.error(e);
+            errorCount++;
+          }
+        }
+
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Data';
+
+        if (errorCount === 0) {
+          alert("✅ Saved successfully!");
+          loadData();
+        } else {
+          alert(`⚠️ Saved ${successCount}, Failed ${errorCount}.`);
+          loadData();
+        }
+      }
+
+      function logout() {
+        localStorage.clear();
+        window.location.href = "/";
+      }
+    </script>
+  </body>
+</html>

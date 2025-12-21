@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Quiz</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <nav
+          class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse"
+          style="min-height: 100vh"
+        >
+          <div class="position-sticky pt-3">
+            <a
+              href="/teacher/dashboard"
+              class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none px-3"
+            >
+              <i class="fa-solid fa-graduation-cap fs-4 me-2"></i
+              ><span class="fs-5 fw-bold">SMS Teacher</span>
+            </a>
+            <hr class="text-white" />
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a href="/teacher/dashboard" class="nav-link text-white"
+                  >Dashboard</a
+                >
+              </li>
+              <li class="nav-item">
+                <a href="/teacher/classes" class="nav-link text-white"
+                  >Classes</a
+                >
+              </li>
+              <li class="nav-item">
+                <a
+                  href="/teacher/quizzes"
+                  class="nav-link active bg-primary text-white"
+                  >Quizzes</a
+                >
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+          <h2 class="mb-4 text-primary">
+            <i class="fa-solid fa-file-circle-plus"></i> Create New Quiz
+          </h2>
+
+          <form id="quizForm">
+            <div class="card shadow-sm mb-4">
+              <div class="card-header bg-primary text-white">1. Quiz Info</div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label class="form-label">Title</label>
+                  <input
+                    type="text"
+                    id="quizTitle"
+                    class="form-control"
+                    placeholder="e.g. Mid-term Java Exam"
+                    required
+                  />
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Assign to Class</label>
+                    <select
+                      title="classSelect"
+                      id="classSelect"
+                      class="form-select"
+                      required
+                    >
+                      <option value="">Loading classes...</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Description</label>
+                    <input
+                      type="text"
+                      id="quizDesc"
+                      class="form-control"
+                      placeholder="Short description"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="questionsContainer"></div>
+
+            <button
+              type="button"
+              class="btn btn-outline-primary w-100 mb-4 py-3 border-dashed"
+              onclick="addQuestion()"
+            >
+              <i class="fa-solid fa-plus-circle"></i> Add Question
+            </button>
+
+            <div class="d-flex justify-content-end mb-5">
+              <button type="submit" class="btn btn-success btn-lg px-5">
+                <i class="fa-solid fa-save"></i> Save Quiz
+              </button>
+            </div>
+          </form>
+        </main>
+      </div>
+    </div>
+    <div th:replace="fragments/footer :: footer"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const token = localStorage.getItem("accessToken");
+
+      // This variable is only used to create a unique ID for the HTML (to avoid duplicate IDs when deleting).
+      // It will increment indefinitely, never decrement.
+      let uniqueIdCounter = 0;
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // Load list student of class
+        fetch("/api/teacher/classes", {
+          headers: { Authorization: "Bearer " + token },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            const select = document.getElementById("classSelect");
+            select.innerHTML = '<option value="">-- Select Class --</option>';
+            data.forEach((c) => {
+              select.innerHTML += `<option value="${c.classId}">${c.className} (${c.courseName})</option>`;
+            });
+          });
+
+        // default add the first question
+        addQuestion();
+      });
+
+      // add question
+      function addQuestion() {
+        uniqueIdCounter++;
+
+        const html = `
+        <div class="card shadow-sm mb-3 question-card" id="q-card-${uniqueIdCounter}">
+            <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                <strong class="q-label">Question ...</strong>
+                
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeQuestion(${uniqueIdCounter})">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <textarea class="form-control q-text" rows="2" placeholder="Enter question text here..." required></textarea>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <div class="input-group-text"><input class="form-check-input mt-0 q-correct" type="radio" name="correct-${uniqueIdCounter}" value="A" checked></div>
+                            <input type="text" class="form-control q-opt-a" placeholder="Option A" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <div class="input-group-text"><input class="form-check-input mt-0 q-correct" type="radio" name="correct-${uniqueIdCounter}" value="B"></div>
+                            <input type="text" class="form-control q-opt-b" placeholder="Option B" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <div class="input-group-text"><input class="form-check-input mt-0 q-correct" type="radio" name="correct-${uniqueIdCounter}" value="C"></div>
+                            <input type="text" class="form-control q-opt-c" placeholder="Option C" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <div class="input-group-text"><input class="form-check-input mt-0 q-correct" type="radio" name="correct-${uniqueIdCounter}" value="D"></div>
+                            <input type="text" class="form-control q-opt-d" placeholder="Option D" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+
+        document
+          .getElementById("questionsContainer")
+          .insertAdjacentHTML("beforeend", html);
+
+        // IMPORTANT: Call the numbering function again after adding.
+        renumberQuestions();
+      }
+
+      // deleta question
+      function removeQuestion(id) {
+        const card = document.getElementById(`q-card-${id}`);
+        if (card) {
+          card.remove();
+          // IMPORTANT: Call the numbering function again after deleting.
+          renumberQuestions();
+        }
+      }
+
+      function renumberQuestions() {
+        const cards = document.querySelectorAll(".question-card");
+        // Browse through all the cards currently displayed on the screen.
+        cards.forEach((card, index) => {
+          //The index runs from 0 -> the sequence number will be index + 1
+          const label = card.querySelector(".q-label");
+          if (label) {
+            label.innerText = `Question ${index + 1}`;
+          }
+        });
+      }
+
+      // submit handle
+      document
+        .getElementById("quizForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const cards = document.querySelectorAll(".question-card");
+          if (cards.length === 0) {
+            alert("Please add at least one question!");
+            return;
+          }
+
+          let questions = [];
+          cards.forEach((card) => {
+            const text = card.querySelector(".q-text").value;
+            const optA = card.querySelector(".q-opt-a").value;
+            const optB = card.querySelector(".q-opt-b").value;
+            const optC = card.querySelector(".q-opt-c").value;
+            const optD = card.querySelector(".q-opt-d").value;
+
+            let correct = "A";
+            const radios = card.querySelectorAll(".q-correct");
+            radios.forEach((r) => {
+              if (r.checked) correct = r.value;
+            });
+
+            questions.push({
+              questionText: text,
+              optionA: optA,
+              optionB: optB,
+              optionC: optC,
+              optionD: optD,
+              correctAnswer: correct,
+            });
+          });
+
+          const payload = {
+            title: document.getElementById("quizTitle").value,
+            description: document.getElementById("quizDesc").value,
+            classId: document.getElementById("classSelect").value,
+            questions: questions,
+          };
+
+          try {
+            const res = await fetch("/api/teacher/quizzes", {
+              method: "POST",
+              headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payload),
+            });
+
+            if (res.ok) {
+              alert("Quiz Created Successfully!");
+              window.location.href = "/teacher/quizzes";
+            } else {
+              alert("Failed to create quiz.");
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        });
+    </script>
+  </body>
+</html>

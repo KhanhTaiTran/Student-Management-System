@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Grades - SMS</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" th:href="@{/css/student.css}" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div
+          class="col-md-3 col-lg-2 sidebar p-3 collapse d-md-block bg-dark text-white"
+          style="min-height: 100vh"
+        >
+          <a
+            href="/"
+            class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+          >
+            <i class="fa-solid fa-graduation-cap fs-4 me-2"></i>
+            <span class="fs-5 fw-bold" th:text="#{nav.brand.student}"
+              >SMS Student</span
+            >
+          </a>
+          <hr class="text-white" />
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a href="/student/dashboard" class="nav-link text-white"
+                ><i class="fa-solid fa-chart-line me-2"></i>
+                <span th:text="#{student.sidebar.dashboard}">Dashboard</span></a
+              >
+            </li>
+            <li class="nav-item">
+              <a href="/student/schedule" class="nav-link text-white"
+                ><i class="fa-solid fa-calendar-alt me-2"></i>
+                <span th:text="#{student.sidebar.schedule}">Schedule</span></a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                href="/student/course-registration"
+                class="nav-link text-white"
+              >
+                <i class="fa-solid fa-cart-plus me-2"></i>
+                <span th:text="#{student.sidebar.registration}">Registration<span ></a
+              >
+            </li>
+            <li class="nav-item">
+              <a href="/student/grades" class="nav-link active text-white"
+                ><i class="fa-solid fa-book me-2"></i>
+                <span th:text="#{student.sidebar.grades}">Grades</span></a
+              >
+            </li>
+            <li class="nav-item">
+              <a href="/student/payment" class="nav-link text-white"
+                ><i class="fa-solid fa-credit-card me-2"></i>
+                <span th:text="#{student.sidebar.payment}">Payment</span></a
+              >
+            </li>
+            <li class="nav-item">
+                        <a href="/student/quizzes" class="nav-link text-white">
+                            <i class="fa-solid fa-list-check me-2"></i> My Quizzes
+                        </a>
+                    </li>
+            <li class="nav-item mt-5">
+              <a href="#" onclick="logout()" class="nav-link text-danger"
+                ><i class="fa-solid fa-sign-out-alt me-2"></i>
+                <span th:text="#{student.sidebar.logout}">Logout</span></a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+          <h2
+            class="mb-4 fw-bold text-primary"
+            th:text="#{student.grades.title}"
+          >
+            My Grades
+          </h2>
+
+          <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-primary text-white">
+                    <tr>
+                      <th th:text="#{student.grades.course}">Course</th>
+                      <th th:text="#{student.grades.class}">Class</th>
+                      <th
+                        class="text-center"
+                        th:text="#{student.grades.inclass}"
+                      >
+                        In-Class
+                      </th>
+                      <th
+                        class="text-center"
+                        th:text="#{student.grades.midterm}"
+                      >
+                        Midterm
+                      </th>
+                      <th class="text-center" th:text="#{student.grades.final}">
+                        Final
+                      </th>
+                      <th class="text-center" th:text="#{student.grades.total}">
+                        Total
+                      </th>
+                      <th
+                        class="text-center"
+                        th:text="#{student.grades.status}"
+                      >
+                        Status
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody id="grades-body">
+                    <tr>
+                      <td colspan="7" class="text-center p-4">
+                        Loading data...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+<div th:replace="fragments/footer :: footer"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+      const i18n = {
+        pass: /*[[#{student.grades.pass}]]*/ "Passed",
+        fail: /*[[#{student.grades.fail}]]*/ "Failed",
+        progress: /*[[#{student.grades.progress}]]*/ "In Progress",
+      };
+    </script>
+
+    <script>
+      function logout() {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("role");
+        window.location.href = "/";
+      }
+
+      document.addEventListener("DOMContentLoaded", async function () {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          window.location.href = "/";
+          return;
+        }
+
+        try {
+          const res = await fetch("/api/enrollments/my-courses", {
+            headers: { Authorization: "Bearer " + token },
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            const tbody = document.getElementById("grades-body");
+            tbody.innerHTML = "";
+
+            if (data.length === 0) {
+              tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted p-4">No enrolled courses yet.</td></tr>`;
+              return;
+            }
+
+            data.forEach((item) => {
+              // Logic display stage
+              let badgeClass = "bg-secondary";
+              let statusText = i18n.progress;
+
+              if (item.status === "PASSED") {
+                badgeClass = "bg-success";
+                statusText = i18n.pass;
+              } else if (item.status === "FAILED") {
+                badgeClass = "bg-danger";
+                statusText = i18n.fail;
+              }
+
+              // Format (if null -> display -)
+              const formatScore = (s) => (s !== null ? s : "-");
+
+              const row = `
+                        <tr>
+                            <td class="fw-bold">${item.courseName}</td>
+                            <td class="small text-muted">${item.className}</td>
+                            <td class="text-center">${formatScore(
+                              item.inclass
+                            )}</td>
+                            <td class="text-center">${formatScore(
+                              item.midTermGrade
+                            )}</td>
+                            <td class="text-center">${formatScore(
+                              item.finalGrade
+                            )}</td>
+                            <td class="text-center fw-bold text-primary">${formatScore(
+                              item.totalGrade
+                            )}</td>
+                            <td class="text-center">
+                                <span class="badge ${badgeClass}">${statusText}</span>
+                            </td>
+                        </tr>
+                    `;
+              tbody.innerHTML += row;
+            });
+          } else {
+            console.error("API Error");
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    </script>
+  </body>
+</html>

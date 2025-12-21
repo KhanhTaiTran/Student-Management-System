@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -36,7 +37,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private Role role = Role.STUDENT;
+    private Role role;
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
@@ -52,6 +53,12 @@ public class User {
 
     @Column(name = "reset_token_expiry")
     private LocalDateTime resetTokenExpiry;
+
+    @Column(name = "teacher_id")
+    private Long teacherId;
+
+    @Column(name = "balance")
+    private BigDecimal balance = BigDecimal.ZERO;
 
     @PrePersist
     protected void onCreate() {

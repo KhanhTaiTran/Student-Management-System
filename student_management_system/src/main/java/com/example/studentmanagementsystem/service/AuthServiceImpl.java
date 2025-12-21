@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.studentmanagementsystem.dto.request.LoginRequestDTO;
+import com.example.studentmanagementsystem.dto.response.JwtAuthResponseDTO;
 import com.example.studentmanagementsystem.entity.User;
 import com.example.studentmanagementsystem.repository.UserRepository;
 import com.example.studentmanagementsystem.security.JwtTokenProvider;
@@ -40,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String login(LoginRequestDTO loginRequestDTO) {
+    public JwtAuthResponseDTO login(LoginRequestDTO loginRequestDTO) {
         // validate username/password with Spring Security
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -52,7 +53,14 @@ public class AuthServiceImpl implements AuthService {
         // return token
         String token = jwtTokenProvider.generateToken(authentication);
 
-        return token;
+        String userRole = authentication.getAuthorities().stream().findFirst().get().getAuthority();
+
+        JwtAuthResponseDTO response = new JwtAuthResponseDTO();
+
+        response.setAccessToken(token);
+        response.setRole(userRole);
+
+        return response;
     }
 
     @Override
@@ -69,8 +77,7 @@ public class AuthServiceImpl implements AuthService {
         user.setResetTokenExpiry(LocalDateTime.now().plusMinutes(5));
         userRepository.save(user);
 
-        // simulate to send email (print to console to test)
-        // can be use JavaMailSender
+        // use JavaMailSender
         String resetLink = "http://localhost:8080/reset-password?token=" + token;
 
         sendEmail(email, "Request to reset the password - SMS System - HCMIU",

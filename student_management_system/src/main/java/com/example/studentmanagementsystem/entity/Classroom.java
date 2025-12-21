@@ -1,5 +1,7 @@
 package com.example.studentmanagementsystem.entity;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,5 +41,20 @@ public class Classroom {
 
     private String semester;
 
-    private String classRoom;// e.g. A1.202
+    private String classroom;// e.g. A1.202
+
+    @Column(name = "day_of_week")
+    private Integer dayOfWeek;
+
+    @Column(name = "start_period")
+    private Integer startPeriod;
+
+    @Column(name = "total_periods")
+    private Integer totalPeriods;
+
+    @Column(name = "start_date")
+    private LocalDate startDate;
+
+    @Column(name = "end_date")
+    private LocalDate endDate;
 }
