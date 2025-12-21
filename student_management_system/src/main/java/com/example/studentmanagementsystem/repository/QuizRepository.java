@@ -17,4 +17,6 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
     // Cái này dùng cho trang "My Quizzes" của Teacher
     @Query("SELECT q FROM Quiz q WHERE q.classroom.teacher.id = :teacherId")
     List<Quiz> findByClassroomTeacherId(Long teacherId);
+
+    long countByClassroom_Teacher_Id(Long teacherId);
 }

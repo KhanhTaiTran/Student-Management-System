@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>Take Attendance</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -18,44 +19,100 @@
     <div class="container-fluid">
       <div class="row">
         <nav
-          th:replace="fragments/sidebar :: sidebar"
           class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse"
-        ></nav>
+          style="min-height: 100vh"
+        >
+          <div class="position-sticky pt-3">
+            <a
+              href="/teacher/dashboard"
+              class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none px-3"
+            >
+              <i class="fa-solid fa-graduation-cap fs-4 me-2"></i>
+              <span class="fs-5 fw-bold">SMS Teacher</span>
+            </a>
+            <hr class="text-white" />
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a href="/teacher/dashboard" class="nav-link text-white"
+                  ><i class="fa-solid fa-chart-line me-2"></i> Dashboard</a
+                >
+              </li>
+              <li class="nav-item">
+                <a
+                  href="/teacher/classes"
+                  class="nav-link active bg-primary text-white"
+                  ><i class="fa-solid fa-chalkboard-user me-2"></i> Classes</a
+                >
+              </li>
+              <li class="nav-item">
+                <a href="/teacher/quizzes" class="nav-link text-white"
+                  ><i class="fa-solid fa-file-circle-question me-2"></i>
+                  Quizzes</a
+                >
+              </li>
+
+              <li class="nav-item mt-5">
+                <a href="#" onclick="logout()" class="nav-link text-danger"
+                  ><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</a
+                >
+              </li>
+            </ul>
+          </div>
+        </nav>
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
           <div
             class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
           >
-            <h2><i class="fa-solid fa-user-check"></i> Attendance Check</h2>
+            <h2>
+              <i class="fa-solid fa-clipboard-user text-success"></i> Attendance
+              Check
+            </h2>
+
             <div class="d-flex align-items-center">
-              <input
-                title="attDate"
-                type="date"
-                id="attDate"
-                class="form-control me-2"
-              />
+              <div class="input-group me-2">
+                <span class="input-group-text"
+                  ><i class="fa-regular fa-calendar"></i
+                ></span>
+                <input
+                  title="attDate"
+                  type="date"
+                  id="attDate"
+                  class="form-control"
+                />
+              </div>
               <button
                 class="btn btn-success"
                 id="btnSubmit"
                 onclick="submitAll()"
               >
-                <i class="fa-solid fa-upload"></i> Submit All
+                <i class="fa-solid fa-floppy-disk"></i> Save Data
               </button>
             </div>
           </div>
 
-          <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-              <thead class="table-dark">
-                <tr>
-                  <th>Student ID</th>
-                  <th>Student Name</th>
-                  <th>Status</th>
-                  <th>Note</th>
-                </tr>
-              </thead>
-              <tbody id="attTableBody"></tbody>
-            </table>
+          <div class="mb-3">
+            <a href="/teacher/classes" class="btn btn-outline-secondary btn-sm">
+              <i class="fa-solid fa-arrow-left"></i> Back to Classes
+            </a>
+          </div>
+
+          <div class="card shadow-sm">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th style="width: 15%">Student ID</th>
+                      <th style="width: 25%">Full Name</th>
+                      <th style="width: 20%">Status</th>
+                      <th style="width: 40%">Note</th>
+                    </tr>
+                  </thead>
+                  <tbody id="attTableBody"></tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </main>
       </div>
@@ -67,89 +124,154 @@
       const classId = pathParts[pathParts.length - 1];
       const token = localStorage.getItem("accessToken");
 
-      // Set ngày mặc định là hôm nay
-      document.getElementById("attDate").valueAsDate = new Date();
+      // Set ngày mặc định và lắng nghe sự kiện đổi ngày
+      const dateInput = document.getElementById("attDate");
+      dateInput.valueAsDate = new Date();
+
+      dateInput.addEventListener("change", function () {
+        loadData(); // Load lại dữ liệu khi chọn ngày khác
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        loadData();
+      });
 
       let studentList = [];
 
-      document.addEventListener("DOMContentLoaded", function () {
-        loadStudents();
-      });
+      // 1. Hàm load dữ liệu thông minh (Merge 2 API)
+      async function loadData() {
+        const tbody = document.getElementById("attTableBody");
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center py-3"><i class="fa-solid fa-spinner fa-spin"></i> Checking data...</td></tr>`;
 
-      function loadStudents() {
-        fetch(`/api/enrollments/class/${classId}`, {
-          headers: { Authorization: "Bearer " + token },
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            studentList = data;
-            const tbody = document.getElementById("attTableBody");
+        const date = dateInput.value;
 
-            if (data.length === 0) {
-              tbody.innerHTML = `<tr><td colspan="4" class="text-center">No students.</td></tr>`;
-              return;
+        try {
+          // Gọi song song 2 API: Lấy HS và Lấy Lịch sử điểm danh ngày hôm đó
+          const [resStudents, resHistory] = await Promise.all([
+            fetch(`/api/enrollments/class/${classId}`, {
+              headers: { Authorization: "Bearer " + token },
+            }),
+            fetch(
+              `/api/teacher/attendance/history?classId=${classId}&date=${date}`,
+              { headers: { Authorization: "Bearer " + token } }
+            ),
+          ]);
+
+          const students = await resStudents.json();
+          const history = await resHistory.json(); // List Attendance entity
+
+          studentList = students;
+          tbody.innerHTML = "";
+
+          if (students.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">No students found.</td></tr>`;
+            return;
+          }
+
+          // Tạo Map để tra cứu nhanh: userId -> attendanceRecord
+          const historyMap = {};
+          history.forEach((h) => {
+            // Backend trả về field tên là studentId
+            if (h.studentId) historyMap[h.studentId] = h;
+          });
+
+          // Render bảng
+          students.forEach((s) => {
+            const existingRecord = historyMap[s.userId]; // Tìm xem em này đã điểm danh chưa
+
+            // Logic hiển thị trạng thái
+            let statusVal = "PRESENT";
+            let noteVal = "";
+            let isLocked = ""; // Biến để khóa input
+            let rowClass = "";
+
+            if (existingRecord) {
+              statusVal = existingRecord.status; // Lấy status cũ (LATE/ABSENT...)
+              noteVal = existingRecord.note || "";
+              isLocked = "disabled"; // 🔒 KHÓA DÒNG NÀY
+              rowClass = "table-active"; // Tô màu xám nhẹ để biết đã xong
             }
 
-            tbody.innerHTML = "";
-            data.forEach((s) => {
-              // Lưu ý: s.userId là trường mới thêm ở Bước 1
-              tbody.innerHTML += `
-                    <tr>
-                        <td>${s.studentId}</td>
-                        <td class="fw-bold">${s.studentName}</td>
+            tbody.innerHTML += `
+                    <tr class="${rowClass}">
+                        <td class="text-muted">${s.studentId || "N/A"}</td>
+                        <td class="fw-bold ${
+                          existingRecord ? "text-secondary" : "text-primary"
+                        }">
+                            ${s.studentName} 
+                            ${
+                              existingRecord
+                                ? '<i class="fa-solid fa-check-circle text-success ms-1" title="Already Saved"></i>'
+                                : ""
+                            }
+                        </td>
                         <td>
-                            <select class="form-select" id="status-${s.userId}">
-                                <option value="PRESENT" selected>Present</option>
-                                <option value="ABSENT">Absent</option>
-                                <option value="LATE">Late</option>
+                            <select class="form-select status-select" id="status-${
+                              s.userId
+                            }" ${isLocked}>
+                                <option value="PRESENT" ${
+                                  statusVal === "PRESENT" ? "selected" : ""
+                                }>Present</option>
+                                <option value="ABSENT" ${
+                                  statusVal === "ABSENT" ? "selected" : ""
+                                }>Absent</option>
+                                <option value="LATE" ${
+                                  statusVal === "LATE" ? "selected" : ""
+                                }>Late</option>
                             </select>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="note-${s.userId}" placeholder="Note...">
+                            <input type="text" class="form-control" id="note-${
+                              s.userId
+                            }" value="${noteVal}" placeholder="Note..." ${isLocked}>
                         </td>
                     </tr>
                 `;
-            });
-          })
-          .catch((err) => console.error(err));
+          });
+        } catch (err) {
+          console.error(err);
+          tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Failed to load data. Please try again.</td></tr>`;
+        }
       }
 
+      // 2. Hàm Submit (Chỉ gửi những người CHƯA điểm danh)
       async function submitAll() {
-        if (!confirm("Save attendance to Database?")) return;
+        // Lọc ra danh sách những input KHÔNG bị disabled
+        // Cách check: Lấy tất cả select, lọc cái nào !disabled
+        const activeSelects = document.querySelectorAll(
+          ".status-select:not(:disabled)"
+        );
 
-        const date = document.getElementById("attDate").value;
+        if (activeSelects.length === 0) {
+          alert("✅ All students have effectively been marked for this date!");
+          return;
+        }
+
+        if (
+          !confirm(
+            `Save attendance for ${activeSelects.length} remaining students?`
+          )
+        )
+          return;
+
         const btn = document.getElementById("btnSubmit");
-
-        // 1. Parse ClassId sang số nguyên cho chắc ăn
+        const date = dateInput.value;
         const numericClassId = parseInt(classId);
 
-        // Hiệu ứng Loading
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
         let errorCount = 0;
+        let successCount = 0;
 
-        // Gửi từng em lên DB
-        for (const s of studentList) {
-          // --- DEBUG: Kiểm tra xem có ID chưa ---
-          console.log(
-            `Checking student: ${s.studentName}, UserID: ${s.userId}`
-          );
+        for (const select of activeSelects) {
+          // Lấy ID từ id="status-123" -> lấy 123
+          const userId = select.id.split("-")[1];
+          const note = document.getElementById(`note-${userId}`).value;
+          const status = select.value;
 
-          if (!s.userId) {
-            console.error(
-              `❌ Lỗi: Sinh viên ${s.studentName} không có User ID. Kiểm tra lại Backend EnrollmentDTO!`
-            );
-            errorCount++;
-            continue; // Bỏ qua em này, không gửi request lỗi
-          }
-
-          const status = document.getElementById(`status-${s.userId}`).value;
-          const note = document.getElementById(`note-${s.userId}`).value;
-
-          // Payload chuẩn
           const payload = {
-            studentId: s.userId, // ID phải có giá trị
+            studentId: userId,
             classId: numericClassId,
             attendanceDate: date,
             status: status,
@@ -166,30 +288,29 @@
               body: JSON.stringify(payload),
             });
 
-            if (!res.ok) {
-              // 🔥 Đọc lỗi từ Server để biết tại sao 500
-              const errorText = await res.text();
-              console.error(`❌ Server Error for ${s.studentName}:`, errorText);
-              errorCount++;
-            } else {
-              console.log(`✅ Saved: ${s.studentName}`);
-            }
+            if (res.ok) successCount++;
+            else errorCount++;
           } catch (e) {
-            console.error("Network Error:", e);
+            console.error(e);
             errorCount++;
           }
         }
 
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-upload"></i> Submit All';
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Data';
 
         if (errorCount === 0) {
-          alert("✅ Saved all attendance data to Database!");
+          alert("✅ Saved successfully!");
+          loadData(); // Load lại bảng để khóa các dòng vừa lưu
         } else {
-          alert(
-            `⚠️ Saved with ${errorCount} errors. Open Console (F12) to see details.`
-          );
+          alert(`⚠️ Saved ${successCount}, Failed ${errorCount}.`);
+          loadData();
         }
+      }
+
+      function logout() {
+        localStorage.clear();
+        window.location.href = "/";
       }
     </script>
   </body>

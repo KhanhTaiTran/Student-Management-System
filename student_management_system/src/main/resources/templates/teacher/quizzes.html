@@ -18,38 +18,46 @@
     <div class="container-fluid">
       <div class="row">
         <nav
-          class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse"
+          class="col-md-3 col-lg-2 sidebar p-3 bg-dark text-white collapse d-md-block"
           style="min-height: 100vh"
         >
-          <div class="position-sticky pt-3">
-            <a
-              href="/teacher/dashboard"
-              class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none px-3"
-            >
-              <i class="fa-solid fa-graduation-cap fs-4 me-2"></i
-              ><span class="fs-5 fw-bold">SMS Teacher</span>
-            </a>
-            <hr class="text-white" />
-            <ul class="nav flex-column">
-              <li class="nav-item">
-                <a href="/teacher/dashboard" class="nav-link text-white"
-                  >Dashboard</a
-                >
-              </li>
-              <li class="nav-item">
-                <a href="/teacher/classes" class="nav-link text-white"
-                  >Classes</a
-                >
-              </li>
-              <li class="nav-item">
-                <a
-                  href="/teacher/quizzes"
-                  class="nav-link active bg-primary text-white"
-                  >Quizzes</a
-                >
-              </li>
-            </ul>
-          </div>
+          <a
+            href="/"
+            class="d-flex align-items-center mb-3 text-white text-decoration-none"
+          >
+            <i class="fa-solid fa-graduation-cap fs-4 me-2"></i>
+            <span class="fs-5 fw-bold">SMS Teacher</span>
+          </a>
+          <hr />
+
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a href="/teacher/dashboard" class="nav-link text-white">
+                <i class="fa-solid fa-chart-line me-2"></i> Dashboard
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="/teacher/classes" class="nav-link text-white">
+                <i class="fa-solid fa-chalkboard-user me-2"></i> Classes
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a
+                href="/teacher/quizzes"
+                class="nav-link active bg-primary text-white"
+              >
+                <i class="fa-solid fa-file-circle-question me-2"></i> Quizzes
+              </a>
+            </li>
+
+            <li class="nav-item mt-5">
+              <a href="#" onclick="logout()" class="nav-link text-danger">
+                <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+              </a>
+            </li>
+          </ul>
         </nav>
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">

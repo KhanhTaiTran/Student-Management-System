@@ -3,6 +3,7 @@ package com.example.studentmanagementsystem.controller;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -25,8 +26,14 @@ public class TeacherViewController {
         return "teacher/grades";
     }
 
+    @GetMapping("/teacher/attendance")
+    public String attendanceDefaultPage() {
+
+        return "redirect:/teacher/classes";
+    }
+
     @GetMapping("/attendance/{classId}")
-    public String attendance() {
+    public String attendancePage(@PathVariable Long classId) {
         return "teacher/attendance";
     }
 

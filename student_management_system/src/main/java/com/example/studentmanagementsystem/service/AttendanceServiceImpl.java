@@ -3,10 +3,12 @@ package com.example.studentmanagementsystem.service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.example.studentmanagementsystem.dto.request.AttendanceRequestDTO;
+import com.example.studentmanagementsystem.dto.response.AttendanceHistoryDTO;
 import com.example.studentmanagementsystem.entity.Attendance;
 import com.example.studentmanagementsystem.entity.Classroom;
 import com.example.studentmanagementsystem.entity.User;
@@ -32,6 +34,18 @@ public class AttendanceServiceImpl implements AttendanceService {
     public Attendance markAttendance(Attendance attendance) {
 
         return attendanceRepository.save(attendance);
+    }
+
+    @Override
+    public List<AttendanceHistoryDTO> getAttendanceHistory(Long classId, LocalDate date) {
+        List<Attendance> list = attendanceRepository.findByClassroomIdAndAttendanceDate(classId, date);
+
+        // Convert Entity -> DTO
+        return list.stream().map(att -> new AttendanceHistoryDTO(
+                att.getId(),
+                att.getStudent().getId(), // Lấy ID sinh viên
+                att.getStatus().toString(),
+                att.getNote())).collect(Collectors.toList());
     }
 
     @Override

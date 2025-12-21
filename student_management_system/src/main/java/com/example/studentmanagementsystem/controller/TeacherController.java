@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.studentmanagementsystem.dto.request.AttendanceRequestDTO;
+import com.example.studentmanagementsystem.dto.response.AttendanceHistoryDTO;
 import com.example.studentmanagementsystem.dto.response.ClassWithStudentCountDTO;
 import com.example.studentmanagementsystem.dto.response.TeacherDashboardDTO;
 import com.example.studentmanagementsystem.entity.*;
@@ -29,24 +30,15 @@ public class TeacherController {
         private final GradeService gradeService;
         private final AttendanceService attendanceService;
         private final QuizService quizService;
-
-        // 🔥 ADD
+        private final TeacherService teacherService;
         private final TeacherDashboardService dashboardService;
         private final UserRepository userRepository;
 
         // ===================== DASHBOARD =====================
         @GetMapping("/dashboard")
         public ResponseEntity<TeacherDashboardDTO> getDashboard(
-                        @AuthenticationPrincipal UserDetails userDetails) {
-
-                User teacher = userRepository
-                                .findByUsername(userDetails.getUsername())
-                                .orElseThrow();
-
-                return ResponseEntity.ok(
-                                new TeacherDashboardDTO(
-                                                dashboardService.getTotalTeachingClasses(teacher.getId()),
-                                                dashboardService.getTotalStudents(teacher.getId())));
+                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+                return ResponseEntity.ok(teacherService.getDashboardData(userDetails.getId()));
         }
 
         // ===================== CLASS =====================
@@ -115,5 +107,13 @@ public class TeacherController {
         @PostMapping("/attendance")
         public ResponseEntity<?> markAttendance(@RequestBody AttendanceRequestDTO request) {
                 return ResponseEntity.ok(attendanceService.markAttendance(request));
+        }
+
+        @GetMapping("/attendance/history")
+        public ResponseEntity<List<AttendanceHistoryDTO>> getAttendanceHistory(
+                        @RequestParam Long classId,
+                        @RequestParam LocalDate date) {
+                // Hàm service này giờ trả về List<DTO> nên Jackson sẽ serialize ngon lành
+                return ResponseEntity.ok(attendanceService.getAttendanceHistory(classId, date));
         }
 }
