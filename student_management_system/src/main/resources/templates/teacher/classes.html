@@ -1,201 +1,127 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <title>My Classes</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+  <meta charset="UTF-8"/>
+  <title>My Classes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-      rel="stylesheet"
-    />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
 
-    <link rel="stylesheet" th:href="@{/css/admin.css}" />
-  </head>
-  <body>
-    <div class="container-fluid">
-      <div class="row">
-        <nav
-          class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse"
-          style="min-height: 100vh"
-        >
-          <div class="position-sticky pt-3">
-            <a
-              href="/"
-              class="d-flex align-items-center mb-3 text-white text-decoration-none"
-            >
-              <i class="fa-solid fa-graduation-cap fs-4 me-2"></i>
-              <span class="fs-5 fw-bold">SMS Teacher</span>
-            </a>
+<body>
+<div class="container-fluid">
+  <div class="row">
+    <!-- SIDEBAR -->
+    <nav th:replace="fragments/sidebar :: sidebar"></nav>
 
-            <hr class="text-white" />
+    <!-- MAIN -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
 
-            <ul class="nav flex-column">
-              <li class="nav-item">
-                <a href="/teacher/dashboard" class="nav-link text-white">
-                  <i class="fa-solid fa-chart-line me-2"></i> Dashboard
-                </a>
-              </li>
-              <li class="nav-item">
-                <a
-                  href="/teacher/classes"
-                  class="nav-link active bg-primary text-white"
-                >
-                  <i class="fa-solid fa-chalkboard-user me-2"></i> Classes
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="/teacher/quizzes" class="nav-link text-white">
-                  <i class="fa-solid fa-file-circle-question me-2"></i> Quizzes
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="/teacher/attendance" class="nav-link text-white">
-                  <i class="fa-solid fa-user-check me-2"></i> Attendance
-                </a>
-              </li>
-
-              <li class="nav-item mt-5">
-                <a href="#" onclick="logout()" class="nav-link text-danger">
-                  <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
-                </a>
-              </li>
-            </ul>
-          </div>
-        </nav>
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
-          <div
-            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
-          >
-            <h2 class="text-primary">
-              <i class="fa-solid fa-chalkboard-user"></i> My Classes
-            </h2>
-          </div>
-
-          <div id="loadingSpinner" class="text-center py-5">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Loading...</span>
-            </div>
-            <p class="mt-2 text-muted">Fetching your classes...</p>
-          </div>
-
-          <div
-            id="contentArea"
-            class="table-responsive shadow-sm rounded d-none"
-          >
-            <table class="table table-hover align-middle mb-0">
-              <thead class="table-dark">
-                <tr>
-                  <th>#</th>
-                  <th>Class Name</th>
-                  <th>Course</th>
-                  <th>Semester</th>
-                  <th>Room</th>
-                  <th class="text-center">Students</th>
-                  <th class="text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="classTableBody"></tbody>
-            </table>
-          </div>
-        </main>
+      <div class="d-flex justify-content-between align-items-center mb-3 border-bottom">
+        <h2 class="text-primary">
+          <i class="fa-solid fa-chalkboard-user"></i> My Classes
+        </h2>
       </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>#</th>
+              <th>Class Name</th>
+              <th>Course</th>
+              <th>Semester</th>
+              <th>Room</th>
+              <th class="text-center">Students</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="classTableBody"></tbody>
+        </table>
+      </div>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const token = localStorage.getItem("accessToken");
+    </main>
+  </div>
+</div>
 
-        // Gọi API lấy danh sách lớp
-        fetch("/api/teacher/classes", {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error("Failed to load classes");
-            return res.json();
-          })
-          .then((classes) => {
-            // Ẩn Loading, hiện bảng
-            document.getElementById("loadingSpinner").classList.add("d-none");
-            const contentArea = document.getElementById("contentArea");
-            contentArea.classList.remove("d-none");
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-            const tbody = document.getElementById("classTableBody");
-            tbody.innerHTML = "";
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const token = localStorage.getItem("accessToken");
 
-            // Check nếu không có lớp nào
-            if (classes.length === 0) {
-              tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="text-center py-4 text-muted">
-                            <i class="fa-regular fa-folder-open fa-2x mb-2"></i><br>
-                            You have not been assigned to any class yet.
-                        </td>
-                    </tr>`;
-              return;
-            }
+  fetch("/api/teacher/classes", {
+    headers: { Authorization: "Bearer " + token }
+  })
+  .then(res => res.json())
+  .then(classes => {
+    const tbody = document.getElementById("classTableBody");
+    tbody.innerHTML = "";
 
-            // Render dữ liệu
-            classes.forEach((c, index) => {
-              tbody.innerHTML += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td class="fw-bold text-primary">${c.className}</td>
-                        <td>${c.courseName}</td>
-                        <td>${
-                          c.semester || '<span class="text-muted">-</span>'
-                        }</td>
-                        <td>${
-                          c.room || '<span class="text-muted">-</span>'
-                        }</td>
-                        <td class="text-center">
-                            <span class="badge bg-info text-dark rounded-pill">
-                                <i class="fa-solid fa-users"></i> ${
-                                  c.studentCount
-                                }
-                            </span>
-                        </td>
-                        <td class="text-center">
-                            <div class="btn-group" role="group">
-                                <a href="/teacher/grades/${
-                                  c.classId
-                                }" class="btn btn-sm btn-outline-primary" title="Enter Grades">
-                                    <i class="fa-solid fa-pen-to-square"></i> Grades
-                                </a>
-                                <a href="/teacher/attendance/${
-                                  c.classId
-                                }" class="btn btn-sm btn-outline-success" title="Take Attendance">
-                                    <i class="fa-solid fa-check-double"></i> Attendance
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-          })
-          .catch((err) => {
-            console.error(err);
-            document.getElementById("loadingSpinner").innerHTML = `
-                <div class="alert alert-danger">
-                    <i class="fa-solid fa-circle-exclamation"></i> Error loading classes. Please try again later.
-                </div>`;
-          });
-      });
+    if (classes.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" class="text-center text-muted py-4">
+            You have not been assigned to any class yet.
+          </td>
+        </tr>`;
+      return;
+    }
 
-      // Hàm logout
-      function logout() {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("role");
-        window.location.href = "/";
-      }
-    </script>
-  </body>
+    classes.forEach((c, index) => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${index + 1}</td>
+          <td class="fw-bold text-primary">${c.className}</td>
+          <td>${c.courseName}</td>
+          <td>${c.semester ?? "-"}</td>
+          <td>${c.room ?? "-"}</td>
+          <td class="text-center">
+            <span class="badge bg-info text-dark rounded-pill">
+              <i class="fa-solid fa-users"></i> ${c.studentCount}
+            </span>
+          </td>
+          <td class="text-center">
+            <div class="btn-group" role="group">
+              
+              <!-- ✅ GIỮ NÚT GRADES -->
+              <a href="/teacher/grades/${c.classId}"
+                 class="btn btn-sm btn-outline-primary"
+                 title="Enter Grades">
+                <i class="fa-solid fa-pen-to-square"></i> Grades
+              </a>
+
+              <!-- ✅ ATTENDANCE + GHI NHỚ CLASS -->
+              <a href="/teacher/attendance/${c.classId}"
+                 class="btn btn-sm btn-outline-success"
+                 title="Take Attendance"
+                 onclick="rememberClass(${c.classId})">
+                <i class="fa-solid fa-check-double"></i> Attendance
+              </a>
+
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById("classTableBody").innerHTML = `
+      <tr>
+        <td colspan="7" class="text-center text-danger py-4">
+          Error loading classes.
+        </td>
+      </tr>`;
+  });
+});
+
+function rememberClass(classId) {
+  localStorage.setItem("lastAttendanceClassId", classId);
+}
+</script>
+
+</body>
 </html>
