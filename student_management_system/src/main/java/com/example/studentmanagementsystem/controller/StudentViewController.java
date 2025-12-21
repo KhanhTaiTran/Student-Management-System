@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -43,5 +44,16 @@ public class StudentViewController {
     @GetMapping("/course-registration")
     public String courseRegistration() {
         return "student/course-registration";
+    }
+
+    @GetMapping("/quizzes")
+    public String studentQuizzesPage() {
+        return "student/quizzes";
+    }
+
+    @GetMapping("/quiz/take/{id}")
+    public String takeQuizPage(@PathVariable Long id, Model model) {
+        model.addAttribute("quizId", id);
+        return "student/take-quiz";
     }
 }
