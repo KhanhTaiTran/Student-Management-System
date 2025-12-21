@@ -35,8 +35,13 @@ public class TeacherViewController {
         return "teacher/quizzes";
     }
 
+    @GetMapping("/quizzes")
+    public String teacherQuizzes() {
+        return "teacher/quizzes";
+    }
+
     @GetMapping("/quiz/create")
-    public String createQuiz() {
-        return "teacher/quiz-create";
+    public String createQuizPage() {
+        return "teacher/create-quiz";
     }
 }
